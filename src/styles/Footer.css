@@ -1,0 +1,30 @@
+.app-footer {
+  background: #001529;
+  color: #fff;
+  padding: 32px 16px 16px 16px;
+  margin-top: 32px;
+}
+.app-footer h3 {
+  color: #fff;
+  margin-bottom: 12px;
+}
+.footer-links {
+  list-style: none;
+  padding: 0;
+}
+.footer-links li {
+  margin-bottom: 8px;
+}
+.footer-links a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover {
+  color: #1890ff;
+}
+.copyright {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}

@@ -1,0 +1,32 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  background: #001529;
+  padding: 0 32px;
+  height: 64px;
+}
+.logo-section {
+  display: flex;
+  align-items: center;
+  margin-right: 32px;
+}
+.logo-img {
+  height: 40px;
+  margin-right: 12px;
+}
+.clinic-name {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.nav-menu {
+  flex: 1;
+  min-width: 0;
+  background: transparent !important;
+  border-bottom: none;
+  justify-content: flex-end;
+}
+.user-menu {
+  float: right;
+}
