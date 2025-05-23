@@ -1,0 +1,76 @@
+/* Container */
+.p-6 {
+  padding: 24px;
+}
+
+/* Tiêu đề */
+.p-6 h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 20px;
+}
+
+/* Ant Design Table */
+.ant-table {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* Header */
+.ant-table-thead > tr > th {
+  background-color: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+/* Table Row */
+.ant-table-tbody > tr > td {
+  font-size: 15px;
+  color: #1f2937;
+  padding: 12px;
+}
+
+/* Rating stars */
+.ant-rate {
+  font-size: 16px;
+  color: #fbbf24;
+}
+
+/* Tag Status */
+.ant-tag-green {
+  background-color: #ecfdf5;
+  color: #10b981;
+  font-weight: 500;
+  border: none;
+}
+
+.ant-tag-orange {
+  background-color: #fff7ed;
+  color: #f97316;
+  font-weight: 500;
+  border: none;
+}
+
+/* Button hành động */
+.ant-btn-link {
+  font-weight: 500;
+  padding: 0 8px;
+  transition: all 0.2s ease;
+}
+
+.ant-btn-link:hover {
+  color: #2563eb;
+}
+
+.ant-btn-link.danger {
+  color: #ef4444;
+}
+
+.ant-btn-link.danger:hover {
+  color: #dc2626;
+}

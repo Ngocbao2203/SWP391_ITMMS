@@ -1,0 +1,149 @@
+/* Sidebar hiện đại, cố định trái */
+.admin-sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: linear-gradient(180deg, #1e3c72, #2a5298);
+  width: 300px !important;
+  overflow: hidden;
+  z-index: 100;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.25);
+}
+
+.logout {
+  padding: 16px;
+  text-align: center;
+  color: #f97316;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout:hover {
+  color: #ffffff;
+  transform: translateX(5px);
+}
+
+
+/* Bọc menu để scroll được */
+.admin-sidebar .menu-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+/* Layout sider */
+.admin-sidebar .ant-layout-sider {
+  background: transparent;
+  transition: all 0.3s ease;
+  width: 300px !important;
+  min-width: 300px !important;
+  max-width: 300px !important;
+}
+
+/* Logo */
+.admin-sidebar .logo {
+  font-size: 1.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 20px 0;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  background: linear-gradient(90deg, #93c5fd, #a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Menu */
+.admin-sidebar .ant-menu {
+  background: transparent;
+  border-right: none;
+}
+
+.admin-sidebar .ant-menu-item {
+  border-radius: 12px;
+  padding: 10px 16px;
+  color: #f3f4f6;
+  transition: all 0.3s ease;
+}
+
+.admin-sidebar .ant-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  transform: translateX(5px);
+}
+
+.admin-sidebar .ant-menu-item-selected {
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.admin-sidebar .ant-menu-item a {
+  color: #f3f4f6;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.admin-sidebar .ant-menu-item a:hover,
+.admin-sidebar .ant-menu-item-selected a {
+  color: #ffffff;
+}
+
+.admin-sidebar .ant-menu-item-icon {
+  font-size: 20px;
+  margin-right: 16px;
+  color: #cbd5e1;
+}
+
+/* Logout riêng dưới cùng */
+.admin-sidebar .logout {
+  padding: 16px;
+  text-align: center;
+}
+
+.admin-sidebar .logout a {
+  color: #f97316;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.admin-sidebar .logout a:hover {
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 200px !important;
+  }
+
+  .admin-sidebar .ant-layout-sider {
+    width: 200px !important;
+    min-width: 200px !important;
+    max-width: 200px !important;
+  }
+
+  .admin-sidebar .logo {
+    font-size: 1.5rem;
+    padding: 16px 0;
+  }
+
+  .admin-sidebar .ant-menu-item {
+    padding: 8px 12px;
+  }
+}
