@@ -1,0 +1,53 @@
+.dashboard-container {
+  padding: 24px;
+}
+
+/* Card thống kê */
+.dashboard-card {
+  background: linear-gradient(135deg, #f9fafb, #ffffff);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Statistic title và value */
+.dashboard-card .ant-statistic-title {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.dashboard-card .ant-statistic-content {
+  font-size: 28px;
+  font-weight: bold;
+  color: #111827;
+}
+
+/* Card biểu đồ */
+.dashboard-container .ant-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.dashboard-container .ant-card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-card .ant-statistic-content {
+    font-size: 22px;
+  }
+
+  .dashboard-container .ant-card {
+    margin-bottom: 16px;
+  }
+}
