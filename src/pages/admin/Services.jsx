@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Button, Space, Switch } from 'antd';
-
+import { Table, Button, Space, Switch, Modal, Form, Input, InputNumber } from 'antd';
+import '../../styles/Services.css'; 
 const Services = () => {
   const [services, setServices] = useState([
     {
@@ -32,6 +32,9 @@ const Services = () => {
     },
   ]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form] = Form.useForm();
+
   const handleToggleStatus = (key) => {
     setServices((prev) =>
       prev.map((service) =>
@@ -40,8 +43,21 @@ const Services = () => {
     );
   };
 
+  const handleAddService = () => {
+    form.validateFields().then((values) => {
+      const newService = {
+        ...values,
+        id: (services.length + 1).toString().padStart(2, '0'),
+        key: (services.length + 1).toString(),
+        status: true,
+      };
+      setServices([...services, newService]);
+      form.resetFields();
+      setIsModalOpen(false);
+    });
+  };
+
   const columns = [
-    // (Optional) ID column – hidden on mobile
     {
       title: 'ID',
       dataIndex: 'id',
@@ -107,7 +123,52 @@ const Services = () => {
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-4">Services</h2>
+
+      <Button type="primary" className="mb-4" onClick={() => setIsModalOpen(true)}>
+        Add Service
+      </Button>
+
       <Table columns={columns} dataSource={services} />
+
+      <Modal
+        title="Thêm Dịch Vụ Mới"
+        open={isModalOpen}
+        onOk={handleAddService}
+        onCancel={() => setIsModalOpen(false)}
+        okText="Thêm"
+        cancelText="Hủy"
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item
+            name="name"
+            label="Tên dịch vụ"
+            rules={[{ required: true, message: 'Vui lòng nhập tên dịch vụ!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Mô tả"
+            rules={[{ required: true, message: 'Vui lòng nhập mô tả!' }]}
+          >
+            <Input.TextArea rows={2} />
+          </Form.Item>
+          <Form.Item
+            name="price"
+            label="Giá"
+            rules={[{ required: true, message: 'Vui lòng nhập giá!' }]}
+          >
+            <InputNumber min={1} className="w-full" />
+          </Form.Item>
+          <Form.Item
+            name="image"
+            label="Link hình ảnh"
+            rules={[{ required: true, message: 'Vui lòng nhập link hình ảnh!' }]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
