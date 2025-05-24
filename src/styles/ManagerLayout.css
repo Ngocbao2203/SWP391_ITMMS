@@ -1,0 +1,30 @@
+.manager-main-layout {
+  margin-left: 300px;
+  width: calc(100% - 300px);
+  transition: margin-left 0.3s ease;
+  padding-top: 24px;
+}
+
+.manager-content {
+  margin: 0 24px 24px 24px;
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  min-height: 360px;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .manager-main-layout {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+  }
+
+  .manager-content {
+    margin: 16px;
+  }
+}
