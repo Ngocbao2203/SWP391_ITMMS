@@ -6,6 +6,7 @@ import RequestPasswordReset from "../pages/public/ReqPass";
 import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/admin/Dashboard";
 import Services from "../pages/admin/Services";
+import UserService from "../pages/public/UserService";
 import Feedback from "../pages/admin/Feedback";
 import Reports from "../pages/admin/Reports";
 
@@ -17,7 +18,7 @@ const AppRouter = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/ReqPass" element={<RequestPasswordReset />} />
-
+      <Route path="/services" element={<UserService />} />
       {/* Admin Routes */}
       <Route
         path="/admin/dashboard"

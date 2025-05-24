@@ -1,0 +1,266 @@
+/* Import font */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap");
+
+/* Base styling */
+:root {
+  --primary-color: #5c6bc0; /* Indigo blue - relaxing and trustworthy */
+  --secondary-color: #3949ab;
+  --accent-color: #8e24aa; /* Purple - associated with healing */
+  --light-color: #f5f8ff;
+  --dark-color: #2c3e50;
+  --shadow: 0 5px 20px rgba(92, 107, 192, 0.15);
+  --transition: all 0.3s ease;
+  --card-radius: 12px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.6;
+  color: var(--dark-color);
+  background-color: #fff;
+}
+
+/* Services Section */
+.fertility-services-container {
+  padding: 5rem 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.services-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.section-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+}
+
+.section-description {
+  font-size: 1.1rem;
+  color: #555;
+  max-width: 700px;
+  margin: 1.5rem auto 0;
+  line-height: 1.8;
+}
+
+/* Services Grid */
+.fertility-services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-bottom: 4rem;
+}
+
+.fertility-service-card {
+  background: #fff;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.fertility-service-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(92, 107, 192, 0.2);
+}
+
+.service-image {
+  height: 220px;
+  overflow: hidden;
+}
+
+.service-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.fertility-service-card:hover .service-image img {
+  transform: scale(1.05);
+}
+
+.service-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  padding: 1.5rem 1.5rem 0.75rem;
+  margin: 0;
+}
+
+.service-description {
+  color: #666;
+  padding: 0 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+  line-height: 1.7;
+}
+
+.service-buttons {
+  display: flex;
+  gap: 10px;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.btn {
+  padding: 0.8rem 1.2rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+  transition: var(--transition);
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.btn-more {
+  background-color: #fff;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.btn-register {
+  background-color: var(--primary-color);
+  color: white;
+  border: 1px solid var(--primary-color);
+}
+
+.btn-more:hover {
+  background-color: rgba(92, 107, 192, 0.1);
+}
+
+.btn-register:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+/* Call to action section */
+.cta-container {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: var(--light-color);
+  border-radius: var(--card-radius);
+  margin-top: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(92, 107, 192, 0.05) 0%,
+    rgba(142, 36, 170, 0.05) 100%
+  );
+}
+
+.cta-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.cta-description {
+  color: #555;
+  margin-bottom: 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--accent-color) 100%
+  );
+  color: white;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+  transition: var(--transition);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 5px 15px rgba(92, 107, 192, 0.3);
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(92, 107, 192, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .fertility-services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .fertility-services-grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .cta-title {
+    font-size: 1.8rem;
+  }
+
+  .service-buttons {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
