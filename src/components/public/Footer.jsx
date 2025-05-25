@@ -1,44 +1,82 @@
-import React from 'react';
-import { Layout, Row, Col } from 'antd';
+import React from "react";
+import { Layout, Row, Col, Tooltip } from "antd";
 import {
   FacebookFilled,
   MailOutlined,
   PhoneOutlined,
   EnvironmentOutlined,
-} from '@ant-design/icons';
-import '../../styles/Footer.css';
+} from "@ant-design/icons";
+import "../../styles/Footer.css";
 
 const { Footer } = Layout;
 
-const AppFooter = () => {
+const FooterComponent = () => {
   const year = new Date().getFullYear();
+
   return (
-    <Footer className="app-footer">
-      <Row gutter={[16, 16]} justify="space-between">
-        <Col xs={24} md={8}>
-          <h3>Contact Us</h3>
-          <p><EnvironmentOutlined /> 123 Clinic St, City, Country</p>
-          <p><PhoneOutlined /> 0123-456-789</p>
-          <p><MailOutlined /> info@myclinic.com</p>
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-            <FacebookFilled style={{ fontSize: 22, color: '#1877f3', marginRight: 8 }} />
-          </a>
-          {/* Add Zalo or other social links here */}
+    <Footer className="site-footer">
+      <Row gutter={[32, 32]}>
+        {/* Giới thiệu */}
+        <Col xs={24} md={6}>
+          <h3>Về chúng tôi</h3>
+          <p><strong>My Clinic</strong> là phòng khám chuyên khoa hỗ trợ sinh sản.</p>
+          <p>Chúng tôi mang đến dịch vụ IUI, IVF uy tín với đội ngũ chuyên gia hơn 10 năm kinh nghiệm.</p>
+          <p>Sứ mệnh: Đồng hành cùng bạn trên hành trình làm cha mẹ.</p>
         </Col>
-        <Col xs={24} md={8}>
-          <h3>Quick Links</h3>
+
+        {/* Liên kết nhanh */}
+        <Col xs={24} md={6}>
+          <h3>Liên kết nhanh</h3>
           <ul className="footer-links">
-            <li><a href="/services">Services</a></li>
-            <li><a href="/doctors">Doctors</a></li>
-            <li><a href="/feedback">Feedback</a></li>
+            <li><a href="/services">Dịch vụ</a></li>
+            <li><a href="/doctors">Bác sĩ</a></li>
+            <li><a href="/feedback">Phản hồi</a></li>
+            <li><a href="/login">Đăng nhập</a></li>
+            <li><a href="/register">Đăng ký tư vấn</a></li>
           </ul>
         </Col>
-        <Col xs={24} md={8} className="copyright">
-          <p>Copyright © {year} My Clinic. All rights reserved.</p>
+
+        {/* Liên hệ */}
+        <Col xs={24} md={6}>
+          <h3>Liên hệ</h3>
+          <p><EnvironmentOutlined /> 123 Clinic St, Quận 1, TP.HCM</p>
+          <p><PhoneOutlined /> 0123-456-789</p>
+          <p><MailOutlined /> info@myclinic.com</p>
+          <Tooltip title="Facebook">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+            >
+              <FacebookFilled className="social-icon" />
+            </a>
+          </Tooltip>
+        </Col>
+
+        {/* Bản đồ vị trí */}
+        <Col xs={24} md={6}>
+          <h3>Vị trí phòng khám</h3>
+          <div className="map-container">
+            <iframe
+              title="clinic-map"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.68174231239!2d106.70042301533415!3d10.762622362417325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f1e22a1b6e7%3A0x51d3773f58685adf!2zMzAgxJAuIFRy4bqnbiBDaMOtbmgsIFBoxrDhu51uZyA3LCBRdeG6rW4gMywgVMOibiBCaOG7aSBDaMOtbmgsIFRow6BuaCBwaOG7kSBI4buNYyBN4bu5LCBWaeG7h3QgTmFt!5e0!3m2!1sen!2s!4v1685178863602!5m2!1sen!2s"
+              width="100%"
+              height="180"
+              style={{ border: 0, borderRadius: '8px' }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
         </Col>
       </Row>
+
+      <div className="copyright">
+        <p>© {year} My Clinic. Được phát triển bởi đội ngũ chuyên gia IVF Việt Nam.</p>
+      </div>
     </Footer>
   );
 };
 
-export default AppFooter;
+export default FooterComponent;
