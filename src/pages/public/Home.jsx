@@ -1,50 +1,50 @@
-import React from 'react';
-import { Button, Card, Carousel, Row, Col, Typography } from 'antd';
-import { Link } from 'react-router-dom';
-import MainLayout from '../../layouts/MainLayout';
-import '../../styles/Home.css'; 
+import React from "react";
+import { Button, Card, Carousel, Row, Col, Typography } from "antd";
+import { Link } from "react-router-dom";
+import MainLayout from "../../layouts/MainLayout";
+import "../../styles/Home.css";
 
 const { Title, Paragraph } = Typography;
 
 const services = [
   {
-    title: 'IUI - Intrauterine Insemination',
-    desc: 'Safe, effective reproductive support for couples.',
-    icon: '🧬',
+    title: "IUI - Intrauterine Insemination",
+    desc: "Safe, effective reproductive support for couples.",
+    icon: "🧬",
   },
   {
-    title: 'IVF - In Vitro Fertilization',
-    desc: 'Advanced fertilization technology for your family.',
-    icon: '👶',
+    title: "IVF - In Vitro Fertilization",
+    desc: "Advanced fertilization technology for your family.",
+    icon: "👶",
   },
   {
-    title: 'Reproductive Support',
-    desc: 'Comprehensive care and consultation.',
-    icon: '🤰',
+    title: "Reproductive Support",
+    desc: "Comprehensive care and consultation.",
+    icon: "🤰",
   },
 ];
 
 const doctors = [
-  { name: 'Dr. Nguyen Van A', specialty: 'IVF Specialist' },
-  { name: 'Dr. Tran Thi B', specialty: 'IUI Expert' },
-  { name: 'Dr. Le Van C', specialty: 'Reproductive Endocrinologist' },
+  { name: "Dr. Nguyen Van A", specialty: "IVF Specialist" },
+  { name: "Dr. Tran Thi B", specialty: "IUI Expert" },
+  { name: "Dr. Le Van C", specialty: "Reproductive Endocrinologist" },
 ];
 
 const articles = [
   {
-    title: 'Successful IVF Stories',
-    desc: 'Real experiences from our patients.',
-    link: '/bai-viet/ivf-stories',
+    title: "Successful IVF Stories",
+    desc: "Real experiences from our patients.",
+    link: "/bai-viet/ivf-stories",
   },
   {
-    title: 'Tips for Fertility Health',
-    desc: 'How to prepare for your journey.',
-    link: '/bai-viet/fertility-tips',
+    title: "Tips for Fertility Health",
+    desc: "How to prepare for your journey.",
+    link: "/bai-viet/fertility-tips",
   },
   {
-    title: 'Understanding IUI',
-    desc: 'What to expect from the procedure.',
-    link: '/bai-viet/understanding-iui',
+    title: "Understanding IUI",
+    desc: "What to expect from the procedure.",
+    link: "/bai-viet/understanding-iui",
   },
 ];
 
@@ -55,7 +55,8 @@ const Home = () => (
       <div className="banner-section">
         <div className="banner-content">
           <Title level={2} className="banner-title">
-            Accompanying the act of parenthood - Prestige, Professionalism, and dedication
+            Accompanying the act of parenthood - Prestige, Professionalism, and
+            dedication
           </Title>
         </div>
       </div>
