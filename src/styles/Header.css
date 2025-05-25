@@ -1,32 +1,119 @@
 .app-header {
   display: flex;
   align-items: center;
-  background: #001529;
-  padding: 0 32px;
-  height: 64px;
+  background: linear-gradient(90deg, #001529 0%, #003a8c 100%);
+  padding: 0 48px;
+  height: 72px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
+
 .logo-section {
   display: flex;
   align-items: center;
-  margin-right: 32px;
+  margin-right: 40px;
 }
+
 .logo-img {
-  height: 40px;
-  margin-right: 12px;
+  height: 48px;
+  margin-right: 16px;
+  transition: transform 0.3s ease;
 }
+
+.logo-img:hover {
+  transform: scale(1.1);
+}
+
 .clinic-name {
   color: #fff;
-  font-size: 1.5rem;
-  font-weight: bold;
-  letter-spacing: 1px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  font-family: 'Roboto', sans-serif;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #ffffff, #a6c1ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
+
 .nav-menu {
   flex: 1;
   min-width: 0;
   background: transparent !important;
   border-bottom: none;
+  display: flex;
   justify-content: flex-end;
 }
+
+.nav-menu .ant-menu-item {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0 20px;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.nav-menu .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #a6c1ee;
+}
+
+.nav-menu .ant-menu-item-selected {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
 .user-menu {
   float: right;
+  padding: 0 16px !important;
+}
+
+.user-menu .ant-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.user-menu .ant-dropdown-trigger:hover {
+  color: #a6c1ee;
+}
+
+.user-menu .ant-avatar {
+  background: #1890ff;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+}
+
+.user-menu .ant-avatar:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 16px;
+    height: 60px;
+  }
+
+  .logo-section {
+    margin-right: 16px;
+  }
+
+  .clinic-name {
+    font-size: 1.4rem;
+  }
+
+  .nav-menu .ant-menu-item {
+    padding: 0 12px;
+    font-size: 0.9rem;
+  }
+
+  .logo-img {
+    height: 36px;
+  }
 }
