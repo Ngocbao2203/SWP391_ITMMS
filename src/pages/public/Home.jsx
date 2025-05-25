@@ -11,23 +11,38 @@ const services = [
     title: "IUI - Intrauterine Insemination",
     desc: "Safe, effective reproductive support for couples.",
     icon: "🧬",
+    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
   {
     title: "IVF - In Vitro Fertilization",
     desc: "Advanced fertilization technology for your family.",
     icon: "👶",
+    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
   {
     title: "Reproductive Support",
     desc: "Comprehensive care and consultation.",
     icon: "🤰",
+    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
 ];
 
 const doctors = [
-  { name: "Dr. Nguyen Van A", specialty: "IVF Specialist" },
-  { name: "Dr. Tran Thi B", specialty: "IUI Expert" },
-  { name: "Dr. Le Van C", specialty: "Reproductive Endocrinologist" },
+  {
+    name: "Dr. Nguyen Van A",
+    specialty: "IVF Specialist",
+    photo: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
+  },
+  {
+    name: "Dr. Tran Thi B",
+    specialty: "IUI Expert",
+    photo: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
+  },
+  {
+    name: "Dr. Le Van C",
+    specialty: "Reproductive Endocrinologist",
+    photo: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
+  },
 ];
 
 const articles = [
@@ -35,16 +50,32 @@ const articles = [
     title: "Successful IVF Stories",
     desc: "Real experiences from our patients.",
     link: "/bai-viet/ivf-stories",
+    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
   {
     title: "Tips for Fertility Health",
     desc: "How to prepare for your journey.",
     link: "/bai-viet/fertility-tips",
+    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
   {
     title: "Understanding IUI",
     desc: "What to expect from the procedure.",
     link: "/bai-viet/understanding-iui",
+    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
+  },
+];
+
+const testimonials = [
+  {
+    content:
+      "Nhờ IVF tại đây, tôi đã đón con trai đầu lòng sau 7 năm hiếm muộn. Cảm ơn đội ngũ bác sĩ tận tâm!",
+    author: "- Chị Mai (Hà Nội)",
+  },
+  {
+    content:
+      "Quy trình IUI rõ ràng, tư vấn dễ hiểu. Tôi thấy an tâm khi chọn My Clinic.",
+    author: "- Anh Hưng (TP.HCM)",
   },
 ];
 
@@ -52,12 +83,22 @@ const Home = () => (
   <MainLayout>
     <div className="home-page">
       {/* Banner */}
-      <div className="banner-section">
+      <div
+        className="banner-section"
+        style={{
+          backgroundImage:
+            "url(https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png)",
+        }}
+      >
         <div className="banner-content">
+
           <Title level={2} className="banner-title">
-            Accompanying the act of parenthood - Prestige, Professionalism, and
-            dedication
+            Điều trị hiếm muộn – Chuyên sâu & Tận tâm
           </Title>
+          <Paragraph className="home-subtext">
+            My Clinic là địa chỉ tin cậy trong lĩnh vực điều trị vô sinh – hiếm muộn tại Việt Nam, nơi bạn được đồng hành và chăm sóc toàn diện trên hành trình tìm kiếm con yêu.
+
+          </Paragraph>
         </div>
       </div>
 
@@ -67,7 +108,11 @@ const Home = () => (
         <Row gutter={[24, 24]} justify="center">
           {services.map((service) => (
             <Col xs={24} sm={12} md={8} key={service.title}>
-              <Card className="service-card" bordered>
+              <Card
+                className="service-card"
+                bordered
+                cover={<img src={service.image} alt={service.title} />}
+              >
                 <div className="service-icon">{service.icon}</div>
                 <Title level={4}>{service.title}</Title>
                 <Paragraph>{service.desc}</Paragraph>
@@ -82,12 +127,52 @@ const Home = () => (
         </Row>
       </div>
 
-      {/* Doctors Carousel/Grid */}
+      {/* Why Choose Us */}
+      <div className="section why-us-section">
+        <Title level={3}>Why Choose Us?</Title>
+        <Row gutter={[16, 16]} justify="center">
+          <Col xs={24} sm={12} md={6}>
+            <Card bordered={false} className="why-us-box">
+              <div className="why-icon">🏥</div>
+              <Title level={5}>Modern Facilities</Title>
+              <Paragraph>
+                State-of-the-art equipment and international-standard
+                environment.
+              </Paragraph>
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} md={6}>
+            <Card bordered={false} className="why-us-box">
+              <div className="why-icon">👨‍⚕️</div>
+              <Title level={5}>Top Doctors</Title>
+              <Paragraph>
+                10+ years of experience in fertility treatment.
+              </Paragraph>
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} md={6}>
+            <Card bordered={false} className="why-us-box">
+              <div className="why-icon">💯</div>
+              <Title level={5}>High Success Rate</Title>
+              <Paragraph>
+                Customized treatment plans for every patient.
+              </Paragraph>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+
+      {/* Doctors */}
       <div className="section doctors-section">
         <Title level={3}>Our Doctors</Title>
         <Carousel autoplay dots={false} className="doctors-carousel">
           {doctors.map((doc) => (
             <div key={doc.name} className="doctor-card">
+              <img
+                src={doc.photo}
+                alt={doc.name}
+                className="doctor-photo"
+              />
               <Title level={5}>{doc.name}</Title>
               <Paragraph>{doc.specialty}</Paragraph>
             </div>
@@ -100,13 +185,30 @@ const Home = () => (
         </Link>
       </div>
 
+      {/* Testimonials */}
+      <div className="section testimonials-section">
+        <Title level={3}>What Our Patients Say</Title>
+        <Carousel autoplay className="testimonials-carousel">
+          {testimonials.map((t, index) => (
+            <div key={index} className="testimonial-item">
+              <Paragraph>"{t.content}"</Paragraph>
+              <p>{t.author}</p>
+            </div>
+          ))}
+        </Carousel>
+      </div>
+
       {/* Articles */}
       <div className="section articles-section">
         <Title level={3}>Experience Sharing</Title>
         <Row gutter={[24, 24]}>
-          {articles.slice(0, 3).map((art) => (
+          {articles.map((art) => (
             <Col xs={24} sm={12} md={8} key={art.title}>
-              <Card title={art.title} bordered>
+              <Card
+                title={art.title}
+                bordered
+                cover={<img alt={art.title} src={art.image} />}
+              >
                 <Paragraph>{art.desc}</Paragraph>
                 <Link to={art.link}>
                   <Button type="link">Read more</Button>
@@ -120,6 +222,21 @@ const Home = () => (
             See more
           </Button>
         </Link>
+      </div>
+
+      {/* Call to Action */}
+      <div className="section cta-section">
+        <Card className="cta-box">
+          <Title level={4}>Need more information?</Title>
+          <Paragraph>
+            Leave your contact info and we’ll get back to you soon.
+          </Paragraph>
+          <Link to="/register">
+            <Button type="primary" size="large">
+              Register for Free Consultation
+            </Button>
+          </Link>
+        </Card>
       </div>
     </div>
   </MainLayout>
