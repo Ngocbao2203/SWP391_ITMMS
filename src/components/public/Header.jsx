@@ -1,6 +1,6 @@
-import React from 'react';
-import { Layout, Menu, Dropdown, Avatar } from 'antd';
-import { Link, useLocation } from 'react-router-dom';
+import React from "react";
+import { Layout, Menu, Dropdown, Avatar } from "antd";
+import { Link, useLocation } from "react-router-dom";
 import {
   HomeOutlined,
   AppstoreOutlined,
@@ -8,9 +8,9 @@ import {
   TeamOutlined,
   UserOutlined,
   LoginOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 // import logo from '../../assets/logo192.png';
-import '../../styles/Header.css';
+import "../../styles/Header.css";
 
 const { Header: AntHeader } = Layout;
 
@@ -44,7 +44,7 @@ const Header = ({ user, onLogout }) => {
           <Link to="/">Home</Link>
         </Menu.Item>
         <Menu.Item key="/services" icon={<AppstoreOutlined />}>
-          <Link to="/services">Services</Link>
+          <Link to="/UserServices">Services</Link>
         </Menu.Item>
         <Menu.Item key="/articles" icon={<ReadOutlined />}>
           <Link to="/articles">Articles</Link>
