@@ -56,7 +56,7 @@ const Login = () => {
             
             <Row justify="space-between" align="middle" className="login-options">
               <Col>
-                <Link to={"/ReqPass"} className="forgot-password">Quên mật khẩu?</Link>
+                <Link to={"/ReqPass"} className="forgot-password">Quên mật khẩu?</Link> 
               </Col>
             </Row>
             
