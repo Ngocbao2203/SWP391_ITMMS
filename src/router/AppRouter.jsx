@@ -5,6 +5,8 @@ import Login from "../pages/public/Login";
 import Register from "../pages/public/Register";
 import Home from "../pages/public/Home";
 import UserService from "../pages/public/UserService";
+import BlogList from "../pages/public/BlogList";
+import BlogDetail from "../pages/public/BlogDetail";
 
 // Admin
 import AdminLayout from "../layouts/AdminLayout";
@@ -12,6 +14,7 @@ import Dashboard from "../pages/admin/Dashboard";
 import Services from "../pages/admin/Services";
 import Feedback from "../pages/admin/Feedback";
 import Reports from "../pages/admin/Reports";
+import Manager from "../pages/admin/Manager"; // Import Manager component
 
 // Doctor
 import DoctorDashboard from "../components/doctor/DoctorDashboard";
@@ -24,6 +27,7 @@ import Schedules from "../pages/manager/Schedules";
 import Registrations from "../pages/manager/Registrations";
 import Progress from "../pages/manager/Progress";
 import Notifications from "../pages/manager/Notifications";
+import BlogManagement from "../pages/manager/BlogManagement";
 
 const AppRouter = () => {
   return (
@@ -33,6 +37,8 @@ const AppRouter = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/userservice" element={<UserService />} />
+      <Route path="/blog" element={<BlogList />} />
+      <Route path="/blog/:id" element={<BlogDetail />} />
 
       {/* Admin Routes */}
       <Route
@@ -64,6 +70,14 @@ const AppRouter = () => {
         element={
           <AdminLayout>
             <Reports />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="/admin/Manager"
+        element={
+          <AdminLayout>
+            <Manager />
           </AdminLayout>
         }
       />
@@ -116,6 +130,14 @@ const AppRouter = () => {
         element={
           <ManagerLayout>
             <Notifications />
+          </ManagerLayout>
+        }
+      />
+      <Route
+        path="/manager/blogs"
+        element={
+          <ManagerLayout>
+            <BlogManagement />
           </ManagerLayout>
         }
       />

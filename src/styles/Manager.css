@@ -1,0 +1,79 @@
+.manager-container {
+  padding: 0;
+}
+
+.manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.manager-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.manager-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.manager-card .ant-card-head {
+  background: #f9fafb;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.manager-table {
+  overflow-x: auto;
+}
+
+.manager-table .ant-table-thead > tr > th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+}
+
+.manager-actions {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.manager-search {
+  width: 300px;
+}
+
+.manager-modal .ant-modal-header {
+  background: #f9fafb;
+  padding: 16px 24px;
+}
+
+.manager-modal .ant-modal-title {
+  font-weight: 600;
+  color: #111827;
+}
+
+.manager-form .ant-form-item-label > label {
+  font-weight: 500;
+}
+
+/* Responsive styles */
+@media (max-width: 576px) {
+  .manager-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .manager-search {
+    width: 100%;
+  }
+}

@@ -8,6 +8,7 @@ import {
   FundProjectionScreenOutlined,
   NotificationOutlined,
   LogoutOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../styles/ManagerSidebar.css"; // 👈 Đừng quên tạo file CSS
@@ -46,6 +47,9 @@ const ManagerSidebar = () => {
           </Menu.Item>
           <Menu.Item key="/manager/notifications" icon={<NotificationOutlined />}>
             <Link to="/manager/notifications">Notifications</Link>
+          </Menu.Item>
+          <Menu.Item key="/manager/blogs" icon={<FileTextOutlined />}>
+            <Link to="/manager/blogs">Quản lý blog</Link>
           </Menu.Item>
         </Menu>
       </div>
