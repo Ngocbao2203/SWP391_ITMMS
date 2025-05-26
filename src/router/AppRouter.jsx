@@ -5,6 +5,8 @@ import Login from "../pages/public/Login";
 import Register from "../pages/public/Register";
 import Home from "../pages/public/Home";
 import UserService from "../pages/public/UserService";
+import DoctorList from "../pages/public/DoctorList";
+import DoctorProfile from "../pages/public/DoctorProfile";
 
 // Admin
 import AdminLayout from "../layouts/AdminLayout";
@@ -33,6 +35,8 @@ const AppRouter = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/userservice" element={<UserService />} />
+      <Route path="/doctors" element={<DoctorList />} />
+      <Route path="/doctors/:id" element={<DoctorProfile />} />
 
       {/* Admin Routes */}
       <Route
