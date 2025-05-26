@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Card, Carousel, Row, Col, Typography } from "antd";
 import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import "../../styles/Home.css";
+import { getPublishedBlogs } from "../../services/blogService";
 
 const { Title, Paragraph } = Typography;
 
@@ -45,27 +46,6 @@ const doctors = [
   },
 ];
 
-const articles = [
-  {
-    title: "Successful IVF Stories",
-    desc: "Real experiences from our patients.",
-    link: "/bai-viet/ivf-stories",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-  {
-    title: "Tips for Fertility Health",
-    desc: "How to prepare for your journey.",
-    link: "/bai-viet/fertility-tips",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-  {
-    title: "Understanding IUI",
-    desc: "What to expect from the procedure.",
-    link: "/bai-viet/understanding-iui",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-];
-
 const testimonials = [
   {
     content:
@@ -79,10 +59,24 @@ const testimonials = [
   },
 ];
 
-const Home = () => (
-  <MainLayout>
-    <div className="home-page">
-      {/* Banner */}
+const Home = () => {
+  const [blogs, setBlogs] = useState([]);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      const blogData = await getPublishedBlogs();
+      setBlogs(blogData);
+    };
+    fetchBlogs();
+    
+    // Save current path to sessionStorage when on the home page
+    sessionStorage.setItem('previousPath', window.location.pathname);
+  }, []);
+  
+  return (
+    <MainLayout>
+      <div className="home-page">
+        {/* Banner */}
       <div
         className="banner-section"
         style={{
@@ -196,28 +190,26 @@ const Home = () => (
             </div>
           ))}
         </Carousel>
-      </div>
-
-      {/* Articles */}
+      </div>      {/* Blog Posts */}
       <div className="section articles-section">
-        <Title level={3}>Experience Sharing</Title>
-        <Row gutter={[24, 24]}>
-          {articles.map((art) => (
-            <Col xs={24} sm={12} md={8} key={art.title}>
-              <Card
-                title={art.title}
+        <Title level={3}>Blog & Experience Sharing</Title>
+        <Row gutter={[24, 24]}>          {blogs.map((blog) => (
+            <Col xs={24} sm={12} md={8} key={blog.id || blog.key}>              <Card
+                title={blog.title}
                 bordered
-                cover={<img alt={art.title} src={art.image} />}
+                hoverable
+                cover={<img alt={blog.title} src={blog.coverImage} />}
+                onClick={() => window.location.href = `/blog/${blog.id || blog.key}?from=home`}
               >
-                <Paragraph>{art.desc}</Paragraph>
-                <Link to={art.link}>
-                  <Button type="link">Read more</Button>
+                <Paragraph>{blog.summary}</Paragraph>                <Link to={`/blog/${blog.id || blog.key}?from=home`}>
+                  <Button type="link">
+                    Read more
+                  </Button>
                 </Link>
               </Card>
             </Col>
           ))}
-        </Row>
-        <Link to="/bai-viet">
+        </Row>        <Link to="/blog">
           <Button type="link" className="see-more-btn">
             See more
           </Button>
@@ -237,9 +229,9 @@ const Home = () => (
             </Button>
           </Link>
         </Card>
-      </div>
-    </div>
+      </div>    </div>
   </MainLayout>
-);
+  );
+};
 
 export default Home;

@@ -553,3 +553,45 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Blog Modal Styles */
+.blog-modal-content {
+  padding: 10px 0;
+}
+
+.blog-modal-content .blog-cover {
+  margin-bottom: 20px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.blog-modal-content .blog-meta {
+  color: #777;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.blog-modal-content .blog-content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.blog-card {
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .blog-modal-content .blog-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
