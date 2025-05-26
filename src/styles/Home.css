@@ -383,7 +383,7 @@
 }
 
 /* Form Elements Enhancement */
-.ant-input {
+/* .ant-input {
   border-radius: 8px !important;
   border: 2px solid #e9ecef !important;
   padding: 12px 16px !important;
@@ -399,7 +399,7 @@
 .ant-input::placeholder {
   color: #6c757d !important;
   font-style: italic;
-}
+} */
 
 /* Labels */
 .ant-form-item-label > label {
