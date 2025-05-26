@@ -8,20 +8,20 @@ const { Title, Paragraph } = Typography;
 
 const services = [
   {
-    title: "IUI - Intrauterine Insemination",
-    desc: "Safe, effective reproductive support for couples.",
+    title: "IUI - Bơm tinh trùng vào buồng tử cung",
+    desc: "Hỗ trợ sinh sản an toàn, hiệu quả cho các cặp vợ chồng.",
     icon: "🧬",
     image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
   {
-    title: "IVF - In Vitro Fertilization",
-    desc: "Advanced fertilization technology for your family.",
+    title: "IVF - Thụ tinh trong ống nghiệm",
+    desc: "Công nghệ thụ tinh tiên tiến giúp gia đình bạn trọn vẹn.",
     icon: "👶",
     image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
   {
-    title: "Reproductive Support",
-    desc: "Comprehensive care and consultation.",
+    title: "Hỗ trợ sinh sản toàn diện",
+    desc: "Chăm sóc và tư vấn toàn diện cho hành trình của bạn.",
     icon: "🤰",
     image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
@@ -29,38 +29,38 @@ const services = [
 
 const doctors = [
   {
-    name: "Dr. Nguyen Van A",
-    specialty: "IVF Specialist",
+    name: "Bác sĩ Nguyễn Văn A",
+    specialty: "Chuyên gia IVF",
     photo: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
   {
-    name: "Dr. Tran Thi B",
-    specialty: "IUI Expert",
+    name: "Bác sĩ Trần Thị B",
+    specialty: "Chuyên gia IUI",
     photo: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
   {
-    name: "Dr. Le Van C",
-    specialty: "Reproductive Endocrinologist",
+    name: "Bác sĩ Lê Văn C",
+    specialty: "Chuyên gia nội tiết sinh sản",
     photo: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
 ];
 
 const articles = [
   {
-    title: "Successful IVF Stories",
-    desc: "Real experiences from our patients.",
+    title: "Những câu chuyện thành công với IVF",
+    desc: "Chia sẻ thực tế từ bệnh nhân của chúng tôi.",
     link: "/bai-viet/ivf-stories",
     image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
   {
-    title: "Tips for Fertility Health",
-    desc: "How to prepare for your journey.",
+    title: "Bí quyết duy trì sức khỏe sinh sản",
+    desc: "Chuẩn bị tốt nhất cho hành trình của bạn.",
     link: "/bai-viet/fertility-tips",
     image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
   {
-    title: "Understanding IUI",
-    desc: "What to expect from the procedure.",
+    title: "Tìm hiểu về phương pháp IUI",
+    desc: "Những điều bạn cần biết về quy trình.",
     link: "/bai-viet/understanding-iui",
     image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
@@ -91,20 +91,18 @@ const Home = () => (
         }}
       >
         <div className="banner-content">
-
           <Title level={2} className="banner-title">
             Điều trị hiếm muộn – Chuyên sâu & Tận tâm
           </Title>
           <Paragraph className="home-subtext">
             My Clinic là địa chỉ tin cậy trong lĩnh vực điều trị vô sinh – hiếm muộn tại Việt Nam, nơi bạn được đồng hành và chăm sóc toàn diện trên hành trình tìm kiếm con yêu.
-
           </Paragraph>
         </div>
       </div>
 
       {/* Featured Services */}
       <div className="section services-section">
-        <Title level={3}>Featured Services</Title>
+        <Title level={3}>Dịch vụ nổi bật</Title>
         <Row gutter={[24, 24]} justify="center">
           {services.map((service) => (
             <Col xs={24} sm={12} md={8} key={service.title}>
@@ -118,7 +116,7 @@ const Home = () => (
                 <Paragraph>{service.desc}</Paragraph>
                 <Link to="/dich-vu">
                   <Button type="primary" size="small">
-                    See all services
+                    Xem tất cả dịch vụ
                   </Button>
                 </Link>
               </Card>
@@ -129,33 +127,32 @@ const Home = () => (
 
       {/* Why Choose Us */}
       <div className="section why-us-section">
-        <Title level={3}>Why Choose Us?</Title>
+        <Title level={3}>Tại sao chọn chúng tôi?</Title>
         <Row gutter={[16, 16]} justify="center">
           <Col xs={24} sm={12} md={6}>
             <Card bordered={false} className="why-us-box">
               <div className="why-icon">🏥</div>
-              <Title level={5}>Modern Facilities</Title>
+              <Title level={5}>Cơ sở hiện đại</Title>
               <Paragraph>
-                State-of-the-art equipment and international-standard
-                environment.
+                Trang thiết bị tiên tiến và môi trường đạt chuẩn quốc tế.
               </Paragraph>
             </Card>
           </Col>
           <Col xs={24} sm={12} md={6}>
             <Card bordered={false} className="why-us-box">
               <div className="why-icon">👨‍⚕️</div>
-              <Title level={5}>Top Doctors</Title>
+              <Title level={5}>Đội ngũ chuyên gia hàng đầu</Title>
               <Paragraph>
-                10+ years of experience in fertility treatment.
+                Hơn 10 năm kinh nghiệm trong lĩnh vực điều trị hiếm muộn.
               </Paragraph>
             </Card>
           </Col>
           <Col xs={24} sm={12} md={6}>
             <Card bordered={false} className="why-us-box">
               <div className="why-icon">💯</div>
-              <Title level={5}>High Success Rate</Title>
+              <Title level={5}>Tỉ lệ thành công cao</Title>
               <Paragraph>
-                Customized treatment plans for every patient.
+                Phác đồ điều trị cá nhân hóa cho từng bệnh nhân.
               </Paragraph>
             </Card>
           </Col>
@@ -164,7 +161,7 @@ const Home = () => (
 
       {/* Doctors */}
       <div className="section doctors-section">
-        <Title level={3}>Our Doctors</Title>
+        <Title level={3}>Đội ngũ bác sĩ</Title>
         <Carousel autoplay dots={false} className="doctors-carousel">
           {doctors.map((doc) => (
             <div key={doc.name} className="doctor-card">
@@ -180,14 +177,14 @@ const Home = () => (
         </Carousel>
         <Link to="/bac-si">
           <Button type="link" className="see-more-btn">
-            See more
+            Xem thêm
           </Button>
         </Link>
       </div>
 
       {/* Testimonials */}
       <div className="section testimonials-section">
-        <Title level={3}>What Our Patients Say</Title>
+        <Title level={3}>Cảm nhận của bệnh nhân</Title>
         <Carousel autoplay className="testimonials-carousel">
           {testimonials.map((t, index) => (
             <div key={index} className="testimonial-item">
@@ -200,7 +197,7 @@ const Home = () => (
 
       {/* Articles */}
       <div className="section articles-section">
-        <Title level={3}>Experience Sharing</Title>
+        <Title level={3}>Chia sẻ kinh nghiệm</Title>
         <Row gutter={[24, 24]}>
           {articles.map((art) => (
             <Col xs={24} sm={12} md={8} key={art.title}>
@@ -211,7 +208,7 @@ const Home = () => (
               >
                 <Paragraph>{art.desc}</Paragraph>
                 <Link to={art.link}>
-                  <Button type="link">Read more</Button>
+                  <Button type="link">Đọc thêm</Button>
                 </Link>
               </Card>
             </Col>
@@ -219,7 +216,7 @@ const Home = () => (
         </Row>
         <Link to="/bai-viet">
           <Button type="link" className="see-more-btn">
-            See more
+            Xem thêm
           </Button>
         </Link>
       </div>
@@ -227,13 +224,13 @@ const Home = () => (
       {/* Call to Action */}
       <div className="section cta-section">
         <Card className="cta-box">
-          <Title level={4}>Need more information?</Title>
+          <Title level={4}>Cần thêm thông tin?</Title>
           <Paragraph>
-            Leave your contact info and we’ll get back to you soon.
+            Hãy để lại thông tin liên hệ, chúng tôi sẽ phản hồi bạn trong thời gian sớm nhất.
           </Paragraph>
           <Link to="/register">
             <Button type="primary" size="large">
-              Register for Free Consultation
+              Đăng ký tư vấn miễn phí
             </Button>
           </Link>
         </Card>
