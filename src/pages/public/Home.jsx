@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Card, Carousel, Row, Col, Typography } from "antd";
 import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import "../../styles/Home.css";
+import { getPublishedBlogs } from "../../services/blogService";
 
 const { Title, Paragraph } = Typography;
 
@@ -79,10 +80,24 @@ const testimonials = [
   },
 ];
 
-const Home = () => (
-  <MainLayout>
-    <div className="home-page">
-      {/* Banner */}
+const Home = () => {
+  const [blogs, setBlogs] = useState([]);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      const blogData = await getPublishedBlogs();
+      setBlogs(blogData);
+    };
+    fetchBlogs();
+    
+    // Save current path to sessionStorage when on the home page
+    sessionStorage.setItem('previousPath', window.location.pathname);
+  }, []);
+  
+  return (
+    <MainLayout>
+      <div className="home-page">
+        {/* Banner */}
       <div
         className="banner-section"
         style={{
@@ -193,9 +208,7 @@ const Home = () => (
             </div>
           ))}
         </Carousel>
-      </div>
-
-      {/* Articles */}
+      </div>      {/* Blog Posts */}
       <div className="section articles-section">
         <Title level={3}>Chia sẻ kinh nghiệm</Title>
         <Row gutter={[24, 24]}>
@@ -213,8 +226,7 @@ const Home = () => (
               </Card>
             </Col>
           ))}
-        </Row>
-        <Link to="/bai-viet">
+        </Row>        <Link to="/blog">
           <Button type="link" className="see-more-btn">
             Xem thêm
           </Button>
@@ -234,9 +246,9 @@ const Home = () => (
             </Button>
           </Link>
         </Card>
-      </div>
-    </div>
+      </div>    </div>
   </MainLayout>
-);
+  );
+};
 
 export default Home;
