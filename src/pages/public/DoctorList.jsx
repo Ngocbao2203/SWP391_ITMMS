@@ -8,8 +8,6 @@ import {
   Input, 
   Select, 
   Button, 
-  Rate, 
-  Empty, 
   message,
   Spin
 } from 'antd';
@@ -17,8 +15,7 @@ import {
   SearchOutlined, 
   UserOutlined, 
   CalendarOutlined,
-  TeamOutlined,
-  StarOutlined 
+  TeamOutlined
 } from '@ant-design/icons';
 import MainLayout from '../../layouts/MainLayout';
 import '../../styles/DoctorList.css';
@@ -274,13 +271,6 @@ const DoctorList = () => {
                         <div className="doctor-experience">
                           <CalendarOutlined style={{ marginRight: '8px' }} />
                           {doctor.experience}
-                        </div>
-                        
-                        <div className="doctor-rating">
-                          <Rate disabled defaultValue={doctor.rating} allowHalf />
-                          <Text style={{ marginLeft: '8px', color: '#faad14' }}>
-                            {doctor.rating} ({doctor.reviewCount} đánh giá)
-                          </Text>
                         </div>
                         
                         <Paragraph className="doctor-description">

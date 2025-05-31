@@ -9,7 +9,6 @@ import BlogList from "../pages/public/BlogList";
 import BlogDetail from "../pages/public/BlogDetail";
 import DoctorList from "../pages/public/DoctorList";
 import DoctorProfile from "../pages/public/DoctorProfile";
-import RegisterService from '../pages/public/RegisterService';
 import ServiceDetail from "../pages/public/ServiceDetail";
 
 // Admin
@@ -43,7 +42,6 @@ const AppRouter = () => {
       <Route path="/doctors" element={<DoctorList />} />
       <Route path="/doctors/:id" element={<DoctorProfile />} />
       <Route path="/services/:serviceId" element={<ServiceDetail />} />
-      <Route path="/register/:serviceId" element={<RegisterService />} />
 
       {/* Admin Routes */}
       <Route path="/admin/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>} />
