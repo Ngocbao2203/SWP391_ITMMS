@@ -1,0 +1,48 @@
+/* AppointmentHistory.css */
+
+/* Card container */
+.ant-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+/* Title */
+.ant-card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Tag color */
+.ant-tag-green {
+  background-color: #87d068;
+  color: white;
+}
+
+.ant-tag-orange {
+  background-color: #ffa500;
+  color: white;
+}
+
+.ant-tag-red {
+  background-color: #f5222d;
+  color: white;
+}
+
+/* Button */
+.ant-btn-link {
+  padding: 0;
+  font-size: 1rem;
+  color: #1890ff;
+}
+
+/* Hover effect */
+.ant-card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Sửa khoảng cách giữa các nút */
+.ant-btn-link {
+  margin-right: 12px;
+}

@@ -29,6 +29,9 @@ import Progress from '../pages/manager/Progress';
 import Notifications from '../pages/manager/Notifications';
 import BlogManagement from "../pages/manager/BlogManagement";
 
+// Patient Dashboard and related pages
+import PatientDashboard from '../pages/patient/PatientDashboard';
+
 const AppRouter = () => {
   return (
     <Routes>
@@ -58,6 +61,9 @@ const AppRouter = () => {
       <Route path="/manager/progress" element={<ManagerLayout><Progress /></ManagerLayout>} />
       <Route path="/manager/notifications" element={<ManagerLayout><Notifications /></ManagerLayout>} />
       <Route path="/manager/blogs" element={<ManagerLayout><BlogManagement /></ManagerLayout>} />
+
+      {/* Patient Routes */}
+      <Route path="/profile" element={<PatientDashboard />} />
     </Routes>
   );
 };
