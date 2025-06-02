@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 import "../../styles/ServiceRegistrationForm.css";
 
 const { Option } = Select;
-const { Title, Paragraph, Text } = Typography;
+const { Title, Text } = Typography;
 const { Step } = Steps;
 const { TextArea } = Input;
 
@@ -471,7 +471,7 @@ const ServiceRegistrationForm = ({ service, visible, onClose }) => {
             
             <Form.Item
               name="preferredDoctor"
-              label="Bác sĩ mong muốn khám"
+              label="Bác sĩ tư vấn"
             >
               <Select placeholder="Chọn bác sĩ">
                 <Option value="">Không chỉ định</Option>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Typography, Tabs, Row, Col, Button, notification } from 'antd';
+import { Card, Typography, Tabs } from 'antd';
 import MainLayout from '../../layouts/MainLayout';
 import {
   UserOutlined,
@@ -17,14 +17,6 @@ const { Title } = Typography;
 const { TabPane } = Tabs;
 
 const PatientDashboard = () => {
-  const openNotification = () => {
-    notification.info({
-      message: 'Lịch Nhắc Nhở',
-      description: 'Đừng quên tiêm thuốc vào ngày mai và xét nghiệm vào tuần tới.',
-      placement: 'topRight',
-    });
-  };
-
   return (
     <MainLayout>
       <div className="patient-dashboard-container">
@@ -79,37 +71,6 @@ const PatientDashboard = () => {
               <MedicalRecords />
             </TabPane>
           </Tabs>
-        </Card>
-
-        {/* Services Section */}
-        <Card className="section-card services-card">
-          <Title level={4}>Dịch Vụ Điều Trị</Title>
-          <Row gutter={[24, 24]} justify="start">
-            <Col xs={24} sm={12} md={8}>
-              <Card
-                title="IUI (Thụ Tinh Trong Tử Cung)"
-                bordered={false}
-                className="service-card"
-                hoverable
-              >
-                <Button type="primary" block size="large" className="action-button">
-                  Đăng Ký IUI
-                </Button>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={8}>
-              <Card
-                title="IVF (Thụ Tinh Trong Ống Nghiệm)"
-                bordered={false}
-                className="service-card"
-                hoverable
-              >
-                <Button type="primary" block size="large" className="action-button">
-                  Đăng Ký IVF
-                </Button>
-              </Card>
-            </Col>
-          </Row>
         </Card>
       </div>
     </MainLayout>
