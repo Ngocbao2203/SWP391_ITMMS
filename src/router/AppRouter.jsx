@@ -14,8 +14,9 @@ import Feedback from "../pages/admin/Feedback";
 import Reports from "../pages/admin/Reports";
 
 // Doctor
-import DoctorDashboard from "../components/doctor/DoctorDashboard";
-
+import DoctorLayout from "../layouts/DoctorLayout";
+import TreatmentProgressPage from "../pages/doctor/TreatmentProgressPage";
+import MedicalRecords from "../pages/doctor/MedicalRecords";
 // Manager
 import ManagerLayout from "../layouts/ManagerLayout";
 import Doctors from "../pages/manager/Doctors";
@@ -67,8 +68,24 @@ const AppRouter = () => {
           </AdminLayout>
         }
       />
-
-      <Route path="/doctor/doctor-dashboard" element={<DoctorDashboard />} />
+      {/* Doctor Routes */}
+      <Route path="/doctor/dashboard" element={<DoctorLayout />} />
+      <Route
+        path="/doctor/treatmentsprogress"
+        element={
+          <DoctorLayout>
+            <TreatmentProgressPage />
+          </DoctorLayout>
+        }
+      />
+      <Route
+        path="doctor/medical-records"
+        element={
+          <DoctorLayout>
+            <MedicalRecords />
+          </DoctorLayout>
+        }
+      />
 
       {/* Manager Routes */}
       <Route
