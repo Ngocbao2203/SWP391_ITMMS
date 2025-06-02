@@ -5,18 +5,26 @@ import Login from "../pages/public/Login";
 import Register from "../pages/public/Register";
 import Home from "../pages/public/Home";
 import UserService from "../pages/public/UserService";
+import BlogList from "../pages/public/BlogList";
+import BlogDetail from "../pages/public/BlogDetail";
+import DoctorList from "../pages/public/DoctorList";
+import DoctorProfile from "../pages/public/DoctorProfile";
+import ServiceDetail from "../pages/public/ServiceDetail";
 
 // Admin
-import AdminLayout from "../layouts/AdminLayout";
-import Dashboard from "../pages/admin/Dashboard";
-import Services from "../pages/admin/Services";
-import Feedback from "../pages/admin/Feedback";
-import Reports from "../pages/admin/Reports";
 
 // Doctor
 import DoctorLayout from "../layouts/DoctorLayout";
 import TreatmentProgressPage from "../pages/doctor/TreatmentProgressPage";
 import MedicalRecords from "../pages/doctor/MedicalRecords";
+
+import AdminLayout from "../layouts/AdminLayout";
+import Dashboard from "../pages/admin/Dashboard";
+import Services from "../pages/admin/Services";
+import Feedback from "../pages/admin/Feedback";
+import Reports from "../pages/admin/Reports";
+import Manager from "../pages/admin/Manager";
+
 // Manager
 import ManagerLayout from "../layouts/ManagerLayout";
 import Doctors from "../pages/manager/Doctors";
@@ -25,6 +33,10 @@ import Schedules from "../pages/manager/Schedules";
 import Registrations from "../pages/manager/Registrations";
 import Progress from "../pages/manager/Progress";
 import Notifications from "../pages/manager/Notifications";
+import BlogManagement from "../pages/manager/BlogManagement";
+
+// Patient Dashboard and related pages
+import PatientDashboard from "../pages/patient/PatientDashboard";
 
 const AppRouter = () => {
   return (
@@ -34,8 +46,33 @@ const AppRouter = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/userservice" element={<UserService />} />
+      <Route path="/blog" element={<BlogList />} />
+      <Route path="/blog/:id" element={<BlogDetail />} />
+      <Route path="/doctors" element={<DoctorList />} />
+      <Route path="/doctors/:id" element={<DoctorProfile />} />
+      <Route path="/services/:serviceId" element={<ServiceDetail />} />
 
       {/* Admin Routes */}
+
+      {/* Doctor Routes */}
+      <Route path="/doctor/dashboard" element={<DoctorLayout />} />
+      <Route
+        path="/doctor/treatmentsprogress"
+        element={
+          <DoctorLayout>
+            <TreatmentProgressPage />
+          </DoctorLayout>
+        }
+      />
+      <Route
+        path="doctor/medical-records"
+        element={
+          <DoctorLayout>
+            <MedicalRecords />
+          </DoctorLayout>
+        }
+      />
+
       <Route
         path="/admin/dashboard"
         element={
@@ -68,22 +105,12 @@ const AppRouter = () => {
           </AdminLayout>
         }
       />
-      {/* Doctor Routes */}
-      <Route path="/doctor/dashboard" element={<DoctorLayout />} />
       <Route
-        path="/doctor/treatmentsprogress"
+        path="/admin/manager"
         element={
-          <DoctorLayout>
-            <TreatmentProgressPage />
-          </DoctorLayout>
-        }
-      />
-      <Route
-        path="doctor/medical-records"
-        element={
-          <DoctorLayout>
-            <MedicalRecords />
-          </DoctorLayout>
+          <AdminLayout>
+            <Manager />
+          </AdminLayout>
         }
       />
 
@@ -136,6 +163,17 @@ const AppRouter = () => {
           </ManagerLayout>
         }
       />
+      <Route
+        path="/manager/blogs"
+        element={
+          <ManagerLayout>
+            <BlogManagement />
+          </ManagerLayout>
+        }
+      />
+
+      {/* Patient Routes */}
+      <Route path="/profile" element={<PatientDashboard />} />
     </Routes>
   );
 };

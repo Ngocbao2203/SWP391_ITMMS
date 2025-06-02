@@ -46,8 +46,8 @@ const Header = ({ user, onLogout }) => {
         <Menu.Item key="/userservice" icon={<AppstoreOutlined />}>
           <Link to="/userservice">Services</Link>
         </Menu.Item>
-        <Menu.Item key="/articles" icon={<ReadOutlined />}>
-          <Link to="/articles">Articles</Link>
+        <Menu.Item key="/profile" icon={<ReadOutlined />}>
+          <Link to="/profile">Articles</Link>
         </Menu.Item>
         <Menu.Item key="/doctors" icon={<TeamOutlined />}>
           <Link to="/doctors">Doctors</Link>

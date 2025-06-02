@@ -1,20 +1,191 @@
-.register-container {
-  max-width: 350px;
-  margin: 40px auto;
-  padding: 2rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+/* CSS cho trang đăng ký phần mềm theo dõi điều trị hiếm muộn */
+
+/* Container chính */
+.medical-register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e3f5f9 0%, #d4e7ff 100%);
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Card chính chứa cả banner và form */
+.medical-register-card {
+  display: flex;
+  width: 900px;
+  min-height: 600px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Phần bên trái - Banner */
+.medical-register-left {
+  flex: 1;
+  background: linear-gradient(135deg, #3f87f5 0%, #1a4da2 100%);
+  color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
 }
-.register-container h2 {
-  margin-bottom: 1.5rem;
+
+.register-banner {
+  max-width: 320px;
 }
-.register-container .ant-form {
+
+.medical-banner-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+.register-banner h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 20px;
+  line-height: 1.3;
+}
+
+.register-banner p {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* Phần bên phải - Form đăng ký */
+.medical-register-right {
+  flex: 1.2;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.medical-register-logo {
+  margin-bottom: 20px;
+}
+
+/* Logo và icon */
+.logo-icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.logo-icon {
+  font-size: 40px;
+  color: #1a4da2;
+}
+
+.logo-text {
+  font-size: 22px;
+  color: #1a4da2;
+  margin-top: 5px;
+  font-weight: 600;
+}
+
+.medical-register-right h2 {
+  color: #1a4da2;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.register-subtitle {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* Form đăng ký */
+.medical-register-form {
   width: 100%;
+  max-width: 380px;
 }
-.register-container .ant-btn {
-  margin-top: 1rem;
+
+.medical-register-form .ant-input-affix-wrapper,
+.medical-register-form .ant-input,
+.medical-register-form .ant-select-selector,
+.medical-register-form .ant-picker {
+  border-radius: 8px;
+  height: 48px;
+  border: 1px solid #e8e8e8;
+}
+
+.medical-register-form .ant-select-selector {
+  display: flex;
+  align-items: center;
+}
+
+.medical-register-form .ant-form-item-control-input-content .ant-input,
+.medical-register-form .ant-input-affix-wrapper .ant-input {
+  height: 100%;
+}
+
+.site-form-item-icon {
+  color: #bfbfbf;
+}
+
+/* Nút đăng ký */
+.medical-register-button {
+  height: 48px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  background: linear-gradient(135deg, #3f87f5 0%, #1a4da2 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(26, 77, 162, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 16px;
+}
+
+.medical-register-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(26, 77, 162, 0.4);
+  background: linear-gradient(135deg, #4b90f8 0%, #2157ae 100%);
+}
+
+/* Link đăng nhập */
+.login-prompt {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.login-prompt a {
+  color: #1a4da2;
+  font-weight: 600;
+}
+
+/* Footer */
+.register-footer {
+  margin-top: auto;
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .medical-register-card {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .medical-register-left {
+    padding: 30px;
+    min-height: 200px;
+  }
+  
+  .medical-register-right {
+    padding: 30px;
+  }
+  
+  .register-banner h2 {
+    font-size: 24px;
+  }
 }

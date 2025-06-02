@@ -38,6 +38,9 @@ const AdminSidebar = () => {
           <Menu.Item key="/admin/services" icon={<AppstoreOutlined />}>
             <Link to="/admin/services">Services</Link>
           </Menu.Item>
+          <Menu.Item key="/admin/Manager" icon={<FileTextOutlined />}>
+            <Link to="/admin/Manager">Manager</Link>
+          </Menu.Item>
           <Menu.Item key="/admin/feedback" icon={<MessageOutlined />}>
             <Link to="/admin/feedback">Feedback</Link>
           </Menu.Item>
