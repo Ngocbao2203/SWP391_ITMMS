@@ -57,9 +57,7 @@ const TreatmentProgressPage = () => {
       try {
         // Replace with your API endpoint
         // const response = await axios.get('/api/treatment-progress');
-        // setPatients(response.data);
-
-        // Mock data
+        // setPatients(response.data);        // Mock data
         setPatients([
           {
             id: 1,
@@ -69,7 +67,6 @@ const TreatmentProgressPage = () => {
             condition: "Dental Implant",
             startDate: "2025-03-15",
             estimatedEndDate: "2025-06-15",
-            progress: 60,
             status: "in-progress",
             doctor: "Dr. Tran Minh",
             lastUpdate: "2025-05-20",
@@ -82,7 +79,6 @@ const TreatmentProgressPage = () => {
             condition: "Root Canal Treatment",
             startDate: "2025-04-10",
             estimatedEndDate: "2025-05-30",
-            progress: 80,
             status: "in-progress",
             doctor: "Dr. Tran Minh",
             lastUpdate: "2025-05-22",
@@ -95,7 +91,6 @@ const TreatmentProgressPage = () => {
             condition: "Orthodontic Treatment",
             startDate: "2025-01-05",
             estimatedEndDate: "2025-07-05",
-            progress: 45,
             status: "in-progress",
             doctor: "Dr. Tran Minh",
             lastUpdate: "2025-05-15",
@@ -108,7 +103,6 @@ const TreatmentProgressPage = () => {
             condition: "Periodontal Treatment",
             startDate: "2025-04-25",
             estimatedEndDate: "2025-06-25",
-            progress: 30,
             status: "in-progress",
             doctor: "Dr. Tran Minh",
             lastUpdate: "2025-05-10",
@@ -121,7 +115,6 @@ const TreatmentProgressPage = () => {
             condition: "Wisdom Tooth Extraction",
             startDate: "2025-05-01",
             estimatedEndDate: "2025-05-15",
-            progress: 100,
             status: "completed",
             doctor: "Dr. Tran Minh",
             lastUpdate: "2025-05-15",
@@ -159,11 +152,9 @@ const TreatmentProgressPage = () => {
     form.resetFields();
     setIsAddModalVisible(true);
   };
-
   const showUpdateModal = (patient) => {
     setCurrentPatient(patient);
     updateForm.setFieldsValue({
-      progress: patient.progress,
       status: patient.status,
       notes: "",
       nextAppointment:
@@ -187,9 +178,7 @@ const TreatmentProgressPage = () => {
 
         message.success("New treatment progress added successfully!");
         form.resetFields();
-        setIsAddModalVisible(false);
-
-        // Refresh patient list (mock implementation)
+        setIsAddModalVisible(false); // Refresh patient list (mock implementation)
         const newPatient = {
           id: patients.length + 1,
           patientId: values.patientId,
@@ -198,7 +187,6 @@ const TreatmentProgressPage = () => {
           condition: values.condition,
           startDate: values.startDate.format("YYYY-MM-DD"),
           estimatedEndDate: values.estimatedEndDate.format("YYYY-MM-DD"),
-          progress: 0,
           status: "new",
           doctor: "Dr. Tran Minh", // Replace with actual logged-in doctor
           lastUpdate: dayjs().format("YYYY-MM-DD"),
@@ -210,7 +198,6 @@ const TreatmentProgressPage = () => {
         console.log("Validation Failed:", info);
       });
   };
-
   const handleUpdateSubmit = () => {
     updateForm
       .validateFields()
@@ -218,7 +205,7 @@ const TreatmentProgressPage = () => {
         // Replace with API call to update patient progress
         // axios.put(`/api/treatment-progress/${currentPatient.id}`, values)
 
-        message.success("Treatment progress updated successfully!");
+        message.success("Treatment status updated successfully!");
         updateForm.resetFields();
         setIsUpdateModalVisible(false);
 
@@ -227,7 +214,6 @@ const TreatmentProgressPage = () => {
           if (patient.id === currentPatient.id) {
             return {
               ...patient,
-              progress: values.progress,
               status: values.status,
               lastUpdate: dayjs().format("YYYY-MM-DD"),
             };
@@ -244,14 +230,11 @@ const TreatmentProgressPage = () => {
 
   const fetchTreatmentHistory = (patientId) => {
     // Replace with API call to get treatment history
-    // axios.get(`/api/treatment-history/${patientId}`)
-
-    // Mock treatment history data
+    // axios.get(`/api/treatment-history/${patientId}`)    // Mock treatment history data
     setTreatmentHistory([
       {
         id: 1,
         date: "2025-03-15",
-        progress: 0,
         status: "new",
         notes: "Initial examination. Treatment plan created.",
         doctor: "Dr. Tran Minh",
@@ -260,7 +243,6 @@ const TreatmentProgressPage = () => {
       {
         id: 2,
         date: "2025-03-22",
-        progress: 15,
         status: "in-progress",
         notes: "First treatment session completed. Patient responding well.",
         doctor: "Dr. Tran Minh",
@@ -269,7 +251,6 @@ const TreatmentProgressPage = () => {
       {
         id: 3,
         date: "2025-04-05",
-        progress: 30,
         status: "in-progress",
         notes: "Second treatment session. Minor complications resolved.",
         doctor: "Dr. Tran Minh",
@@ -278,7 +259,6 @@ const TreatmentProgressPage = () => {
       {
         id: 4,
         date: "2025-04-19",
-        progress: 45,
         status: "in-progress",
         notes: "Progress is as expected. Continuing with treatment plan.",
         doctor: "Dr. Tran Minh",
@@ -287,7 +267,6 @@ const TreatmentProgressPage = () => {
       {
         id: 5,
         date: "2025-05-03",
-        progress: 60,
         status: "in-progress",
         notes: "Good progress. Patient reports improvement in symptoms.",
         doctor: "Dr. Tran Minh",
@@ -295,7 +274,6 @@ const TreatmentProgressPage = () => {
       },
     ]);
   };
-
   const getStatusTag = (status) => {
     switch (status) {
       case "new":
@@ -312,13 +290,6 @@ const TreatmentProgressPage = () => {
         return <Tag color="default">{status}</Tag>;
     }
   };
-
-  const getProgressColor = (progress) => {
-    if (progress < 30) return "red";
-    if (progress < 70) return "blue";
-    return "green";
-  };
-
   const columns = [
     {
       title: "Patient ID",
@@ -353,19 +324,6 @@ const TreatmentProgressPage = () => {
       title: "Est. End Date",
       dataIndex: "estimatedEndDate",
       key: "estimatedEndDate",
-    },
-    {
-      title: "Progress",
-      dataIndex: "progress",
-      key: "progress",
-      render: (progress) => (
-        <Progress
-          percent={progress}
-          size="small"
-          strokeColor={getProgressColor(progress)}
-        />
-      ),
-      sorter: (a, b) => a.progress - b.progress,
     },
     {
       title: "Status",
@@ -492,19 +450,9 @@ const TreatmentProgressPage = () => {
                         {getStatusTag(currentPatient.status)}
                       </p>
                     </Card>
-                  </Col>
+                  </Col>{" "}
                 </Row>
-                <Card title="Treatment Progress" className="progress-card">
-                  <Progress
-                    percent={currentPatient.progress}
-                    status={
-                      currentPatient.status === "completed"
-                        ? "success"
-                        : currentPatient.status === "cancelled"
-                        ? "exception"
-                        : "active"
-                    }
-                  />
+                <Card title="Treatment Information" className="progress-card">
                   <div className="last-update-info">
                     <p>
                       <strong>Last Updated:</strong> {currentPatient.lastUpdate}
@@ -518,11 +466,9 @@ const TreatmentProgressPage = () => {
                   items={treatmentHistory.map((record) => ({
                     children: (
                       <Card className="history-card">
+                        {" "}
                         <p>
                           <strong>Date:</strong> {record.date}
-                        </p>
-                        <p>
-                          <strong>Progress:</strong> {record.progress}%
                         </p>
                         <p>
                           <strong>Status:</strong> {getStatusTag(record.status)}
@@ -626,6 +572,7 @@ const TreatmentProgressPage = () => {
       >
         {currentPatient && (
           <Form form={updateForm} layout="vertical">
+            {" "}
             <div className="patient-update-info">
               <p>
                 <strong>Patient:</strong> {currentPatient.name} (
@@ -634,19 +581,7 @@ const TreatmentProgressPage = () => {
               <p>
                 <strong>Condition:</strong> {currentPatient.condition}
               </p>
-              <p>
-                <strong>Current Progress:</strong> {currentPatient.progress}%
-              </p>
             </div>
-            <Form.Item
-              name="progress"
-              label="Update Progress (%)"
-              rules={[
-                { required: true, message: "Please input progress percentage" },
-              ]}
-            >
-              <Input type="number" min={0} max={100} />
-            </Form.Item>
             <Form.Item
               name="status"
               label="Status"

@@ -17,6 +17,7 @@ import ServiceDetail from "../pages/public/ServiceDetail";
 import DoctorLayout from "../layouts/DoctorLayout";
 import TreatmentProgressPage from "../pages/doctor/TreatmentProgressPage";
 import MedicalRecords from "../pages/doctor/MedicalRecords";
+import AppointmentSchedule from "../pages/doctor/AppointmentSchedule";
 
 import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/admin/Dashboard";
@@ -37,6 +38,7 @@ import BlogManagement from "../pages/manager/BlogManagement";
 
 // Patient Dashboard and related pages
 import PatientDashboard from "../pages/patient/PatientDashboard";
+import BookAppointment from "../pages/patient/BookAppointment";
 
 const AppRouter = () => {
   return (
@@ -51,11 +53,18 @@ const AppRouter = () => {
       <Route path="/doctors" element={<DoctorList />} />
       <Route path="/doctors/:id" element={<DoctorProfile />} />
       <Route path="/services/:serviceId" element={<ServiceDetail />} />
-
-      {/* Admin Routes */}
+      <Route path="/bookappointment" element={<BookAppointment />} />
 
       {/* Doctor Routes */}
       <Route path="/doctor/dashboard" element={<DoctorLayout />} />
+      <Route
+        path="/doctor/appointments"
+        element={
+          <DoctorLayout>
+            <AppointmentSchedule />
+          </DoctorLayout>
+        }
+      />
       <Route
         path="/doctor/treatmentsprogress"
         element={
@@ -72,7 +81,7 @@ const AppRouter = () => {
           </DoctorLayout>
         }
       />
-
+      {/* Admin Routes */}
       <Route
         path="/admin/dashboard"
         element={
