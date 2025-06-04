@@ -1,4 +1,4 @@
-/* CSS cho trang đăng ký phần mềm theo dõi điều trị hiếm muộn */
+/* CSS cho trang đăng ký - Phiên bản tối giản và hiện đại */
 
 /* Container chính */
 .medical-register-container {
@@ -14,8 +14,8 @@
 /* Card chính chứa cả banner và form */
 .medical-register-card {
   display: flex;
-  width: 900px;
-  min-height: 600px;
+  width: 1000px;
+  min-height: 650px;
   background: white;
   border-radius: 20px;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
@@ -33,15 +33,55 @@
   justify-content: center;
   text-align: center;
   padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.medical-register-left::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.medical-register-left::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -80px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .register-banner {
   max-width: 320px;
+  position: relative;
+  z-index: 1;
 }
 
 .medical-banner-icon {
   font-size: 60px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .register-banner h2 {
@@ -50,11 +90,13 @@
   color: white;
   margin-bottom: 20px;
   line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .register-banner p {
   font-size: 16px;
   opacity: 0.9;
+  line-height: 1.6;
 }
 
 /* Phần bên phải - Form đăng ký */
@@ -65,23 +107,48 @@
   flex-direction: column;
   align-items: center;
   overflow-y: auto;
+  position: relative;
 }
 
 .medical-register-logo {
   margin-bottom: 20px;
 }
 
-/* Logo và icon */
-.logo-icon-container {
+/* Home icon */
+.home-icon-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
-.logo-icon {
-  font-size: 40px;
+.home-icon {
+  font-size: 50px;
+  color: #3f87f5;
+  padding: 15px;
+  border-radius: 50%;
+  background-color: rgba(63, 135, 245, 0.1);
+  margin-bottom: 15px;
+  animation: float 3s ease-in-out infinite;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.home-icon:hover {
   color: #1a4da2;
+  background-color: rgba(63, 135, 245, 0.2);
+  transform: scale(1.1);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .logo-text {
@@ -91,57 +158,120 @@
   font-weight: 600;
 }
 
-.medical-register-right h2 {
+.register-title {
   color: #1a4da2;
-  margin-bottom: 10px;
-  font-weight: 700;
+  margin-bottom: 10px !important;
+  font-weight: 700 !important;
+  text-align: center;
 }
 
 .register-subtitle {
   color: #666;
   margin-bottom: 30px;
+  text-align: center;
 }
 
 /* Form đăng ký */
 .medical-register-form {
   width: 100%;
-  max-width: 380px;
+  max-width: 500px;
+}
+
+.medical-register-form .ant-form-item {
+  margin-bottom: 20px;
+}
+
+.medical-register-form .ant-form-item-label {
+  padding-bottom: 4px;
 }
 
 .medical-register-form .ant-input-affix-wrapper,
 .medical-register-form .ant-input,
 .medical-register-form .ant-select-selector,
 .medical-register-form .ant-picker {
-  border-radius: 8px;
-  height: 48px;
+  border-radius: 10px;
+  height: 45px;
   border: 1px solid #e8e8e8;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
 }
 
-.medical-register-form .ant-select-selector {
-  display: flex;
-  align-items: center;
+.medical-register-form .ant-input-affix-wrapper:hover,
+.medical-register-form .ant-input:hover,
+.medical-register-form .ant-select-selector:hover,
+.medical-register-form .ant-picker:hover {
+  border-color: #3f87f5;
+  box-shadow: 0 3px 8px rgba(63, 135, 245, 0.15);
 }
 
-.medical-register-form .ant-form-item-control-input-content .ant-input,
-.medical-register-form .ant-input-affix-wrapper .ant-input {
-  height: 100%;
+.medical-register-form .ant-input-affix-wrapper-focused,
+.medical-register-form .ant-input:focus,
+.medical-register-form .ant-select-focused .ant-select-selector,
+.medical-register-form .ant-picker-focused {
+  border-color: #3f87f5;
+  box-shadow: 0 3px 8px rgba(63, 135, 245, 0.2);
 }
 
-.site-form-item-icon {
-  color: #bfbfbf;
+/* Add styles for form structure */
+.medical-register-form .ant-form-item-label > label {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Làm nổi bật dấu * đỏ cho trường bắt buộc */
+.medical-register-form .ant-form-item-required::before {
+  color: #ff4d4f !important;
+  font-size: 16px;
+  margin-right: 4px;
+  display: inline-block;
+}
+
+.register-icon {
+  color: #3f87f5;
+  font-size: 16px;
+}
+
+.medical-register-form .ant-checkbox + span {
+  line-height: 1.5;
+}
+
+.medical-register-form .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #3f87f5;
+  border-color: #3f87f5;
+}
+
+.register-checkbox {
+  color: #666;
+  font-size: 14px;
+}
+
+.register-checkbox .text-button {
+  color: #3f87f5;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: inherit;
+}
+
+.register-checkbox .text-button:hover {
+  text-decoration: underline;
 }
 
 /* Nút đăng ký */
 .medical-register-button {
   height: 48px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 600;
   font-size: 16px;
   background: linear-gradient(135deg, #3f87f5 0%, #1a4da2 100%);
   border: none;
   box-shadow: 0 4px 12px rgba(26, 77, 162, 0.3);
   transition: all 0.3s ease;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 .medical-register-button:hover {
@@ -154,11 +284,19 @@
 .login-prompt {
   text-align: center;
   margin-top: 24px;
+  color: #666;
 }
 
 .login-prompt a {
-  color: #1a4da2;
+  color: #3f87f5;
   font-weight: 600;
+  margin-left: 5px;
+  transition: color 0.3s ease;
+}
+
+.login-prompt a:hover {
+  color: #1a4da2;
+  text-decoration: underline;
 }
 
 /* Footer */
@@ -167,25 +305,48 @@
   text-align: center;
   color: #999;
   font-size: 12px;
+  width: 100%;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Responsive style */
+@media (max-width: 991px) {
   .medical-register-card {
+    width: 90%;
+    max-width: 800px;
     flex-direction: column;
-    width: 100%;
   }
   
   .medical-register-left {
     padding: 30px;
-    min-height: 200px;
-  }
-  
-  .medical-register-right {
-    padding: 30px;
   }
   
   .register-banner h2 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 575px) {
+  .medical-register-card {
+    min-height: auto;
+  }
+  
+  .medical-register-left {
+    padding: 20px;
+  }
+  
+  .medical-banner-icon {
+    font-size: 40px;
+  }
+  
+  .register-banner h2 {
+    font-size: 20px;
+  }
+  
+  .medical-register-right {
+    padding: 20px;
+  }
+  
+  .register-title {
     font-size: 24px;
   }
 }

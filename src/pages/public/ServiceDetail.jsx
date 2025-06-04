@@ -9,7 +9,6 @@ import {
   Row,
   Col,
   Tabs,
-  Divider,
 } from 'antd';
 
 import MainLayout from '../../layouts/MainLayout';
