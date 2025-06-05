@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Typography, message, Checkbox, Row, Col } from 'antd';
+import { Form, Input, Button, Typography, message, Row, Col } from 'antd';
 import { 
   LockOutlined, 
   MailOutlined, 
@@ -162,20 +162,6 @@ const Register = ({ onRegister }) => {
                 </Form.Item>
               </Col>
             </Row>
-              <Form.Item 
-              name="agreement" 
-              valuePropName="checked"
-              required
-              rules={[
-                { 
-                  validator: (_, value) =>
-                    value ? Promise.resolve() : Promise.reject(new Error('Vui lòng đồng ý với điều khoản để tiếp tục')),
-                },
-              ]}
-            >              <Checkbox className="register-checkbox">
-                Tôi đã đọc và đồng ý với <button type="button" className="text-button">Điều khoản dịch vụ</button> và <button type="button" className="text-button">Chính sách bảo mật</button>
-              </Checkbox>
-            </Form.Item>
             
             <Form.Item>
               <Button 
