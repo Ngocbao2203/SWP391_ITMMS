@@ -1,0 +1,80 @@
+.book-appointment-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.book-appointment-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.appointment-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-steps {
+  margin-bottom: 2rem;
+}
+
+.step-content {
+  margin: 1.5rem 0;
+}
+
+.step-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.confirmation-card {
+  background-color: #f8f8f8;
+  margin: 1rem 0;
+}
+
+.confirmation-item {
+  display: flex;
+  margin-bottom: 0.75rem;
+}
+
+.confirmation-item .ant-typography + .ant-typography {
+  margin-left: 0.5rem;
+}
+
+.success-step {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.success-icon {
+  font-size: 4rem;
+  color: #52c41a;
+  margin-bottom: 1rem;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .book-appointment-container {
+    padding: 0 0.5rem;
+  }
+  
+  .step-content {
+    margin: 1rem 0;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .action-buttons button {
+    width: 100%;
+  }
+}

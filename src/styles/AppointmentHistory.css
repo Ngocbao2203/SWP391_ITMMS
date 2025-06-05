@@ -1,17 +1,45 @@
 /* AppointmentHistory.css */
 
+/* Base style */
+.appointment-history-container {
+  padding: 0 1rem;
+}
+
+.appointment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.appointment-tabs {
+  margin-bottom: 1.5rem;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
 /* Card container */
-.ant-card {
+.ant-card, .appointment-card {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 16px;
+  transition: transform 0.3s;
+  height: 100%;
 }
 
 /* Title */
-.ant-card-title {
+.ant-card-title, .appointment-card-title {
   font-size: 1.2rem;
   font-weight: bold;
   color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Tag color */
@@ -30,19 +58,64 @@
   color: white;
 }
 
+.ant-tag-blue {
+  background-color: #1890ff;
+  color: white;
+}
+
+/* Appointment info */
+.appointment-info {
+  margin-bottom: 1rem;
+}
+
+.appointment-info-item {
+  margin-bottom: 0.5rem;
+}
+
 /* Button */
 .ant-btn-link {
   padding: 0;
   font-size: 1rem;
   color: #1890ff;
+  margin-right: 12px;
 }
 
 /* Hover effect */
-.ant-card:hover {
+.ant-card:hover, .appointment-card:hover {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
 }
 
-/* Sửa khoảng cách giữa các nút */
-.ant-btn-link {
-  margin-right: 12px;
+/* Actions */
+.appointment-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.cancel-reason {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .appointment-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .appointment-header button {
+    margin-top: 1rem;
+    width: 100%;
+  }
+  
+  .appointment-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .appointment-actions button {
+    width: 100%;
+  }
 }
