@@ -56,7 +56,6 @@ const AppointmentSchedule = () => {
   const [activeTab, setActiveTab] = useState("1");
   const [form] = Form.useForm();
   const [statusForm] = Form.useForm();
-
   // Mock data - replace with actual API calls
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -468,7 +467,6 @@ const AppointmentSchedule = () => {
       ),
     },
   ];
-
   return (
     <div className="appointment-schedule-container">
       <div className="appointment-schedule-header">

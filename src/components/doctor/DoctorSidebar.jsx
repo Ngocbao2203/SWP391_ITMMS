@@ -35,8 +35,6 @@ const DoctorSidebar = () => {
       name: "Hồ sơ bệnh nhân",
       icon: <FaClipboardList />,
     },
-
-    { path: "/doctor/settings", name: "Cài đặt", icon: <FaCog /> },
   ];
 
   return (

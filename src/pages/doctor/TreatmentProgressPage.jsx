@@ -13,11 +13,13 @@ import {
   Tooltip,
   message,
   Spin,
-  Progress,
+  Progress as AntdProgress,
   Card,
   Timeline,
   Row,
   Col,
+  Typography,
+  Empty,
 } from "antd";
 import {
   SearchOutlined,
@@ -29,6 +31,10 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   ClockCircleOutlined,
+  CheckCircleTwoTone,
+  ClockCircleTwoTone,
+  MinusCircleTwoTone,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import "../../styles/TreatmentProgressPage.css";
@@ -37,8 +43,472 @@ import "../../styles/TreatmentProgressPage.css";
 const { TabPane } = Tabs;
 const { Option } = Select;
 const { TextArea } = Input;
+const { Title, Text } = Typography;
+
+// Timeline component for patient treatment progress
+const PatientTimeline = () => {
+  // Patients data
+  const patientsList = [
+    { id: "p1", name: "Nguyễn Thị A" },
+    { id: "p2", name: "Trần Văn B" },
+    { id: "p3", name: "Lê Minh C" },
+    { id: "p4", name: "Phạm Hoàng D" },
+  ];
+
+  // Progress data for each patient
+  const [progressData, setProgressData] = useState({
+    p1: [
+      {
+        id: 1,
+        step: "Khám tổng quát",
+        time: "2025-05-20",
+        status: "done",
+        note: "Răng có dấu hiệu sâu nhẹ",
+      },
+      {
+        id: 2,
+        step: "Chụp X-quang",
+        time: "2025-05-20",
+        status: "done",
+        note: "Phát hiện 2 răng sâu cần điều trị",
+      },
+      {
+        id: 3,
+        step: "Điều trị sâu răng",
+        time: "2025-05-24",
+        status: "done",
+        note: "Đã trám 1 răng, còn 1 răng cần điều trị",
+      },
+      {
+        id: 4,
+        step: "Điều trị sâu răng lần 2",
+        time: "2025-06-01",
+        status: "doing",
+        note: "Đang tiến hành trám răng còn lại",
+      },
+      {
+        id: 5,
+        step: "Tái khám",
+        time: "2025-06-15",
+        status: "pending",
+        note: "Kiểm tra sau điều trị",
+      },
+    ],
+    p2: [
+      {
+        id: 1,
+        step: "Khám tổng quát",
+        time: "2025-05-22",
+        status: "done",
+        note: "Cần niềng răng",
+      },
+      {
+        id: 2,
+        step: "Tư vấn niềng răng",
+        time: "2025-05-25",
+        status: "doing",
+        note: "Đang tư vấn về phương pháp và chi phí",
+      },
+      { id: 3, step: "Lấy dấu răng", time: "2025-06-10", status: "pending" },
+      { id: 4, step: "Gắn mắc cài", time: "2025-06-20", status: "pending" },
+    ],
+    p3: [
+      {
+        id: 1,
+        step: "Khám tổng quát",
+        time: "2025-05-15",
+        status: "done",
+        note: "Cần nhổ răng khôn",
+      },
+      {
+        id: 2,
+        step: "Chụp X-quang",
+        time: "2025-05-15",
+        status: "done",
+        note: "Răng khôn mọc lệch, cần phẫu thuật",
+      },
+      {
+        id: 3,
+        step: "Phẫu thuật răng khôn",
+        time: "2025-05-30",
+        status: "done",
+        note: "Đã nhổ thành công",
+      },
+      {
+        id: 4,
+        step: "Tái khám sau phẫu thuật",
+        time: "2025-06-06",
+        status: "pending",
+        note: "Kiểm tra vết thương",
+      },
+    ],
+    p4: [
+      {
+        id: 1,
+        step: "Khám tổng quát",
+        time: "2025-05-28",
+        status: "done",
+        note: "Cần tẩy trắng răng",
+      },
+      {
+        id: 2,
+        step: "Tẩy trắng răng",
+        time: "2025-06-10",
+        status: "pending",
+        note: "Đặt lịch tẩy trắng",
+      },
+    ],
+  });
+
+  const [selectedPatient, setSelectedPatient] = useState("p1");
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [currentProgress, setCurrentProgress] = useState(null);
+  const [form] = Form.useForm();
+
+  const patient = patientsList.find((p) => p.id === selectedPatient);
+  const currentSteps = (progressData[selectedPatient] || [])
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(a.time || "2100-01-01") - new Date(b.time || "2100-01-01")
+    );
+
+  const doneCount = currentSteps.filter((s) => s.status === "done").length;
+  const percent =
+    currentSteps.length > 0
+      ? Math.round((doneCount / currentSteps.length) * 100)
+      : 0;
+
+  const globalStatus = currentSteps.every((s) => s.status === "done")
+    ? "Hoàn thành"
+    : currentSteps.some((s) => s.status === "doing")
+    ? "Đang điều trị"
+    : "Chưa bắt đầu";
+
+  const statusColor = {
+    done: "green",
+    doing: "blue",
+    pending: "gray",
+  };
+
+  const statusIcon = {
+    done: (
+      <CheckCircleTwoTone twoToneColor="#52c41a" style={{ marginLeft: 8 }} />
+    ),
+    doing: (
+      <ClockCircleTwoTone twoToneColor="#1890ff" style={{ marginLeft: 8 }} />
+    ),
+    pending: (
+      <MinusCircleTwoTone twoToneColor="#999" style={{ marginLeft: 8 }} />
+    ),
+  };
+
+  const showAddModal = () => {
+    form.resetFields();
+    setIsAddModalVisible(true);
+  };
+
+  const showEditModal = (progress) => {
+    setCurrentProgress(progress);
+    form.setFieldsValue({
+      step: progress.step,
+      time: progress.time ? dayjs(progress.time) : null,
+      status: progress.status,
+      note: progress.note || "",
+    });
+    setIsEditModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsAddModalVisible(false);
+    setIsEditModalVisible(false);
+    setCurrentProgress(null);
+  };
+
+  const handleAddProgress = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        // Create a new progress entry
+        const newProgress = {
+          id: Date.now(), // Generate a unique ID
+          step: values.step,
+          time: values.time ? values.time.format("YYYY-MM-DD") : "",
+          status: values.status,
+          note: values.note,
+        };
+
+        // Update state with the new progress entry
+        setProgressData({
+          ...progressData,
+          [selectedPatient]: [
+            ...(progressData[selectedPatient] || []),
+            newProgress,
+          ],
+        });
+
+        message.success("Tiến độ điều trị đã được thêm thành công!");
+        setIsAddModalVisible(false);
+        form.resetFields();
+      })
+      .catch((info) => {
+        console.log("Validate Failed:", info);
+      });
+  };
+
+  const handleEditProgress = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        // Update the existing progress entry
+        const updatedProgress = progressData[selectedPatient].map((p) =>
+          p.id === currentProgress.id
+            ? {
+                ...p,
+                step: values.step,
+                time: values.time ? values.time.format("YYYY-MM-DD") : "",
+                status: values.status,
+                note: values.note,
+              }
+            : p
+        );
+
+        // Update state with the modified progress entry
+        setProgressData({
+          ...progressData,
+          [selectedPatient]: updatedProgress,
+        });
+
+        message.success("Tiến độ điều trị đã được cập nhật thành công!");
+        setIsEditModalVisible(false);
+        setCurrentProgress(null);
+        form.resetFields();
+      })
+      .catch((info) => {
+        console.log("Validate Failed:", info);
+      });
+  };
+
+  const handleDeleteProgress = (progressId) => {
+    // Filter out the progress entry to be deleted
+    const updatedProgress = progressData[selectedPatient].filter(
+      (p) => p.id !== progressId
+    );
+
+    // Update state without the deleted progress entry
+    setProgressData({
+      ...progressData,
+      [selectedPatient]: updatedProgress,
+    });
+
+    message.success("Tiến độ điều trị đã được xóa thành công!");
+  };
+
+  // Create a custom timeline component that renders the timeline horizontally
+  const HorizontalTimeline = ({ steps }) => (
+    <div className="horizontal-timeline">
+      <div className="timeline-steps">
+        {steps.map((step, index) => (
+          <div className={`timeline-step status-${step.status}`} key={index}>
+            <div className="timeline-marker">
+              {step.status === "done" && (
+                <CheckCircleTwoTone twoToneColor="#52c41a" />
+              )}
+              {step.status === "doing" && (
+                <ClockCircleTwoTone twoToneColor="#1890ff" />
+              )}
+              {step.status === "pending" && (
+                <MinusCircleTwoTone twoToneColor="#999" />
+              )}
+            </div>
+            <div className="timeline-content">
+              <h4>{step.step}</h4>
+              {step.time && (
+                <div className="timeline-date">
+                  {dayjs(step.time).format("DD/MM/YYYY")}
+                </div>
+              )}
+              <div className="timeline-status">
+                {step.status === "done" && <>Hoàn thành {statusIcon.done}</>}
+                {step.status === "doing" && (
+                  <>Đang thực hiện {statusIcon.doing}</>
+                )}
+                {step.status === "pending" && (
+                  <>Chưa thực hiện {statusIcon.pending}</>
+                )}
+              </div>
+              {step.note && (
+                <div className="timeline-note">Ghi chú: {step.note}</div>
+              )}
+              <div className="timeline-actions">
+                <Button
+                  type="primary"
+                  icon={<EditOutlined />}
+                  size="small"
+                  onClick={() => showEditModal(step)}
+                >
+                  Sửa
+                </Button>
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  size="small"
+                  onClick={() => handleDeleteProgress(step.id)}
+                  style={{ marginLeft: 8 }}
+                >
+                  Xóa
+                </Button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+  return (
+    <div className="horizontal-timeline-container">
+      <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>
+        Tiến trình điều trị
+      </h2>
+
+      <div
+        className="patient-selector"
+        style={{ marginBottom: "16px", display: "flex", alignItems: "center" }}
+      >
+        <Select
+          placeholder="Chọn bệnh nhân"
+          value={selectedPatient}
+          style={{ width: 280, marginBottom: 16 }}
+          onChange={(val) => setSelectedPatient(val)}
+        >
+          {patientsList.map((p) => (
+            <Option key={p.id} value={p.id}>
+              {p.name}
+            </Option>
+          ))}
+        </Select>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={showAddModal}
+          style={{ marginLeft: "16px" }}
+        >
+          Thêm tiến độ mới
+        </Button>
+      </div>
+
+      <AntdProgress
+        percent={percent}
+        status={globalStatus === "Hoàn thành" ? "success" : "active"}
+        format={(p) => `${globalStatus} – ${p}%`}
+        style={{ marginBottom: 24 }}
+      />
+
+      <Card
+        title={`Tiến độ của ${patient?.name}`}
+        className="progress-card"
+        style={{ maxHeight: "100%", overflowY: "auto" }}
+      >
+        {currentSteps.length === 0 ? (
+          <Empty description="Chưa có tiến trình điều trị" />
+        ) : (
+          <HorizontalTimeline steps={currentSteps} />
+        )}
+      </Card>
+
+      {/* Add Progress Modal */}
+      <Modal
+        title="Thêm tiến độ điều trị mới"
+        open={isAddModalVisible}
+        onOk={handleAddProgress}
+        onCancel={handleCancel}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item
+            name="step"
+            label="Bước điều trị"
+            rules={[{ required: true, message: "Vui lòng nhập bước điều trị" }]}
+          >
+            <Input placeholder="Nhập tên bước điều trị" />
+          </Form.Item>
+          <Form.Item
+            name="time"
+            label="Ngày thực hiện"
+            rules={[{ required: true, message: "Vui lòng chọn ngày" }]}
+          >
+            <DatePicker style={{ width: "100%" }} placeholder="Chọn ngày" />
+          </Form.Item>
+          <Form.Item
+            name="status"
+            label="Trạng thái"
+            rules={[{ required: true, message: "Vui lòng chọn trạng thái" }]}
+          >
+            <Select placeholder="Chọn trạng thái">
+              <Option value="done">Hoàn thành</Option>
+              <Option value="doing">Đang thực hiện</Option>
+              <Option value="pending">Chưa thực hiện</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="note" label="Ghi chú">
+            <TextArea rows={3} placeholder="Nhập ghi chú (nếu có)" />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Edit Progress Modal */}
+      <Modal
+        title="Chỉnh sửa tiến độ điều trị"
+        open={isEditModalVisible}
+        onOk={handleEditProgress}
+        onCancel={handleCancel}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item
+            name="step"
+            label="Bước điều trị"
+            rules={[{ required: true, message: "Vui lòng nhập bước điều trị" }]}
+          >
+            <Input placeholder="Nhập tên bước điều trị" />
+          </Form.Item>
+          <Form.Item
+            name="time"
+            label="Ngày thực hiện"
+            rules={[{ required: true, message: "Vui lòng chọn ngày" }]}
+          >
+            <DatePicker style={{ width: "100%" }} placeholder="Chọn ngày" />
+          </Form.Item>
+          <Form.Item
+            name="status"
+            label="Trạng thái"
+            rules={[{ required: true, message: "Vui lòng chọn trạng thái" }]}
+          >
+            <Select placeholder="Chọn trạng thái">
+              <Option value="done">Hoàn thành</Option>
+              <Option value="doing">Đang thực hiện</Option>
+              <Option value="pending">Chưa thực hiện</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="note" label="Ghi chú">
+            <TextArea rows={3} placeholder="Nhập ghi chú (nếu có)" />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  );
+};
 
 const TreatmentProgressPage = () => {
+  // Use the PatientTimeline component for the main view
+  return (
+    <div className="treatment-progress-container">
+      <PatientTimeline />
+    </div>
+  );
+};
+
+// This is the original TreatmentProgressPage implementation kept for reference
+const TreatmentProgressTablePage = () => {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
@@ -152,6 +622,7 @@ const TreatmentProgressPage = () => {
     form.resetFields();
     setIsAddModalVisible(true);
   };
+
   const showUpdateModal = (patient) => {
     setCurrentPatient(patient);
     updateForm.setFieldsValue({
@@ -198,6 +669,7 @@ const TreatmentProgressPage = () => {
         console.log("Validation Failed:", info);
       });
   };
+
   const handleUpdateSubmit = () => {
     updateForm
       .validateFields()
@@ -274,6 +746,7 @@ const TreatmentProgressPage = () => {
       },
     ]);
   };
+
   const getStatusTag = (status) => {
     switch (status) {
       case "new":
@@ -290,6 +763,7 @@ const TreatmentProgressPage = () => {
         return <Tag color="default">{status}</Tag>;
     }
   };
+
   const columns = [
     {
       title: "Patient ID",
@@ -375,16 +849,17 @@ const TreatmentProgressPage = () => {
   return (
     <div className="treatment-progress-container">
       <div className="treatment-progress-header">
-        <h1>Treatment Progress Management</h1>
-        <Space>
+        <Title level={2}>Treatment Progress</Title>
+        <Space size="middle">
           <Input
-            placeholder="Search by name, ID or condition"
+            placeholder="Search patients"
             prefix={<SearchOutlined />}
+            value={searchText}
             onChange={(e) => handleSearch(e.target.value)}
             className="search-input"
           />
           <Button type="primary" icon={<PlusOutlined />} onClick={showAddModal}>
-            Add New Treatment
+            Add New Patient
           </Button>
         </Space>
       </div>
@@ -394,18 +869,20 @@ const TreatmentProgressPage = () => {
           <Spin size="large" />
         </div>
       ) : (
-        <Table
-          columns={columns}
-          dataSource={filteredPatients}
-          rowKey="id"
-          pagination={{ pageSize: 10 }}
-          className="treatment-table"
-        />
+        <div className="treatment-table">
+          <Table
+            dataSource={filteredPatients}
+            columns={columns}
+            rowKey="id"
+            pagination={{ pageSize: 10 }}
+            locale={{ emptyText: "No patients found" }}
+          />
+        </div>
       )}
 
-      {/* View Patient Treatment Details Modal */}
+      {/* Patient view modal with tabs */}
       <Modal
-        title="Treatment Progress Details"
+        title="Patient Treatment Details"
         open={isViewModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -501,12 +978,13 @@ const TreatmentProgressPage = () => {
         )}
       </Modal>
 
-      {/* Add New Treatment Modal */}
+      {/* Add Patient Modal */}
       <Modal
-        title="Add New Treatment"
+        title="Add New Patient Treatment"
         open={isAddModalVisible}
         onOk={handleAddSubmit}
         onCancel={handleCancel}
+        width={600}
       >
         <Form form={form} layout="vertical">
           <Form.Item
@@ -569,6 +1047,7 @@ const TreatmentProgressPage = () => {
         open={isUpdateModalVisible}
         onOk={handleUpdateSubmit}
         onCancel={handleCancel}
+        width={600}
       >
         {currentPatient && (
           <Form form={updateForm} layout="vertical">
