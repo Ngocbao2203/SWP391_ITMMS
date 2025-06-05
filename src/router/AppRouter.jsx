@@ -31,6 +31,7 @@ import BlogManagement from "../pages/manager/BlogManagement";
 
 // Patient Dashboard and related pages
 import PatientDashboard from '../pages/patient/PatientDashboard';
+import UserProfile from '../pages/patient/UserProfile';
 
 const AppRouter = () => {
   return (
@@ -64,6 +65,7 @@ const AppRouter = () => {
 
       {/* Patient Routes */}
       <Route path="/profile" element={<PatientDashboard />} />
+      <Route path="/user-profile" element={<UserProfile />} />
     </Routes>
   );
 };
