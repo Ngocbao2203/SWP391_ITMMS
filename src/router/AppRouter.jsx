@@ -37,8 +37,11 @@ import Notifications from "../pages/manager/Notifications";
 import BlogManagement from "../pages/manager/BlogManagement";
 
 // Patient Dashboard and related pages
-import PatientDashboard from "../pages/patient/PatientDashboard";
+
 import BookAppointment from "../pages/patient/BookAppointment";
+
+import PatientDashboard from "../pages/patient/PatientDashboard";
+import UserProfile from "../pages/patient/UserProfile";
 
 const AppRouter = () => {
   return (
@@ -47,14 +50,14 @@ const AppRouter = () => {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/userservice" element={<UserService />} />
+      <Route path="/userservice" element={<UserService />} />{" "}
+      {/* Blog Routes */}
       <Route path="/blog" element={<BlogList />} />
       <Route path="/blog/:id" element={<BlogDetail />} />
       <Route path="/doctors" element={<DoctorList />} />
       <Route path="/doctors/:id" element={<DoctorProfile />} />
       <Route path="/services/:serviceId" element={<ServiceDetail />} />
       <Route path="/bookappointment" element={<BookAppointment />} />
-
       {/* Doctor Routes */}
       <Route path="/doctor/dashboard" element={<DoctorLayout />} />
       <Route
@@ -122,7 +125,6 @@ const AppRouter = () => {
           </AdminLayout>
         }
       />
-
       {/* Manager Routes */}
       <Route
         path="/manager/doctors"
@@ -180,9 +182,9 @@ const AppRouter = () => {
           </ManagerLayout>
         }
       />
-
       {/* Patient Routes */}
       <Route path="/profile" element={<PatientDashboard />} />
+      <Route path="/user-profile" element={<UserProfile />} />
     </Routes>
   );
 };

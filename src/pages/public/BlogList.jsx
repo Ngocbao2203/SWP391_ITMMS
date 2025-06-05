@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Typography, Input, Select, Empty, Pagination } from 'antd';
+import { Card, Row, Col, Typography, Input, Select, Empty, Pagination, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import MainLayout from '../../layouts/MainLayout';
@@ -62,17 +62,21 @@ const BlogList = () => {
 
   return (
     <MainLayout>
-      <div className="blog-list-container">
-        <div className="blog-list-header">
-          <Title level={2}>Blog & Experience Sharing</Title>
-          <Paragraph>
-            Read our latest articles about fertility treatments, patient experiences, and helpful tips.
-          </Paragraph>
-        </div>
-
-        <div className="blog-filters">
+      <div className="blog-list-container">        <div className="blog-list-header">
+          <div className="blog-header-content">
+            <Title level={2}>Bài viết & Chia sẻ kinh nghiệm</Title>
+            <Paragraph>
+              Tìm hiểu về các phương pháp điều trị hiếm muộn, chia sẻ từ bệnh nhân và những lời khuyên hữu ích.
+            </Paragraph>
+          </div>
+          <Link to="/">
+            <Button type="primary" size="large">
+              Quay về trang chủ
+            </Button>
+          </Link>
+        </div>        <div className="blog-filters">
           <Input 
-            placeholder="Search blogs..." 
+            placeholder="Tìm kiếm bài viết..." 
             prefix={<SearchOutlined />}
             onChange={e => setSearchText(e.target.value)}
             className="blog-search"
@@ -84,16 +88,14 @@ const BlogList = () => {
           >
             {categories.map(cat => (
               <Option key={cat} value={cat}>
-                {cat === 'all' ? 'All Categories' : cat}
+                {cat === 'all' ? 'Tất cả danh mục' : cat}
               </Option>
             ))}
           </Select>
-        </div>
-
-        {loading ? (
-          <div className="loading-blogs">Loading blogs...</div>
+        </div>        {loading ? (
+          <div className="loading-blogs">Đang tải bài viết...</div>
         ) : paginatedBlogs.length === 0 ? (
-          <Empty description="No blogs found matching your search" />
+          <Empty description="Không tìm thấy bài viết nào phù hợp" />
         ) : (
           <>
             <Row gutter={[24, 24]} className="blog-grid">
@@ -117,15 +119,17 @@ const BlogList = () => {
                   </Link>
                 </Col>
               ))}
-            </Row>
-
-            <div className="blog-pagination">
+            </Row>            <div className="blog-pagination">
               <Pagination 
                 current={currentPage}
                 total={filteredBlogs.length}
                 pageSize={pageSize}
                 onChange={handlePageChange}
                 hideOnSinglePage
+                showSizeChanger={false}
+                showQuickJumper
+                prevText="Trước"
+                nextText="Sau"
               />
             </div>
           </>
