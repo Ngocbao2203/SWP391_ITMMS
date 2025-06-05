@@ -46,26 +46,7 @@ const doctors = [
   },
 ];
 
-const articles = [
-  {
-    title: "Những câu chuyện thành công với IVF",
-    desc: "Chia sẻ thực tế từ bệnh nhân của chúng tôi.",
-    link: "/bai-viet/ivf-stories",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-  {
-    title: "Bí quyết duy trì sức khỏe sinh sản",
-    desc: "Chuẩn bị tốt nhất cho hành trình của bạn.",
-    link: "/bai-viet/fertility-tips",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-  {
-    title: "Tìm hiểu về phương pháp IUI",
-    desc: "Những điều bạn cần biết về quy trình.",
-    link: "/bai-viet/understanding-iui",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-];
+// Removed static articles as we'll use real blogs from blogService
 
 const testimonials = [
   {
@@ -212,15 +193,15 @@ const Home = () => {
       <div className="section articles-section">
         <Title level={3}>Chia sẻ kinh nghiệm</Title>
         <Row gutter={[24, 24]}>
-          {articles.map((art) => (
-            <Col xs={24} sm={12} md={8} key={art.title}>
+          {blogs.slice(0, 3).map((blog) => (
+            <Col xs={24} sm={12} md={8} key={blog.id}>
               <Card
-                title={art.title}
+                title={blog.title}
                 bordered
-                cover={<img alt={art.title} src={art.image} />}
+                cover={<img alt={blog.title} src={blog.coverImage} />}
               >
-                <Paragraph>{art.desc}</Paragraph>
-                <Link to={art.link}>
+                <Paragraph ellipsis={{ rows: 2 }}>{blog.summary}</Paragraph>
+                <Link to={`/blog/${blog.id}?from=home`}>
                   <Button type="link">Đọc thêm</Button>
                 </Link>
               </Card>
@@ -228,7 +209,7 @@ const Home = () => {
           ))}
         </Row>        <Link to="/blog">
           <Button type="link" className="see-more-btn">
-            Xem thêm
+            Xem thêm bài viết
           </Button>
         </Link>
       </div>
