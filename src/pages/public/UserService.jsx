@@ -1,21 +1,14 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ⬅️ THÊM DÒNG NÀY
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/UserService.css";
 import MainLayout from "../../layouts/MainLayout";
-import ServiceRegistrationForm from "../../components/public/ServiceRegistrationForm";
 
 export default function UserService() {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedService, setSelectedService] = useState(null);
-  const navigate = useNavigate(); // ⬅️ THÊM DÒNG NÀY
+  const navigate = useNavigate();
 
   const showRegistrationForm = (service) => {
-    setSelectedService(service);
-    setIsModalVisible(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalVisible(false);
+    // Điều hướng đến trang đăng ký dịch vụ mới với ID dịch vụ
+    navigate(`/service-register/${service.id}`);
   };
 
   const dataServices = [
@@ -41,14 +34,8 @@ export default function UserService() {
       type: "IUI"
     },
   ];
-
   return (
     <MainLayout>
-      <ServiceRegistrationForm
-        visible={isModalVisible}
-        onClose={handleModalClose}
-        service={selectedService}
-      />
       <section className="fertility-services-container">
         <div className="services-header">
           <h2 className="section-title">Dịch vụ điều trị hiếm muộn</h2>
