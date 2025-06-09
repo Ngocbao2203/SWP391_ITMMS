@@ -10,6 +10,7 @@ import BlogDetail from "../pages/public/BlogDetail";
 import DoctorList from "../pages/public/DoctorList";
 import DoctorProfile from "../pages/public/DoctorProfile";
 import ServiceDetail from "../pages/public/ServiceDetail";
+import SimpleServiceRegistrationPage from "../pages/public/SimpleServiceRegistrationPage";
 
 // Admin
 
@@ -55,8 +56,9 @@ const AppRouter = () => {
       <Route path="/blog" element={<BlogList />} />
       <Route path="/blog/:id" element={<BlogDetail />} />
       <Route path="/doctors" element={<DoctorList />} />
-      <Route path="/doctors/:id" element={<DoctorProfile />} />
-      <Route path="/services/:serviceId" element={<ServiceDetail />} />
+      <Route path="/doctors/:id" element={<DoctorProfile />} />      <Route path="/services/:serviceId" element={<ServiceDetail />} />
+      <Route path="/service-register" element={<SimpleServiceRegistrationPage />} />
+      <Route path="/service-register/:serviceId" element={<SimpleServiceRegistrationPage />} />
       <Route path="/bookappointment" element={<BookAppointment />} />
       {/* Doctor Routes */}
       <Route path="/doctor/dashboard" element={<DoctorLayout />} />
