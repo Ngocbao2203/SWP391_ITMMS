@@ -234,6 +234,58 @@
   margin-left: 8px;
 }
 
+.avatar-uploader > .ant-upload {
+  width: 120px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px auto;
+  border-radius: 4px;
+}
+
+.avatar-uploader .ant-upload-select-picture-card:hover {
+  border-color: #1890ff;
+}
+
+.avatar-uploader .upload-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.user-avatar {
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.user-avatar:hover {
+  opacity: 0.8;
+}
+
+/* Custom styles for user profile tabs */
+.user-profile-tabs .ant-tabs-nav-list {
+  width: 100%;
+}
+
+.user-profile-tabs .ant-tabs-tab {
+  margin: 0;
+  padding: 12px 16px;
+  transition: all 0.3s;
+}
+
+.user-profile-tabs .ant-tabs-tab:hover {
+  color: #1890ff;
+  background-color: rgba(24, 144, 255, 0.1);
+}
+
+.user-profile-tabs .ant-tabs-tab-active {
+  background-color: rgba(24, 144, 255, 0.1);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .user-profile-container {
@@ -294,4 +346,4 @@
 
 .treatment-card {
   animation: fadeInUp 0.3s ease-out;
-} 
+}

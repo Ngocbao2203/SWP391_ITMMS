@@ -1,6 +1,13 @@
 import React from 'react';
 import { Avatar, Dropdown, Menu } from 'antd';
-import { UserOutlined, LoginOutlined, EditOutlined } from '@ant-design/icons';
+import { 
+  UserOutlined, 
+  LoginOutlined, 
+  EditOutlined, 
+  CalendarOutlined, 
+  MedicineBoxOutlined, 
+  FileTextOutlined 
+} from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
 // Component UserAvatar
@@ -14,7 +21,22 @@ const UserAvatar = ({ user, onLogout }) => {
     <Menu>
       <Menu.Item key="profile">
         <Link to="/profile">
-          <EditOutlined /> Chỉnh sửa hồ sơ
+          <EditOutlined /> Hồ sơ cá nhân
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="appointments">
+        <Link to="/bookappointment">
+          <CalendarOutlined /> Lịch hẹn
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="treatment">
+        <Link to="/profile">
+          <FileTextOutlined /> Tiến trình điều trị
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="medical-records">
+        <Link to="/profile">
+          <MedicineBoxOutlined /> Hồ sơ y tế
         </Link>
       </Menu.Item>
       <Menu.Item key="logout" onClick={onLogout} icon={<LoginOutlined />}>

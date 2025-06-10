@@ -1,21 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Typography, message, Divider, Row, Col } from "antd";
 import { UserOutlined, LockOutlined, MedicineBoxOutlined, HomeOutlined } from "@ant-design/icons";
 import "../../styles/Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import authService from "../../services/authService";
 
 const { Title } = Typography;
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
-  const onFinish = (values) => {
+  const navigate = useNavigate();
+  
+  // Kiểm tra xem người dùng đã đăng nhập chưa
+  useEffect(() => {
+    const currentUser = authService.getCurrentUser();
+    if (currentUser) {
+      // Nếu đã đăng nhập, chuyển hướng về trang chủ
+      navigate('/');
+    }
+  }, [navigate]);
+  
+  // Xử lý đăng nhập
+  const onFinish = async (values) => {
     setLoading(true);
-    setTimeout(() => {
+    try {
+      // Gọi service đăng nhập
+      const result = await authService.login(values);
+      
+      if (result.success) {
+        message.success(result.message);
+        // Chuyển hướng người dùng về trang chủ
+        navigate('/');
+      } else {
+        message.error(result.message);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      message.error('Có lỗi xảy ra khi đăng nhập');
+    } finally {
       setLoading(false);
-      message.success("Đăng nhập thành công!");
-      localStorage.setItem("user", JSON.stringify(values)); // ✅ Lưu thông tin đăng nhập
-      window.location.href = "/"; // ✅ Chuyển đến trang Home
-    }, 1000);
+    }
   };
   return (
     <div className="medical-login-container">
