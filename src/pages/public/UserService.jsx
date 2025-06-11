@@ -56,7 +56,7 @@ export default function UserService() {
                   Tìm hiểu thêm
                 </button>
                 <button className="btn btn-register" onClick={() => showRegistrationForm(DS)}>
-                  Đăng ký
+                  Đặt lịch
                 </button>
               </div>
             </div>

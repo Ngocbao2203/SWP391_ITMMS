@@ -414,7 +414,7 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
               htmlType="submit"
               loading={loading}
             >
-              Đăng ký dịch vụ
+              Đặt lịch
             </Button>
           </div>
         </Form>

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Card, Typography, Row, Col, Avatar, Button, Input, Space, Select, DatePicker } from 'antd';
+import { Card, Row, Col, Avatar, Button, Input, Space, Select, DatePicker } from 'antd';
 import { UserOutlined, PhoneOutlined, MailOutlined, EditOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
-const { Text } = Typography;
 const { Option } = Select;
 
 const PatientProfile = () => {
@@ -130,18 +129,6 @@ const PatientProfile = () => {
                 value={formData.address}
                 onChange={(e) => handleInputChange(e, 'address')}
                 placeholder="Địa chỉ"
-                style={{ marginBottom: '16px' }}
-              />
-            </Col>
-          </Row>
-
-          {/* Trạng thái sức khỏe */}
-          <Row gutter={[16, 16]}>
-            <Col span={24}>
-              <Input
-                value={formData.healthStatus}
-                onChange={(e) => handleInputChange(e, 'healthStatus')}
-                placeholder="Trạng thái sức khỏe"
                 style={{ marginBottom: '16px' }}
               />
             </Col>
