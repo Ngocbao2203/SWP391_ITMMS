@@ -50,9 +50,9 @@ const PatientTimeline = () => {
   // Patients data
   const patientsList = [
     { id: "p1", name: "Nguyễn Thị A" },
-    { id: "p2", name: "Trần Văn B" },
-    { id: "p3", name: "Lê Minh C" },
-    { id: "p4", name: "Phạm Hoàng D" },
+    { id: "p2", name: "Trần Văn B và Lê Thị M" },
+    { id: "p3", name: "Lê Minh C và Phạm Thị N" },
+    { id: "p4", name: "Phạm Hoàng D và Trần Thị P" },
   ];
 
   // Progress data for each patient
@@ -63,35 +63,35 @@ const PatientTimeline = () => {
         step: "Khám tổng quát",
         time: "2025-05-20",
         status: "done",
-        note: "Răng có dấu hiệu sâu nhẹ",
+        note: "Kiểm tra sức khỏe sinh sản, hẹn thực hiện các xét nghiệm",
       },
       {
         id: 2,
-        step: "Chụp X-quang",
+        step: "Xét nghiệm hormone",
         time: "2025-05-20",
         status: "done",
-        note: "Phát hiện 2 răng sâu cần điều trị",
+        note: "Phát hiện hormone FSH thấp, cần điều trị",
       },
       {
         id: 3,
-        step: "Điều trị sâu răng",
+        step: "Kích thích buồng trứng",
         time: "2025-05-24",
         status: "done",
-        note: "Đã trám 1 răng, còn 1 răng cần điều trị",
+        note: "Bắt đầu liệu trình kích thích buồng trứng",
       },
       {
         id: 4,
-        step: "Điều trị sâu răng lần 2",
+        step: "Theo dõi phát triển nang noãn",
         time: "2025-06-01",
         status: "doing",
-        note: "Đang tiến hành trám răng còn lại",
+        note: "Đang theo dõi sự phát triển của nang noãn",
       },
       {
         id: 5,
-        step: "Tái khám",
+        step: "Thu hoạch trứng",
         time: "2025-06-15",
         status: "pending",
-        note: "Kiểm tra sau điều trị",
+        note: "Dự kiến thu hoạch trứng",
       },
     ],
     p2: [
@@ -100,17 +100,29 @@ const PatientTimeline = () => {
         step: "Khám tổng quát",
         time: "2025-05-22",
         status: "done",
-        note: "Cần niềng răng",
+        note: "Cặp vợ chồng cần điều trị IVF",
       },
       {
         id: 2,
-        step: "Tư vấn niềng răng",
+        step: "Tư vấn phương pháp IVF",
         time: "2025-05-25",
         status: "doing",
         note: "Đang tư vấn về phương pháp và chi phí",
       },
-      { id: 3, step: "Lấy dấu răng", time: "2025-06-10", status: "pending" },
-      { id: 4, step: "Gắn mắc cài", time: "2025-06-20", status: "pending" },
+      {
+        id: 3,
+        step: "Kích thích buồng trứng",
+        time: "2025-06-10",
+        status: "pending",
+        note: "Chuẩn bị cho liệu trình kích thích buồng trứng",
+      },
+      {
+        id: 4,
+        step: "Thu hoạch và thụ tinh",
+        time: "2025-06-20",
+        status: "pending",
+        note: "Dự kiến thực hiện thụ tinh trong ống nghiệm",
+      },
     ],
     p3: [
       {
@@ -118,28 +130,28 @@ const PatientTimeline = () => {
         step: "Khám tổng quát",
         time: "2025-05-15",
         status: "done",
-        note: "Cần nhổ răng khôn",
+        note: "Cặp vợ chồng cần thụ tinh nhân tạo IUI",
       },
       {
         id: 2,
-        step: "Chụp X-quang",
+        step: "Xét nghiệm tinh trùng",
         time: "2025-05-15",
         status: "done",
-        note: "Răng khôn mọc lệch, cần phẫu thuật",
+        note: "Tinh trùng có chất lượng thấp, cần hỗ trợ",
       },
       {
         id: 3,
-        step: "Phẫu thuật răng khôn",
+        step: "Chuẩn bị IUI",
         time: "2025-05-30",
         status: "done",
-        note: "Đã nhổ thành công",
+        note: "Đã hoàn thành quá trình chuẩn bị",
       },
       {
         id: 4,
-        step: "Tái khám sau phẫu thuật",
+        step: "Thực hiện IUI",
         time: "2025-06-06",
         status: "pending",
-        note: "Kiểm tra vết thương",
+        note: "Dự kiến thực hiện thụ tinh nhân tạo IUI",
       },
     ],
     p4: [
@@ -148,14 +160,14 @@ const PatientTimeline = () => {
         step: "Khám tổng quát",
         time: "2025-05-28",
         status: "done",
-        note: "Cần tẩy trắng răng",
+        note: "Cần hỗ trợ điều trị vô sinh thứ phát",
       },
       {
         id: 2,
-        step: "Tẩy trắng răng",
+        step: "Siêu âm buồng trứng",
         time: "2025-06-10",
         status: "pending",
-        note: "Đặt lịch tẩy trắng",
+        note: "Đặt lịch kiểm tra chức năng buồng trứng",
       },
     ],
   });
@@ -369,15 +381,14 @@ const PatientTimeline = () => {
   return (
     <div className="horizontal-timeline-container">
       <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>
-        Tiến trình điều trị
+        Tiến trình điều trị hiếm muộn
       </h2>
-
       <div
         className="patient-selector"
         style={{ marginBottom: "16px", display: "flex", alignItems: "center" }}
       >
         <Select
-          placeholder="Chọn bệnh nhân"
+          placeholder="Chọn bệnh nhân/cặp đôi"
           value={selectedPatient}
           style={{ width: 280, marginBottom: 16 }}
           onChange={(val) => setSelectedPatient(val)}
@@ -394,19 +405,17 @@ const PatientTimeline = () => {
           onClick={showAddModal}
           style={{ marginLeft: "16px" }}
         >
-          Thêm tiến độ mới
+          Thêm tiến độ điều trị hiếm muộn
         </Button>
       </div>
-
       <AntdProgress
         percent={percent}
         status={globalStatus === "Hoàn thành" ? "success" : "active"}
         format={(p) => `${globalStatus} – ${p}%`}
         style={{ marginBottom: 24 }}
-      />
-
+      />{" "}
       <Card
-        title={`Tiến độ của ${patient?.name}`}
+        title={`Tiến trình điều trị hiếm muộn của ${patient?.name}`}
         className="progress-card"
         style={{ maxHeight: "100%", overflowY: "auto" }}
       >
@@ -416,10 +425,9 @@ const PatientTimeline = () => {
           <HorizontalTimeline steps={currentSteps} />
         )}
       </Card>
-
-      {/* Add Progress Modal */}
+      {/* Add Progress Modal */}{" "}
       <Modal
-        title="Thêm tiến độ điều trị mới"
+        title="Thêm tiến độ điều trị hiếm muộn mới"
         open={isAddModalVisible}
         onOk={handleAddProgress}
         onCancel={handleCancel}
@@ -427,10 +435,40 @@ const PatientTimeline = () => {
         <Form form={form} layout="vertical">
           <Form.Item
             name="step"
-            label="Bước điều trị"
+            label="Bước điều trị hiếm muộn"
             rules={[{ required: true, message: "Vui lòng nhập bước điều trị" }]}
           >
-            <Input placeholder="Nhập tên bước điều trị" />
+            <Select placeholder="Chọn bước điều trị">
+              <Option value="Khám tổng quát">Khám tổng quát</Option>
+              <Option value="Xét nghiệm hormone">Xét nghiệm hormone</Option>
+              <Option value="Siêu âm buồng trứng">Siêu âm buồng trứng</Option>
+              <Option value="Xét nghiệm tinh trùng">
+                Xét nghiệm tinh trùng
+              </Option>
+              <Option value="Kích thích buồng trứng">
+                Kích thích buồng trứng
+              </Option>
+              <Option value="Theo dõi phát triển nang noãn">
+                Theo dõi phát triển nang noãn
+              </Option>
+              <Option value="Thu hoạch trứng">Thu hoạch trứng</Option>
+              <Option value="Thụ tinh trong ống nghiệm">
+                Thụ tinh trong ống nghiệm
+              </Option>
+              <Option value="Nuôi cấy phôi">Nuôi cấy phôi</Option>
+              <Option value="Chuyển phôi">Chuyển phôi</Option>
+              <Option value="Thụ tinh nhân tạo IUI">
+                Thụ tinh nhân tạo IUI
+              </Option>
+              <Option value="Chuẩn bị IUI">Chuẩn bị IUI</Option>
+              <Option value="Thực hiện IUI">Thực hiện IUI</Option>
+              <Option value="Xét nghiệm thai">Xét nghiệm thai</Option>
+              <Option value="Theo dõi thai kỳ">Theo dõi thai kỳ</Option>
+              <Option value="Tư vấn phương pháp điều trị">
+                Tư vấn phương pháp điều trị
+              </Option>
+              <Option value="Khác">Khác</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="time"
@@ -450,15 +488,14 @@ const PatientTimeline = () => {
               <Option value="pending">Chưa thực hiện</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="note" label="Ghi chú">
-            <TextArea rows={3} placeholder="Nhập ghi chú (nếu có)" />
+          <Form.Item name="note" label="Ghi chú và kết quả">
+            <TextArea rows={3} placeholder="Nhập kết quả và ghi chú (nếu có)" />
           </Form.Item>
         </Form>
-      </Modal>
-
+      </Modal>{" "}
       {/* Edit Progress Modal */}
       <Modal
-        title="Chỉnh sửa tiến độ điều trị"
+        title="Chỉnh sửa tiến độ điều trị hiếm muộn"
         open={isEditModalVisible}
         onOk={handleEditProgress}
         onCancel={handleCancel}
@@ -466,10 +503,40 @@ const PatientTimeline = () => {
         <Form form={form} layout="vertical">
           <Form.Item
             name="step"
-            label="Bước điều trị"
+            label="Bước điều trị hiếm muộn"
             rules={[{ required: true, message: "Vui lòng nhập bước điều trị" }]}
           >
-            <Input placeholder="Nhập tên bước điều trị" />
+            <Select placeholder="Chọn bước điều trị">
+              <Option value="Khám tổng quát">Khám tổng quát</Option>
+              <Option value="Xét nghiệm hormone">Xét nghiệm hormone</Option>
+              <Option value="Siêu âm buồng trứng">Siêu âm buồng trứng</Option>
+              <Option value="Xét nghiệm tinh trùng">
+                Xét nghiệm tinh trùng
+              </Option>
+              <Option value="Kích thích buồng trứng">
+                Kích thích buồng trứng
+              </Option>
+              <Option value="Theo dõi phát triển nang noãn">
+                Theo dõi phát triển nang noãn
+              </Option>
+              <Option value="Thu hoạch trứng">Thu hoạch trứng</Option>
+              <Option value="Thụ tinh trong ống nghiệm">
+                Thụ tinh trong ống nghiệm
+              </Option>
+              <Option value="Nuôi cấy phôi">Nuôi cấy phôi</Option>
+              <Option value="Chuyển phôi">Chuyển phôi</Option>
+              <Option value="Thụ tinh nhân tạo IUI">
+                Thụ tinh nhân tạo IUI
+              </Option>
+              <Option value="Chuẩn bị IUI">Chuẩn bị IUI</Option>
+              <Option value="Thực hiện IUI">Thực hiện IUI</Option>
+              <Option value="Xét nghiệm thai">Xét nghiệm thai</Option>
+              <Option value="Theo dõi thai kỳ">Theo dõi thai kỳ</Option>
+              <Option value="Tư vấn phương pháp điều trị">
+                Tư vấn phương pháp điều trị
+              </Option>
+              <Option value="Khác">Khác</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="time"
@@ -489,8 +556,8 @@ const PatientTimeline = () => {
               <Option value="pending">Chưa thực hiện</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="note" label="Ghi chú">
-            <TextArea rows={3} placeholder="Nhập ghi chú (nếu có)" />
+          <Form.Item name="note" label="Ghi chú và kết quả">
+            <TextArea rows={3} placeholder="Nhập kết quả và ghi chú (nếu có)" />
           </Form.Item>
         </Form>
       </Modal>
@@ -532,9 +599,9 @@ const TreatmentProgressTablePage = () => {
           {
             id: 1,
             patientId: "P001",
-            name: "Nguyen Van A",
+            name: "Nguyen Van A và Nguyen Thi H",
             age: 35,
-            condition: "Dental Implant",
+            condition: "Thụ tinh trong ống nghiệm (IVF)",
             startDate: "2025-03-15",
             estimatedEndDate: "2025-06-15",
             status: "in-progress",
@@ -546,7 +613,7 @@ const TreatmentProgressTablePage = () => {
             patientId: "P002",
             name: "Tran Thi B",
             age: 28,
-            condition: "Root Canal Treatment",
+            condition: "Hỗ trợ sinh sản IUI",
             startDate: "2025-04-10",
             estimatedEndDate: "2025-05-30",
             status: "in-progress",
@@ -556,9 +623,9 @@ const TreatmentProgressTablePage = () => {
           {
             id: 3,
             patientId: "P003",
-            name: "Le Van C",
+            name: "Le Van C và Pham Thi D",
             age: 42,
-            condition: "Orthodontic Treatment",
+            condition: "Điều trị vô sinh nam",
             startDate: "2025-01-05",
             estimatedEndDate: "2025-07-05",
             status: "in-progress",
@@ -569,8 +636,8 @@ const TreatmentProgressTablePage = () => {
             id: 4,
             patientId: "P004",
             name: "Pham Thi D",
-            age: 50,
-            condition: "Periodontal Treatment",
+            age: 38,
+            condition: "Điều trị nội tiết và kích thích buồng trứng",
             startDate: "2025-04-25",
             estimatedEndDate: "2025-06-25",
             status: "in-progress",
