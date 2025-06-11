@@ -1,63 +1,110 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import {
-  Typography,
-  Button,
-  Card,
-  List,
-  Rate,
-  Row,
-  Col,
-  Tabs,
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { 
+  Row, 
+  Col, 
+  Card, 
+  Typography, 
+  Button, 
+  Tabs, 
+  List, 
+  Avatar, 
   Divider,
+  Tag,
+  Rate,
+  Spin,
+  notification
 } from 'antd';
-
+import { 
+  CalendarOutlined, 
+  CheckCircleOutlined, 
+  TeamOutlined, 
+  ClockCircleOutlined, 
+  ReadOutlined,
+  HeartOutlined,
+  UserOutlined
+} from '@ant-design/icons';
 import MainLayout from '../../layouts/MainLayout';
-import '../../styles/ServiceDetail.css'; // Import your CSS styles
+import { getServiceById } from '../../services/serviceRegistration';
+import '../../styles/ServiceDetail.css';
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 const { TabPane } = Tabs;
-
-// Dữ liệu mẫu
-const serviceData = [
-  {
-    id: 'ivf',
-    title: 'Thụ tinh trong ống nghiệm (IVF)',
-    description: 'Phương pháp điều trị hiệu quả cao giúp các cặp vợ chồng hiếm muộn có cơ hội làm cha mẹ.',
-    details: 'IVF là phương pháp điều trị giúp thụ thai cho những cặp vợ chồng gặp khó khăn trong việc có con. Quy trình này bao gồm việc lấy trứng từ người phụ nữ, thụ tinh ngoài cơ thể và cấy phôi vào tử cung.',
-    pricing: [
-      { name: 'Dịch vụ cơ bản', amount: 5000000 },
-      { name: 'Dịch vụ cao cấp', amount: 8000000 }
-    ],
-    doctors: [
-      { name: 'Dr. Nguyễn Văn A', specialty: 'IVF Specialist', photo: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png ' },
-      { name: 'Dr. Trần Thị B', specialty: 'IUI Expert', photo: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png ' }
-    ],
-    schedule: [
-      { day: 'Ngày 1', activity: 'Khám sức khỏe và xác nhận hồ sơ.' },
-      { day: 'Ngày 3-5', activity: 'Tiêm thuốc kích trứng và theo dõi phát triển.' },
-      { day: 'Ngày 7', activity: 'Thụ tinh ngoài cơ thể.' },
-    ],
-    faqs: [
-      { question: 'Quy trình IVF mất bao lâu?', answer: 'Quy trình có thể kéo dài từ 2 đến 3 tuần tùy vào tình trạng sức khỏe của bệnh nhân.' },
-      { question: 'Chi phí dịch vụ IVF là bao nhiêu?', answer: 'Chi phí dao động từ 5 triệu VND đến 8 triệu VND tùy chọn dịch vụ.' }
-    ],
-    reviews: [
-      { patient: 'Chị Mai', rating: 5, comment: 'IVF tại đây thật tuyệt vời, tôi đã có em bé sau 3 lần thử.' },
-      { patient: 'Anh Hùng', rating: 4, comment: 'Cảm ơn đội ngũ bác sĩ, dịch vụ rất tốt.' },
-    ],
-    image: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png '
-  },
-];
 
 const ServiceDetail = () => {
   const { serviceId } = useParams();
-  const service = serviceData.find(s => s.id === serviceId);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [service, setService] = useState(null);
+  const [error, setError] = useState(null);
+
+  // Tải dữ liệu dịch vụ
+  useEffect(() => {
+    const fetchServiceData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const serviceData = await getServiceById(serviceId);
+        setService(serviceData);
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu dịch vụ:", error);
+        setError("Không thể tải thông tin dịch vụ. Vui lòng thử lại sau.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchServiceData();
+  }, [serviceId]);
+
+  // Điều hướng đến trang đăng ký dịch vụ
+  const handleRegisterService = () => {
+    navigate(`/service-register/${serviceId}`);
+  };
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+          <Spin size="large" tip="Đang tải thông tin dịch vụ..." />
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <MainLayout>
+        <div className="service-detail-container error">
+          <Card className="error-card">
+            <div className="error-content">
+              <Title level={3}>Có lỗi xảy ra</Title>
+              <Paragraph>{error}</Paragraph>
+              <Button type="primary" onClick={() => navigate('/services')}>
+                Quay lại danh sách dịch vụ
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </MainLayout>
+    );
+  }
 
   if (!service) {
     return (
       <MainLayout>
-        <Typography.Title level={2} type="danger">Dịch vụ không tồn tại!</Typography.Title>
+        <div className="service-detail-container error">
+          <Card className="error-card">
+            <div className="error-content">
+              <Title level={3}>Không tìm thấy dịch vụ</Title>
+              <Paragraph>Dịch vụ này không tồn tại hoặc đã bị xóa.</Paragraph>
+              <Button type="primary" onClick={() => navigate('/services')}>
+                Quay lại danh sách dịch vụ
+              </Button>
+            </div>
+          </Card>
+        </div>
       </MainLayout>
     );
   }
@@ -65,99 +112,221 @@ const ServiceDetail = () => {
   return (
     <MainLayout>
       <div className="service-detail-container">
-        {/* Hình ảnh & Tiêu đề */}
-        <Card bordered={false} className="header-card">
-          <img src={service.image} alt={service.title} className="service-image" />
-          <div className="service-info">
-            <Title level={2}>{service.title}</Title>
-            <Paragraph>{service.description}</Paragraph>
-          </div>
-        </Card>
-
-        {/* Nội dung chính với Tabs */}
-        <Card bordered={false} className="content-card">
-          <Tabs defaultActiveKey="1" tabPosition="left">
-            <TabPane tab="Thông tin chi tiết" key="1">
-              <Paragraph>{service.details}</Paragraph>
-            </TabPane>
-
-            <TabPane tab="Bảng giá" key="2">
-              <List
-                dataSource={service.pricing}
-                renderItem={(item) => (
-                  <List.Item>
-                    <strong>{item.name}:</strong> {item.amount.toLocaleString()} VND
-                  </List.Item>
-                )}
-              />
-            </TabPane>
-
-            <TabPane tab="Bác sĩ" key="3">
-              <Row gutter={[16, 16]}>
-                {service.doctors.map((doctor, index) => (
-                  <Col xs={24} sm={12} md={12} lg={12} key={index}>
-                    <Card hoverable className="doctor-card">
-                      <Row align="middle">
-                        <Col span={6}>
-                          <img src={doctor.photo} alt={doctor.name} className="doctor-photo" />
-                        </Col>
-                        <Col span={18}>
-                          <strong>{doctor.name}</strong>
-                          <p>{doctor.specialty}</p>
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </TabPane>
-
-            <TabPane tab="Lịch trình" key="4">
-              <List
-                dataSource={service.schedule}
-                renderItem={(item) => (
-                  <List.Item>
-                    <strong>{item.day}:</strong> {item.activity}
-                  </List.Item>
-                )}
-              />
-            </TabPane>
-
-            <TabPane tab="FAQ" key="5">
-              <List
-                dataSource={service.faqs}
-                renderItem={(faq) => (
-                  <List.Item>
-                    <strong>{faq.question}</strong>
-                    <p>{faq.answer}</p>
-                  </List.Item>
-                )}
-              />
-            </TabPane>
-
-            <TabPane tab="Đánh giá" key="6">
-              <List
-                dataSource={service.reviews}
-                renderItem={(review) => (
-                  <List.Item>
-                    <div style={{ width: '100%' }}>
-                      <strong>{review.patient}</strong>
-                      <Rate disabled value={review.rating} />
-                      <p>{review.comment}</p>
+        {/* Phần header hiển thị thông tin cơ bản của dịch vụ */}
+        <Card className="header-card">
+          <Row gutter={24}>
+            <Col xs={24} md={10}>
+              <div className="service-image">
+                <img src={service.image} alt={service.name} />
+              </div>
+            </Col>
+            
+            <Col xs={24} md={14}>
+              <div className="service-intro">
+                <Title level={2}>{service.name}</Title>
+                
+                <div className="service-stats">
+                  <div className="stat-item">
+                    <Rate disabled defaultValue={4.5} allowHalf />
+                    <span className="rating-count">(120 đánh giá)</span>
+                  </div>
+                  
+                  <div className="stat-item">
+                    <UserOutlined />
+                    <span>2000+ khách hàng đã sử dụng</span>
+                  </div>
+                </div>
+                
+                <Paragraph className="service-description">
+                  {service.detailedDescription}
+                </Paragraph>
+                
+                <Row className="service-highlights">
+                  <Col span={12}>
+                    <div className="highlight-item">
+                      <CheckCircleOutlined className="highlight-icon" />
+                      <span>Chuyên gia hàng đầu</span>
                     </div>
-                  </List.Item>
-                )}
-              />
+                    <div className="highlight-item">
+                      <CheckCircleOutlined className="highlight-icon" />
+                      <span>Thiết bị hiện đại</span>
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div className="highlight-item">
+                      <CheckCircleOutlined className="highlight-icon" />
+                      <span>Tỷ lệ thành công cao</span>
+                    </div>
+                    <div className="highlight-item">
+                      <CheckCircleOutlined className="highlight-icon" />
+                      <span>Hỗ trợ trọn gói</span>
+                    </div>
+                  </Col>
+                </Row>
+                
+                <Button 
+                  type="primary" 
+                  size="large" 
+                  className="register-button"
+                  onClick={handleRegisterService}
+                >
+                  Đăng ký dịch vụ
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        </Card>
+        
+        {/* Tabs hiển thị các thông tin chi tiết */}
+        <Card className="detail-card">
+          <Tabs defaultActiveKey="details">
+            <TabPane tab="Chi tiết dịch vụ" key="details">
+              <div className="service-details">
+                <Title level={4}>Mô tả chi tiết</Title>
+                <Paragraph>
+                  {service.detailedDescription}
+                </Paragraph>
+                
+                <Title level={4}>Quy trình điều trị</Title>
+                <div className="treatment-process">
+                  <div className="process-step">
+                    <div className="step-number">1</div>
+                    <div className="step-content">
+                      <Title level={5}>Thăm khám và tư vấn</Title>
+                      <Paragraph>
+                        Bác sĩ thăm khám và tư vấn để xác định nguyên nhân hiếm muộn.
+                      </Paragraph>
+                    </div>
+                  </div>
+                  
+                  <div className="process-step">
+                    <div className="step-number">2</div>
+                    <div className="step-content">
+                      <Title level={5}>Kích thích buồng trứng</Title>
+                      <Paragraph>
+                        Sử dụng các loại thuốc để kích thích buồng trứng sản xuất nhiều trứng.
+                      </Paragraph>
+                    </div>
+                  </div>
+                  
+                  <div className="process-step">
+                    <div className="step-number">3</div>
+                    <div className="step-content">
+                      <Title level={5}>Thu nhận trứng</Title>
+                      <Paragraph>
+                        Tiến hành thủ thuật để thu nhận trứng khi trứng đã trưởng thành.
+                      </Paragraph>
+                    </div>
+                  </div>
+                  
+                  <div className="process-step">
+                    <div className="step-number">4</div>
+                    <div className="step-content">
+                      <Title level={5}>Thụ tinh trong phòng thí nghiệm</Title>
+                      <Paragraph>
+                        Trứng được thụ tinh với tinh trùng trong điều kiện phòng thí nghiệm.
+                      </Paragraph>
+                    </div>
+                  </div>
+                  
+                  <div className="process-step">
+                    <div className="step-number">5</div>
+                    <div className="step-content">
+                      <Title level={5}>Chuyển phôi</Title>
+                      <Paragraph>
+                        Phôi được chuyển vào tử cung của người phụ nữ.
+                      </Paragraph>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabPane>
+            
+            <TabPane tab="Đội ngũ chuyên gia" key="experts">
+              <div className="service-doctors">
+                <Title level={4}>Bác sĩ chuyên khoa</Title>
+                <Row gutter={[24, 24]}>
+                  {service.doctors && service.doctors.map(doctor => (
+                    <Col xs={24} sm={12} md={8} key={doctor.id}>
+                      <Card 
+                        className="doctor-card" 
+                        hoverable 
+                        cover={
+                          <div className="doctor-image-container">
+                            <img 
+                              alt={doctor.name}
+                              src={doctor.photo} 
+                              className="doctor-photo"
+                            />
+                          </div>
+                        }
+                      >
+                        <div className="doctor-info">
+                          <Title level={4}>{doctor.name}</Title>
+                          <Tag color="blue">{doctor.specialty}</Tag>
+                          <div className="doctor-experience">
+                            <Text type="secondary">{doctor.experience}</Text>
+                          </div>
+                        </div>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
+            </TabPane>
+            
+            <TabPane tab="Câu hỏi thường gặp" key="faq">
+              <div className="service-faq">
+                <Title level={4}>Những câu hỏi thường gặp</Title>
+                <List
+                  itemLayout="vertical"
+                  dataSource={[
+                    {
+                      question: "Tỷ lệ thành công của phương pháp này là bao nhiêu?",
+                      answer: "Tỷ lệ thành công của phương pháp này phụ thuộc vào nhiều yếu tố như tuổi, nguyên nhân vô sinh và sức khỏe tổng thể. Tỷ lệ thành công trung bình dao động từ 30-60% sau một chu kỳ điều trị."
+                    },
+                    {
+                      question: "Chi phí điều trị thường là bao nhiêu?",
+                      answer: "Chi phí điều trị dao động tùy thuộc vào phương pháp và nhu cầu cá nhân của từng cặp đôi. Trung tâm sẽ tư vấn chi tiết về chi phí sau khi thăm khám và đánh giá."
+                    },
+                    {
+                      question: "Liệu phương pháp này có đau không?",
+                      answer: "Hầu hết các thủ thuật được thực hiện dưới sự hỗ trợ của thuốc giảm đau hoặc gây tê nhẹ. Bệnh nhân có thể cảm thấy hơi khó chịu sau thủ thuật nhưng không gây đau đáng kể."
+                    },
+                  ]}
+                  renderItem={item => (
+                    <List.Item>
+                      <div className="faq-item">
+                        <Title level={5} className="faq-question">
+                          <ReadOutlined /> {item.question}
+                        </Title>
+                        <Paragraph className="faq-answer">{item.answer}</Paragraph>
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              </div>
             </TabPane>
           </Tabs>
         </Card>
-
-        {/* Nút hành động */}
-        <div className="cta-section">
-          <Button type="primary" href={`/register/${serviceId}`} size="large" block>
-            Đăng ký dịch vụ
-          </Button>
-        </div>
+        
+        {/* Call to action */}
+        <Card className="cta-card">
+          <div className="cta-content">
+            <Title level={3}>Bạn còn thắc mắc về dịch vụ này?</Title>
+            <Paragraph>
+              Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng giải đáp mọi thắc mắc và tư vấn chi tiết về dịch vụ.
+              Liên hệ ngay để được hỗ trợ tốt nhất.
+            </Paragraph>
+            <Button 
+              type="primary" 
+              size="large"
+              onClick={handleRegisterService}
+            >
+              Đăng ký dịch vụ ngay
+            </Button>
+          </div>
+        </Card>
       </div>
     </MainLayout>
   );

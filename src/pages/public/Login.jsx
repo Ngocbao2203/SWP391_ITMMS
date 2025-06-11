@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Typography, message, Divider, Row, Col } from "antd";
-import { UserOutlined, LockOutlined, MedicineBoxOutlined } from "@ant-design/icons";
+import { UserOutlined, LockOutlined, MedicineBoxOutlined, HomeOutlined } from "@ant-design/icons";
 import "../../styles/Login.css";
 import { Link } from "react-router-dom";
 
@@ -27,11 +27,13 @@ const Login = () => {
             <p>Đồng hành cùng bạn trên hành trình làm cha mẹ</p>
           </div>
         </div>
-        
-        <div className="medical-login-right">
+          <div className="medical-login-right">          <div className="home-icon-container">
+            <Link to="/">
+              <HomeOutlined className="home-icon" />
+            </Link>
+          </div>
           <Title level={2}>Đăng nhập</Title>
           <p className="login-subtitle">Vui lòng đăng nhập để tiếp tục</p>
-          
           <Form name="login" onFinish={onFinish} layout="vertical" size="large" className="medical-login-form">
             <Form.Item
               name="email"

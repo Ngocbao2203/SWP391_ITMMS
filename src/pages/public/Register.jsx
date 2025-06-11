@@ -1,121 +1,187 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Typography, message } from 'antd';
+import { Form, Input, Button, Typography, message, Row, Col } from 'antd';
 import { 
   LockOutlined, 
   MailOutlined, 
   MedicineBoxOutlined, 
-  HeartOutlined 
+  UserOutlined,
+  PhoneOutlined,
+  HomeOutlined
 } from "@ant-design/icons";
 import '../../styles/Register.css';
 import { Link } from 'react-router-dom';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const Register = ({ onRegister }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-
+  
   const onFinish = (values) => {
     setLoading(true);
-    // Simulate registration
+    console.log('Submitted registration data:', values);
+    
+    // Simulation for registration success
     setTimeout(() => {
       setLoading(false);
       message.success('Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.');
       window.location.href = '/login';
-    }, 1000);
+    }, 1500);
   };
 
-  return (    <div className="medical-register-container">
+  return (
+    <div className="medical-register-container">
       <div className="medical-register-card">
         <div className="medical-register-left">
           <div className="register-banner">
             <MedicineBoxOutlined className="medical-banner-icon" />
-            <h2>Phần mềm quản lý và theo dõi<br />điều trị hiếm muộn</h2>
+            <h2>Phần mềm quản lý và theo dõi<br />điều trị hiếm muộn</h2>
             <p>Đồng hành cùng bạn trên hành trình làm cha mẹ</p>
           </div>
         </div>
         
-        <div className="medical-register-right">
-          <div className="medical-register-logo">
-            <div className="logo-icon-container">
-              <HeartOutlined className="logo-icon" />
-              <h3 className="logo-text">ITMMS</h3>
-            </div>
+        <div className="medical-register-right">          <div className="home-icon-container">
+            <Link to="/">
+              <HomeOutlined className="home-icon" />
+            </Link>
           </div>
-          <Title level={2}>Đăng ký tài khoản</Title>
-          <p className="register-subtitle">Vui lòng điền đầy đủ thông tin để đăng ký</p>
-            <Form 
+          
+          <Title level={2} className="register-title">Đăng Ký Tài Khoản</Title>
+          <p className="register-subtitle">Điền thông tin cá nhân của bạn để bắt đầu</p>
+          
+          <Form 
             form={form}
             name="medical_register" 
             onFinish={onFinish} 
             layout="vertical"
             size="large"
             className="medical-register-form"
-          >
+            scrollToFirstError
+          >            <Row gutter={16}>
+              <Col span={24}>
+                <Form.Item
+                  name="fullName"
+                  label="Họ và tên"
+                  required
+                  rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
+                >
+                  <Input 
+                    prefix={<UserOutlined className="register-icon" />} 
+                    placeholder="Họ và tên đầy đủ" 
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  name="email"
+                  label="Email"
+                  required
+                  rules={[
+                    { required: true, message: "Vui lòng nhập email!" }, 
+                    { type: 'email', message: "Email không hợp lệ!" }
+                  ]}
+                >
+                  <Input 
+                    prefix={<MailOutlined className="register-icon" />} 
+                    placeholder="Email" 
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  name="phoneNumber"
+                  label="Số điện thoại"
+                  required
+                  rules={[
+                    { required: true, message: "Vui lòng nhập số điện thoại!" },
+                    { pattern: /^[0-9]{10}$/, message: "Số điện thoại không hợp lệ!" }
+                  ]}
+                >
+                  <Input 
+                    prefix={<PhoneOutlined className="register-icon" />} 
+                    placeholder="Số điện thoại" 
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            
             <Form.Item
-              name="email"
-              rules={[
-                { required: true, message: "Vui lòng nhập email!" }, 
-                { type: 'email', message: "Email không hợp lệ!" }
-              ]}
+              name="address"
+              label="Địa chỉ"
+              required
+              rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
             >
               <Input 
-                prefix={<MailOutlined className="site-form-item-icon" />} 
-                placeholder="Email" 
+                prefix={<HomeOutlined className="register-icon" />} 
+                placeholder="Địa chỉ liên hệ" 
               />
             </Form.Item>
             
-            <Form.Item
-              name="password"
-              rules={[
-                { required: true, message: "Vui lòng nhập mật khẩu!" },
-                { min: 8, message: "Mật khẩu phải có ít nhất 8 ký tự!" }
-              ]}
-            >
-              <Input.Password 
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                placeholder="Mật khẩu" 
-              />
-            </Form.Item>
-            
-            <Form.Item
-              name="confirmPassword"
-              dependencies={["password"]}
-              rules={[
-                { required: true, message: "Vui lòng xác nhận mật khẩu!" },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue('password') === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
-                  },
-                }),
-              ]}
-            >
-              <Input.Password 
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                placeholder="Xác nhận mật khẩu" 
-              />
-            </Form.Item>
+            <Row gutter={16}>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  name="password"
+                  label="Mật khẩu"
+                  required
+                  rules={[
+                    { required: true, message: "Vui lòng nhập mật khẩu!" },
+                    { min: 8, message: "Mật khẩu phải có ít nhất 8 ký tự!" }
+                  ]}
+                >
+                  <Input.Password 
+                    prefix={<LockOutlined className="register-icon" />}
+                    placeholder="Mật khẩu" 
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  name="confirmPassword"
+                  label="Xác nhận mật khẩu"
+                  required
+                  dependencies={["password"]}
+                  rules={[
+                    { required: true, message: "Vui lòng xác nhận mật khẩu!" },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue('password') === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
+                      },
+                    }),
+                  ]}
+                >
+                  <Input.Password 
+                    prefix={<LockOutlined className="register-icon" />}
+                    placeholder="Xác nhận mật khẩu" 
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
             
             <Form.Item>
               <Button 
                 type="primary" 
                 htmlType="submit" 
                 loading={loading} 
-                block                className="medical-register-button"
+                block                
+                className="medical-register-button"
               >
-                Đăng ký
+                Đăng ký ngay
               </Button>
             </Form.Item>
-              <div className="login-prompt">
-              <p>Đã có tài khoản? <Link to="/login">Đăng nhập</Link></p>
+            
+            <div className="login-prompt">
+              <Text>Đã có tài khoản? <Link to="/login">Đăng nhập</Link></Text>
             </div>
           </Form>
           
           <div className="register-footer">
-            <p>© 2025 Phần mềm quản lý và theo dõi điều trị hiếm muộn. All rights reserved.</p>
+            <p>© 2025 Phần mềm quản lý và theo dõi điều trị hiếm muộn. All rights reserved.</p>
           </div>
         </div>
       </div>

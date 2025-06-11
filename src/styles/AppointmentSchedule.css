@@ -1,0 +1,110 @@
+
+.appointment-schedule-container {
+  padding: 20px;
+  background-color: #fff;
+}
+
+.appointment-schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.appointment-schedule-header h2 {
+  margin: 0;
+  color: #1890ff;
+}
+
+.appointment-tabs {
+  background-color: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.appointment-badge {
+  width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.events li {
+  margin-bottom: 4px;
+}
+
+.daily-appointments {
+  margin-top: 20px;
+}
+
+.appointment-details {
+  padding: 10px 0;
+}
+
+.details-card {
+  margin-bottom: 16px;
+}
+
+.appointment-summary {
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.medical-history-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+/* Calendar customizations */
+.ant-picker-calendar-full .ant-picker-panel {
+  border-top: 1px solid #f0f0f0;
+}
+
+.ant-picker-calendar-date-content {
+  height: 70px;
+  overflow-y: auto;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .appointment-schedule-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .appointment-schedule-header h2 {
+    margin-bottom: 16px;
+  }
+
+  .calendar-container {
+    flex-direction: column;
+  }
+
+  .ant-picker-calendar-date-content {
+    height: 50px;
+  }
+}

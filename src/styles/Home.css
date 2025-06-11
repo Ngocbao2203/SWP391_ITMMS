@@ -55,11 +55,6 @@
 }
 
 /* Section Styling */
-.section {
-  padding: 60px 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
 
 .section h3 {
   text-align: center;
@@ -81,65 +76,223 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 2px;
 }
-
-/* Service Cards */
-.services-section {
-  background: #f8f9fa;
+/* Container chính cho carousel */
+.gratitude-carousel {
+  background: linear-gradient(135deg, #e8f4f8 0%, #d1e7dd 100%);
+  padding: 60px 20px;
+  position: relative;
 }
 
-.service-card {
-  border-radius: 12px !important;
-  border: 1px solid #e9ecef !important;
-  transition: all 0.3s ease;
-  height: 100%;
-  overflow: hidden;
+/* Custom arrows cho carousel */
+.gratitude-carousel .slick-arrow {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
-.service-card:hover {
+.gratitude-carousel .slick-arrow:before {
+  font-size: 18px;
+  color: #6c757d;
+  font-weight: bold;
+}
+
+.gratitude-carousel .slick-prev {
+  left: 30px;
+}
+
+.gratitude-carousel .slick-next {
+  right: 30px;
+}
+
+/* Title section */
+.gratitude-carousel::before {
+  content: "GÓC TRI ÂN";
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-weight: bold;
+  color: #2c3e50;
+  letter-spacing: 2px;
+}
+
+.gratitude-carousel::after {
+  content: "";
+  position: absolute;
+  top: 55px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: #3498db;
+}
+
+/* Slide container */
+.gratitude-slide {
+  padding: 0 15px;
+}
+
+/* Main content block */
+.gratitude-block {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 40px 35px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gratitude-block:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
-  border-color: #667eea !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
-.service-card .ant-card-cover img {
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+/* Quote mark styling */
+.quote-mark {
+  font-size: 60px;
+  color: #3498db;
+  font-family: "Times New Roman", serif;
+  line-height: 1;
+  margin-bottom: 15px;
+  opacity: 0.7;
 }
 
-.service-card:hover .ant-card-cover img {
-  transform: scale(1.05);
+/* Main testimonial text */
+.gratitude-text {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #555;
+  margin-bottom: 20px;
+  font-style: italic;
+  text-align: justify;
 }
 
-.service-icon {
-  font-size: 2rem;
-  text-align: center;
-  margin: 15px 0;
+/* Detail link */
+.gratitude-detail {
+  color: #3498db;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 25px;
+  display: inline-block;
+  transition: color 0.3s ease;
 }
 
-.service-card h4 {
-  color: #2c3e50 !important;
-  font-weight: 600 !important;
-  margin-bottom: 12px !important;
+.gratitude-detail:hover {
+  color: #2980b9;
+  text-decoration: underline;
 }
 
-.service-card p {
-  color: #6c757d !important;
-  margin-bottom: 20px !important;
+/* Author section */
+.gratitude-author {
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+  margin-top: 20px;
 }
 
-/* Form Elements - Button Styling */
-/* .ant-btn {
-  border-radius: 8px !important;
-  font-weight: 500 !important;
-  transition: all 0.3s ease !important;
-  border: none !important;
-  padding: 8px 20px !important;
-  height: auto !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-} */
+.gratitude-author strong {
+  font-size: 18px;
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.gratitude-author div {
+  font-size: 14px;
+  color: #7f8c8d;
+  font-weight: 400;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .gratitude-carousel {
+    padding: 40px 15px;
+  }
+  
+  .gratitude-block {
+    padding: 30px 25px;
+  }
+  
+  .gratitude-carousel .slick-arrow {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .gratitude-carousel .slick-prev {
+    left: 15px;
+  }
+  
+  .gratitude-carousel .slick-next {
+    right: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gratitude-carousel::before {
+    font-size: 24px;
+  }
+  
+  .gratitude-block {
+    padding: 25px 20px;
+    margin: 0 10px;
+  }
+  
+  .quote-mark {
+    font-size: 50px;
+  }
+  
+  .gratitude-text {
+    font-size: 15px;
+  }
+  
+  .gratitude-carousel .slick-arrow {
+    display: none !important;
+  }
+}
+
+/* Custom slick track spacing */
+.gratitude-carousel .slick-track {
+  display: flex;
+  align-items: center;
+}
+
+.gratitude-carousel .slick-slide {
+  height: auto;
+}
+
+.gratitude-carousel .slick-slide > div {
+  height: 100%;
+}
+
+/* Animation cho slide active */
+.gratitude-carousel .slick-slide.slick-active .gratitude-block {
+  animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 .ant-btn-primary {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
@@ -163,222 +316,442 @@
   text-decoration: underline !important;
 }
 
-/* Why Choose Us Section */
-.why-us-section {
-  background: white;
+.why-my-clinic {
+  padding: 60px 0;
 }
 
-.why-us-box {
-  text-align: center;
-  padding: 30px 20px !important;
-  border-radius: 12px !important;
-  transition: all 0.3s ease;
-  height: 100%;
-  background: #f8f9fa;
+.clinic-hero-image {
+  width: 100%;
+  max-width: 380px;
+  display: block;
+  margin: 0 auto;
 }
 
-.why-us-box:hover {
-  background: white;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
-  transform: translateY(-3px);
+.clinic-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.why-icon {
-  font-size: 3rem;
-  margin-bottom: 15px;
+.clinic-icon {
+  font-size: 30px;
+  color: #1890ff;
+  margin-bottom: 12px;
 }
 
-.why-us-box h5 {
-  color: #2c3e50 !important;
-  font-weight: 600 !important;
-  margin-bottom: 12px !important;
-}
-
-.why-us-box p {
-  color: #6c757d !important;
-  line-height: 1.6;
-}
-
-/* Doctors Section */
+/* Container chính cho section */
 .doctors-section {
-  background: #f8f9fa;
-  text-align: center;
+  padding: 60px 0;
+  background: #f8fafc;
+  position: relative;
+  overflow: hidden;
 }
 
-.doctors-carousel .slick-slide {
+/* Tiêu đề */
+.doctors-section .ant-typography h3 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 50px;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.doctors-section .ant-typography h3::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: #4a5568;
+  border-radius: 2px;
+}
+
+/* Carousel container */
+.doctors-section .ant-carousel {
+  position: relative;
+  z-index: 1;
+}
+
+.doctors-section .ant-carousel .slick-slide {
   padding: 0 15px;
 }
 
-.doctor-card {
+/* Card profile bác sĩ */
+.doctor-profile {
   background: white;
   border-radius: 12px;
   padding: 30px 20px;
-  margin: 0 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
 }
 
-.doctor-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+.doctor-profile:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.doctor-photo {
+/* Ảnh bác sĩ */
+.doctor-img {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  margin: 0 auto 20px;
-  display: block;
-  border: 4px solid #f8f9fa;
+  margin: 0 auto 25px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.doctor-card h5 {
-  color: #2c3e50 !important;
-  font-weight: 600 !important;
-  margin-bottom: 8px !important;
+/* Thông tin bác sĩ */
+.doctor-info {
+  position: relative;
 }
 
-.doctor-card p {
-  color: #667eea !important;
-  font-weight: 500 !important;
+.doctor-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 8px;
 }
 
-.see-more-btn {
-  margin-top: 30px;
-  display: block;
-  text-align: center;
+.doctor-title {
+  font-size: 1rem;
+  color: #718096;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
-/* Testimonials Section */
-.testimonials-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  text-align: center;
-}
-
-.testimonials-section h3 {
-  color: white !important;
-}
-
-.testimonials-section h3::after {
+/* Custom navigation arrows */
+.doctors-section .ant-carousel .slick-prev,
+.doctors-section .ant-carousel .slick-next {
+  width: 40px;
+  height: 40px;
   background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+  border: 1px solid #e2e8f0;
 }
 
-.testimonials-carousel {
-  max-width: 800px;
-  margin: 0 auto;
+.doctors-section .ant-carousel .slick-prev {
+  left: -10px;
 }
 
-.testimonials-carousel .slick-slide {
-  padding: 0 20px;
+.doctors-section .ant-carousel .slick-next {
+  right: -10px;
 }
 
-.testimonial-item {
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.doctors-section .ant-carousel .slick-prev:before,
+.doctors-section .ant-carousel .slick-next:before {
+  color: #4a5568;
+  font-size: 16px;
 }
 
-.testimonial-item p:first-child {
-  font-size: 1.2rem !important;
-  font-style: italic;
-  margin-bottom: 20px !important;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.95) !important;
-  text-align: center;
+/* Responsive */
+@media (max-width: 1024px) {
+  .doctors-section {
+    padding: 40px 0;
+  }
+  
+  .doctors-section .ant-typography h3 {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+  
+  .doctor-profile {
+    padding: 25px 15px;
+  }
+  
+  .doctor-img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+  }
 }
 
-.testimonial-item p:last-child {
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8) !important;
-  text-align: center;
+@media (max-width: 768px) {
+  .doctors-section .ant-typography h3 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+  }
+  
+  .doctor-profile {
+    margin: 0 10px;
+    padding: 20px 15px;
+  }
+  
+  .doctor-img {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 15px;
+  }
+  
+  .doctor-name {
+    font-size: 1.1rem;
+  }
+  
+  .doctor-title {
+    font-size: 0.9rem;
+  }
+  
+  .doctors-section .ant-carousel .slick-prev,
+  .doctors-section .ant-carousel .slick-next {
+    display: none !important;
+  }
 }
 
-/* Articles Section */
+/* Animation cho loading */
+.doctor-profile {
+  opacity: 1;
+}
+
+/* Section chính */
 .articles-section {
-  background: white;
+  padding: 80px 0;
+  background: linear-gradient(135deg, #f8fdff 0%, #f0f8ff 100%);
+  position: relative;
 }
 
+.articles-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e3f2fd, transparent);
+}
+
+/* Title section */
+.articles-section .ant-typography-h3 {
+  text-align: center;
+  color: #1a365d;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 50px;
+  position: relative;
+  letter-spacing: -0.5px;
+}
+
+.articles-section .ant-typography-h3::after {
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+  border-radius: 2px;
+}
+
+/* Card styling */
 .articles-section .ant-card {
-  border-radius: 12px !important;
-  border: 1px solid #e9ecef !important;
-  transition: all 0.3s ease;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   height: 100%;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+  background: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .articles-section .ant-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
-  border-color: #667eea !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.articles-section .ant-card-head {
+  border-bottom: none;
+  padding: 20px 24px 16px;
+  background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
+}
+
+.articles-section .ant-card-head-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a365d;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Cover image */
+.articles-section .ant-card-cover {
+  position: relative;
+  overflow: hidden;
 }
 
 .articles-section .ant-card-cover img {
-  height: 200px;
+  height: 220px;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
 
 .articles-section .ant-card:hover .ant-card-cover img {
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
-.articles-section .ant-card-head {
-  border-bottom: 1px solid #f0f0f0 !important;
+.articles-section .ant-card-cover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.02) 100%);
+  pointer-events: none;
 }
 
-.articles-section .ant-card-head-title {
-  color: #2c3e50 !important;
-  font-weight: 600 !important;
+/* Card body */
+.articles-section .ant-card-body {
+  padding: 24px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.articles-section .ant-card-body p {
-  color: #6c757d !important;
-  margin-bottom: 15px !important;
+/* Summary paragraph */
+.articles-section .ant-typography {
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-weight: 400;
 }
 
-/* CTA Section */
-.cta-section {
-  background: #f8f9fa;
+/* Read more button */
+.articles-section .ant-btn-link {
+  padding: 8px 0;
+  height: auto;
+  color: #3b82f6;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.articles-section .ant-btn-link::after {
+  content: "→";
+  margin-left: 6px;
+  transition: transform 0.2s ease;
+}
+
+.articles-section .ant-btn-link:hover {
+  color: #2563eb;
+}
+
+.articles-section .ant-btn-link:hover::after {
+  transform: translateX(2px);
+}
+
+/* See more button container */
+.articles-section .see-more-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 32px;
+  height: auto;
+  font-size: 16px;
   text-align: center;
+  border-radius: 50px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+.articles-section > a:last-child {
+  display: flex;
+  justify-content: center;
 }
 
-.cta-box {
-  max-width: 600px;
-  margin: 0 auto;
-  border-radius: 16px !important;
-  border: 1px solid #e9ecef !important;
-  background: white !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08) !important;
-  padding: 40px 30px !important;
+.articles-section .see-more-btn:hover {
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
-.cta-box h4 {
-  color: #2c3e50 !important;
-  font-weight: 700 !important;
-  margin-bottom: 15px !important;
+.articles-section .see-more-btn::after {
+  content: "→";
+  margin-left: 8px;
+  transition: transform 0.2s ease;
 }
 
-.cta-box p {
-  color: #6c757d !important;
-  margin-bottom: 25px !important;
-  font-size: 1.1rem;
+.articles-section .see-more-btn:hover::after {
+  transform: translateX(2px);
 }
 
-.cta-box .ant-btn {
-  font-size: 1.1rem !important;
-  padding: 12px 30px !important;
-  height: auto !important;
+/* Row spacing */
+.articles-section .ant-row {
+  margin-bottom: 30px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .articles-section {
+    padding: 60px 0;
+  }
+  
+  .articles-section .ant-typography-h3 {
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+  
+  .articles-section .ant-card-cover img {
+    height: 200px;
+  }
+  
+  .articles-section .ant-card-body {
+    padding: 20px;
+  }
+  
+  .articles-section .see-more-btn {
+    margin-top: 40px;
+    padding: 10px 28px;
+  }
+}
+
+@media (max-width: 576px) {
+  .articles-section {
+    padding: 50px 0;
+  }
+  
+  .articles-section .ant-typography-h3 {
+    font-size: 24px;
+  }
+  
+  .articles-section .ant-card-cover img {
+    height: 180px;
+  }
+  
+  .articles-section .ant-card-head {
+    padding: 16px 20px 12px;
+  }
+  
+  .articles-section .ant-card-head-title {
+    font-size: 16px;
+  }
+  
+  .articles-section .ant-typography {
+    font-size: 14px;
+  }
+  
+  .articles-section .ant-card-body {
+    padding: 18px;
+  }
 }
 
 /* Labels */
-.ant-form-item-label > label {
+.ant-form-item-label>label {
   color: #2c3e50 !important;
   font-weight: 500 !important;
   font-size: 1rem !important;
@@ -407,47 +780,43 @@
   .banner-title {
     font-size: 1.8rem !important;
   }
-  
+
   .home-subtext {
     font-size: 1rem !important;
   }
-  
+
   .section {
     padding: 40px 15px;
   }
-  
+
   .section h3 {
     font-size: 1.5rem !important;
     margin-bottom: 30px !important;
   }
-  
+
   .service-card,
   .why-us-box,
   .doctor-card {
     margin-bottom: 20px;
   }
-  
+
   .testimonial-item {
     padding: 30px 15px;
   }
-  
+
   .testimonial-item p:first-child {
     font-size: 1rem !important;
   }
-  
-  .cta-box {
-    padding: 30px 20px !important;
-    margin: 0 15px;
-  }
-  
+
+
   .banner-section {
     height: 400px;
   }
-  
+
   .doctors-carousel .slick-slide {
     padding: 0 5px;
   }
-  
+
   .testimonials-carousel .slick-slide {
     padding: 0 15px;
   }
@@ -457,34 +826,34 @@
   .banner-title {
     font-size: 1.5rem !important;
   }
-  
+
   .section {
     padding: 30px 10px;
   }
-  
+
   .section h3 {
     font-size: 1.3rem !important;
   }
-  
+
   .service-card .ant-card-cover img,
   .articles-section .ant-card-cover img {
     height: 150px;
   }
-  
+
   .doctor-photo {
     width: 100px;
     height: 100px;
   }
-  
+
   .cta-box .ant-btn {
     width: 100%;
     font-size: 1rem !important;
   }
-  
+
   .why-us-box {
     padding: 20px 15px !important;
   }
-  
+
   .doctor-card {
     padding: 20px 15px;
   }
@@ -512,6 +881,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -562,7 +932,7 @@ html {
 
 .blog-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
