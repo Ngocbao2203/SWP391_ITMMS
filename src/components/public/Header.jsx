@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Menu, Dropdown, Avatar } from "antd";
+import { Layout, Menu, Dropdown, Avatar, Space } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import {
   HomeOutlined,
@@ -8,22 +8,35 @@ import {
   TeamOutlined,
   UserOutlined,
   LoginOutlined,
+  SettingOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
-// import logo from '../../assets/logo192.png';
 import "../../styles/Header.css";
 
 const { Header: AntHeader } = Layout;
 
 const Header = ({ user, onLogout }) => {
   const location = useLocation();
-
   const userMenu = (
     <Menu>
-      <Menu.Item key="profile">
-        <Link to="/profile">Profile</Link>
+      <Menu.Item key="profile" icon={<UserOutlined />}>
+        <Link to="/profile">Hồ sơ cá nhân</Link>
       </Menu.Item>
-      <Menu.Item key="logout" onClick={onLogout} icon={<LoginOutlined />}>
-        Logout
+      <Menu.Item key="appointments" icon={<AppstoreOutlined />}>
+        <Link to="/bookappointment">Lịch hẹn</Link>
+      </Menu.Item>
+      <Menu.Item key="treatment" icon={<TeamOutlined />}>
+        <Link to="/profile">Tiến trình điều trị</Link>
+      </Menu.Item>
+      <Menu.Item key="medical-records" icon={<ReadOutlined />}>
+        <Link to="/profile">Hồ sơ y tế</Link>
+      </Menu.Item>
+      <Menu.Item key="settings" icon={<SettingOutlined />}>
+        <Link to="/profile">Cài đặt tài khoản</Link>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="logout" onClick={onLogout} icon={<LogoutOutlined />}>
+        Đăng xuất
       </Menu.Item>
     </Menu>
   );
@@ -31,8 +44,9 @@ const Header = ({ user, onLogout }) => {
   return (
     <AntHeader className="app-header">
       <div className="logo-section">
-        {/* <img src={logo} alt="Clinic Logo" className="logo-img" /> */}
-        <span className="clinic-name">My Clinic</span>
+        <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>
+          <span className="clinic-name">IVF Clinic</span>
+        </Link>
       </div>
       <Menu
         theme="dark"
@@ -41,34 +55,38 @@ const Header = ({ user, onLogout }) => {
         className="nav-menu"
       >
         <Menu.Item key="/" icon={<HomeOutlined />}>
-          <Link to="/">Home</Link>
+          <Link to="/">Trang chủ</Link>
         </Menu.Item>
         <Menu.Item key="/userservice" icon={<AppstoreOutlined />}>
-          <Link to="/userservice">Services</Link>
+          <Link to="/userservice">Dịch vụ</Link>
         </Menu.Item>
-        <Menu.Item key="/profile" icon={<ReadOutlined />}>
-          <Link to="/profile">Articles</Link>
+        <Menu.Item key="/blog" icon={<ReadOutlined />}>
+          <Link to="/blog">Bài viết</Link>
         </Menu.Item>
         <Menu.Item key="/doctors" icon={<TeamOutlined />}>
-          <Link to="/doctors">Doctors</Link>
+          <Link to="/doctors">Bác sĩ</Link>
         </Menu.Item>
 
-        {user?.username ? (
+        {user ? (
           <Menu.Item key="user" className="user-menu">
-            <Dropdown overlay={userMenu} placement="bottomRight">
-              <span>
-                <Avatar icon={<UserOutlined />} style={{ marginRight: 8 }} />
-                {user.username}
-              </span>
+            <Dropdown overlay={userMenu} placement="bottomRight" trigger={['click']}>
+              <Space className="avatar-dropdown" style={{ cursor: 'pointer' }}>
+                <Avatar 
+                  src={user.avatar || null} 
+                  icon={!user.avatar && <UserOutlined />} 
+                  style={{ marginRight: 8 }} 
+                />
+                <span className="user-name">{user.firstName} {user.lastName}</span>
+              </Space>
             </Dropdown>
           </Menu.Item>
         ) : (
           <>
             <Menu.Item key="/login">
-              <Link to="/login">Login</Link>
+              <Link to="/login">Đăng nhập</Link>
             </Menu.Item>
             <Menu.Item key="/register">
-              <Link to="/register">Register</Link>
+              <Link to="/register">Đăng ký</Link>
             </Menu.Item>
           </>
         )}

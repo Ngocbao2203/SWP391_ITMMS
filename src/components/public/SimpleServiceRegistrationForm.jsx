@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Form, Select, DatePicker, TimePicker, Button, Typography, Card, message, Divider, Row, Col, Skeleton, Result, Input } from "antd";
+import { Form, Select, DatePicker, Button, Typography, Card, message, Divider, Row, Col, Skeleton, Result, Input } from "antd";
 import { 
   CalendarOutlined,
-  ClockCircleOutlined,
   MedicineBoxOutlined,
   CheckCircleOutlined,
   InfoCircleOutlined,
@@ -13,7 +12,6 @@ import "../../styles/SimpleServiceRegistrationForm.css";
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
-const format = 'HH:mm';
 
 const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrationSuccess }) => {
   const [form] = Form.useForm();
@@ -29,14 +27,9 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
     const savedData = localStorage.getItem("simpleServiceRegistrationFormData");
     if (savedData) {
       const parsedData = JSON.parse(savedData);
-      
-      // Chuyển đổi ngày và giờ từ string sang dayjs object
+        // Chuyển đổi ngày từ string sang dayjs object
       if (parsedData.appointmentDate) {
         parsedData.appointmentDate = dayjs(parsedData.appointmentDate);
-      }
-      
-      if (parsedData.appointmentTime) {
-        parsedData.appointmentTime = dayjs(parsedData.appointmentTime, format);
       }
       
       setFormData(parsedData);
@@ -61,15 +54,10 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
   useEffect(() => {
     const handleBeforeUnload = () => {
       const currentFormValues = form.getFieldsValue();
-      
-      // Chuyển đổi các giá trị đặc biệt (như dayjs) sang định dạng có thể lưu trữ
+        // Chuyển đổi các giá trị đặc biệt (như dayjs) sang định dạng có thể lưu trữ
       const dataToSave = { ...currentFormValues };
       if (dataToSave.appointmentDate) {
         dataToSave.appointmentDate = dataToSave.appointmentDate.format('YYYY-MM-DD');
-      }
-      
-      if (dataToSave.appointmentTime) {
-        dataToSave.appointmentTime = dataToSave.appointmentTime.format(format);
       }
       
       localStorage.setItem("simpleServiceRegistrationFormData", JSON.stringify(dataToSave));
@@ -85,15 +73,10 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
   // Cập nhật formData khi người dùng nhập liệu
   const handleValuesChange = (changedValues, allValues) => {
     setFormData({ ...formData, ...changedValues });
-    
-    // Lưu vào localStorage khi người dùng thay đổi giá trị
+      // Lưu vào localStorage khi người dùng thay đổi giá trị
     const dataToSave = { ...allValues };
     if (dataToSave.appointmentDate) {
       dataToSave.appointmentDate = dataToSave.appointmentDate.format('YYYY-MM-DD');
-    }
-    
-    if (dataToSave.appointmentTime) {
-      dataToSave.appointmentTime = dataToSave.appointmentTime.format(format);
     }
     
     localStorage.setItem("simpleServiceRegistrationFormData", JSON.stringify(dataToSave));
@@ -133,7 +116,6 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
       const submissionData = {
         ...form.getFieldsValue(),
         appointmentDate: form.getFieldValue('appointmentDate')?.format('YYYY-MM-DD'),
-        appointmentTime: form.getFieldValue('appointmentTime')?.format(format),
       };
       
       // Gọi API (hoặc service giả lập)
@@ -215,8 +197,7 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
                   </div>
                 </div>
               </Col>
-              
-              <Col xs={24} sm={12}>
+                <Col xs={24} sm={24}>
                 <div className="info-item">
                   <CalendarOutlined className="info-icon" />
                   <div>
@@ -225,27 +206,12 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
                   </div>
                 </div>
               </Col>
-              
-              <Col xs={24} sm={12}>
-                <div className="info-item">
-                  <ClockCircleOutlined className="info-icon" />
-                  <div>
-                    <div className="info-label">Giờ hẹn</div>
-                    <div className="info-value">{registrationData.appointmentTime}</div>
-                  </div>
-                </div>
-              </Col>
             </Row>
             
             <Paragraph className="note">
               Trung tâm sẽ liên hệ với bạn trong vòng 24 giờ để xác nhận lịch hẹn. Nếu cần thay đổi thông tin hoặc có thắc mắc, vui lòng liên hệ hotline: <a href="tel:0123456789">0123 456 789</a>
             </Paragraph>
-            
-            <div className="success-actions">
-              <Button type="primary" onClick={handleRegisterAgain}>
-                Đăng ký dịch vụ khác
-              </Button>
-              
+              <div className="success-actions">
               <Button onClick={() => window.location.href = '/'}>
                 Quay về trang chủ
               </Button>
@@ -262,9 +228,8 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
         <div className="registration-header">
           <MedicineBoxOutlined className="registration-icon" />
           <div className="registration-title">
-            <Title level={4}>Đăng ký dịch vụ</Title>
-            <Text type="secondary">
-              Vui lòng chọn bác sĩ và ngày giờ hẹn phù hợp với lịch của bạn
+            <Title level={4}>Đăng ký dịch vụ</Title>            <Text type="secondary">
+              Vui lòng chọn bác sĩ và ngày hẹn phù hợp với lịch của bạn
             </Text>
           </div>
         </div>
@@ -354,14 +319,13 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
               <Input type="hidden" />
             </Form.Item>
           </div>
-          
-          <div className="form-section">
+            <div className="form-section">
             <Title level={5} className="section-title">
-              <CalendarOutlined /> Thông tin lịch hẹn
+              <CalendarOutlined /> Chọn ngày hẹn
             </Title>
             
             <Row gutter={24}>
-              <Col xs={24} md={12}>
+              <Col xs={24} md={24}>
                 <Form.Item
                   name="appointmentDate"
                   label="Ngày hẹn"
@@ -372,21 +336,6 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
                     placeholder="Chọn ngày"
                     style={{ width: '100%' }}
                     disabledDate={disabledDate}
-                  />
-                </Form.Item>
-              </Col>
-              
-              <Col xs={24} md={12}>
-                <Form.Item
-                  name="appointmentTime"
-                  label="Giờ hẹn"
-                  rules={[{ required: true, message: 'Vui lòng chọn giờ hẹn' }]}
-                >
-                  <TimePicker 
-                    format={format} 
-                    placeholder="Chọn giờ"
-                    minuteStep={30}
-                    style={{ width: '100%' }}
                   />
                 </Form.Item>
               </Col>
@@ -402,13 +351,10 @@ const SimpleServiceRegistrationForm = ({ service, visible, onClose, onRegistrati
               />
             </Form.Item>
           </div>
-          
-          <div className="form-actions">
-            {onClose && (
-              <Button onClick={onClose}>
-                Hủy bỏ
-              </Button>
-            )}
+            <div className="form-actions">
+            <Button onClick={() => window.location.href = '/userservice'}>
+              Quay lại
+            </Button>
             <Button 
               type="primary" 
               htmlType="submit"

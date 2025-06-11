@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Typography, message, Row, Col } from 'antd';
 import { 
   LockOutlined, 
@@ -9,24 +9,42 @@ import {
   HomeOutlined
 } from "@ant-design/icons";
 import '../../styles/Register.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import authService from '../../services/authService';
 
 const { Title, Text } = Typography;
 
-const Register = ({ onRegister }) => {
+const Register = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const navigate = useNavigate();
   
-  const onFinish = (values) => {
+  // Kiểm tra nếu người dùng đã đăng nhập
+  useEffect(() => {
+    const currentUser = authService.getCurrentUser();
+    if (currentUser) {
+      navigate('/');
+    }
+  }, [navigate]);
+  
+  const onFinish = async (values) => {
     setLoading(true);
-    console.log('Submitted registration data:', values);
-    
-    // Simulation for registration success
-    setTimeout(() => {
+    try {
+      // Xử lý đăng ký
+      const result = await authService.register(values);
+      
+      if (result.success) {
+        message.success('Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.');
+        navigate('/login');
+      } else {
+        message.error(result.message);
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      message.error('Có lỗi xảy ra khi đăng ký');
+    } finally {
       setLoading(false);
-      message.success('Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.');
-      window.location.href = '/login';
-    }, 1500);
+    }
   };
 
   return (
