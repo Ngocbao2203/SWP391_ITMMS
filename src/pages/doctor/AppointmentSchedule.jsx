@@ -72,7 +72,6 @@ const AppointmentSchedule = () => {
             patientPhone: "0901234567",
             patientEmail: "nguyenvana@email.com",
             date: "2025-06-02",
-            time: "09:00",
             duration: 30,
             service: "Regular Checkup",
             status: "confirmed",
@@ -87,7 +86,6 @@ const AppointmentSchedule = () => {
             patientPhone: "0912345678",
             patientEmail: "tranthib@email.com",
             date: "2025-06-02",
-            time: "10:00",
             duration: 45,
             service: "Dental Cleaning",
             status: "confirmed",
@@ -102,7 +100,6 @@ const AppointmentSchedule = () => {
             patientPhone: "0923456789",
             patientEmail: "levanc@email.com",
             date: "2025-06-02",
-            time: "14:00",
             duration: 60,
             service: "Root Canal Treatment",
             status: "pending",
@@ -117,7 +114,6 @@ const AppointmentSchedule = () => {
             patientPhone: "0934567890",
             patientEmail: "phamthid@email.com",
             date: "2025-06-03",
-            time: "11:00",
             duration: 30,
             service: "Consultation",
             status: "confirmed",
@@ -132,7 +128,6 @@ const AppointmentSchedule = () => {
             patientPhone: "0945678901",
             patientEmail: "hoangvane@email.com",
             date: "2025-06-04",
-            time: "13:30",
             duration: 45,
             service: "Dental Implant Consultation",
             status: "cancelled",
@@ -147,7 +142,6 @@ const AppointmentSchedule = () => {
             patientPhone: "0956789012",
             patientEmail: "vuthif@email.com",
             date: "2025-06-05",
-            time: "09:30",
             duration: 60,
             service: "Wisdom Tooth Extraction",
             status: "confirmed",
@@ -162,7 +156,6 @@ const AppointmentSchedule = () => {
             patientPhone: "0967890123",
             patientEmail: "nguyenvang@email.com",
             date: "2025-06-05",
-            time: "15:00",
             duration: 30,
             service: "Follow-up",
             status: "completed",
@@ -193,9 +186,10 @@ const AppointmentSchedule = () => {
       <ul className="events">
         {listData.map((item) => (
           <li key={item.id}>
+            {" "}
             <Badge
               status={getStatusBadge(item.status)}
-              text={`${item.time} - ${item.patientName}`}
+              text={`${item.patientName}`}
               className="appointment-badge"
             />
           </li>
@@ -237,12 +231,10 @@ const AppointmentSchedule = () => {
   const handleDateSelect = (value) => {
     setSelectedDate(value);
   };
-
   const showAddAppointmentModal = () => {
     form.resetFields();
     form.setFieldsValue({
       date: selectedDate,
-      time: null,
       duration: 30,
     });
     setIsModalVisible(true);
@@ -287,7 +279,6 @@ const AppointmentSchedule = () => {
           patientPhone: values.patientPhone,
           patientEmail: values.patientEmail,
           date: values.date.format("YYYY-MM-DD"),
-          time: values.time.format("HH:mm"),
           duration: values.duration,
           service: values.service,
           status: "pending",
@@ -348,14 +339,7 @@ const AppointmentSchedule = () => {
         appointment.status !== "cancelled"
     );
   };
-
   const columns = [
-    {
-      title: "Time",
-      dataIndex: "time",
-      key: "time",
-      sorter: (a, b) => a.time.localeCompare(b.time),
-    },
     {
       title: "Patient",
       dataIndex: "patientName",
@@ -419,11 +403,6 @@ const AppointmentSchedule = () => {
       dataIndex: "date",
       key: "date",
       sorter: (a, b) => dayjs(a.date).unix() - dayjs(b.date).unix(),
-    },
-    {
-      title: "Time",
-      dataIndex: "time",
-      key: "time",
     },
     {
       title: "Patient",
@@ -612,28 +591,15 @@ const AppointmentSchedule = () => {
                 <Input placeholder="Enter email address" />
               </Form.Item>
             </Col>
-          </Row>
+          </Row>{" "}
           <Row gutter={16}>
-            <Col span={12}>
+            <Col span={24}>
               <Form.Item
                 name="date"
                 label="Date"
                 rules={[{ required: true, message: "Please select date" }]}
               >
                 <DatePicker style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="time"
-                label="Time"
-                rules={[{ required: true, message: "Please select time" }]}
-              >
-                <TimePicker
-                  format="HH:mm"
-                  minuteStep={15}
-                  style={{ width: "100%" }}
-                />
               </Form.Item>
             </Col>
           </Row>

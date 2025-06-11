@@ -647,9 +647,9 @@ const TreatmentProgressTablePage = () => {
           {
             id: 5,
             patientId: "P005",
-            name: "Hoang Van E",
-            age: 22,
-            condition: "Wisdom Tooth Extraction",
+            name: "Hoang Van E và Nguyen Thi F",
+            age: 32,
+            condition: "Thụ tinh trong ống nghiệm và chuyển phôi",
             startDate: "2025-05-01",
             estimatedEndDate: "2025-05-15",
             status: "completed",
