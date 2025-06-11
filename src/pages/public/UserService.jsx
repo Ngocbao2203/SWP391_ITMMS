@@ -216,8 +216,7 @@ export default function UserService() {
                     <CheckCircleOutlined className="check-icon" /> {feature}
                   </div>
                 ))}
-              </div>
-              <div className="service-buttons">
+              </div>              <div className="service-buttons">
                 <Button
                   type="primary"
                   className="btn-more"
@@ -227,7 +226,8 @@ export default function UserService() {
                   }}
                 >
                   Tìm hiểu thêm <RightOutlined />
-                </Button>                <Button
+                </Button>
+                <Button
                   type="default"
                   className="btn-register"
                   onClick={(e) => {
