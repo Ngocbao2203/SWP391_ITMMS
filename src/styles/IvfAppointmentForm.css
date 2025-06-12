@@ -1,0 +1,400 @@
+/* IVF Appointment Form - Phù hợp với thiết kế mẫu */
+
+.ivf-appointment-form {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  overflow: hidden;
+  max-width: 100%;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ivf-form-header {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: linear-gradient(90deg, #6064e3, #8172f7);
+  color: white;
+}
+
+.ivf-form-header-icon {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.ivf-form-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ivf-form-content {
+  padding: 20px 25px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: calc(100% - 54px);
+}
+
+.ivf-main-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-top: 10px;
+}
+
+/* Section styling */
+.ivf-form-section {
+  margin-bottom: 20px;
+  border: 1px solid #ebedf0;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fafafa;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.ivf-form-section:hover {
+  border-color: #d6e4ff;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.08);
+}
+
+.ivf-form-step-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ivf-form-step-number {
+  width: 30px;
+  height: 30px;
+  background-color: #6064e3;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.ivf-form-step-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+/* Form controls styling */
+.ivf-form-control {
+  margin-bottom: 16px;
+}
+
+.ivf-form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.ivf-form-control .ant-select,
+.ivf-form-control .ant-picker,
+.ivf-form-control .ant-input {
+  width: 100%;
+}
+
+.ant-form-item-label > label {
+  font-weight: 500;
+  color: #333;
+}
+
+.ant-select-selection-placeholder,
+.ant-picker-input > input::placeholder {
+  color: #999;
+}
+
+/* Service card styling */
+.ivf-service-cards {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.ivf-service-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+}
+
+.ivf-service-card:hover {
+  border-color: #6064e3;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.ivf-service-card.selected {
+  border-color: #6064e3;
+  background-color: #f0f1ff;
+}
+
+.ivf-service-card.selected::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 18px;
+  height: 18px;
+  background-color: #6064e3;
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+  background-size: 12px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.service-card-icon {
+  font-size: 24px;
+  color: #6064e3;
+  margin-bottom: 10px;
+}
+
+.service-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: #333;
+}
+
+.service-card-desc {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+/* Doctor card grid */
+.ivf-doctor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.ivf-doctor-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.ivf-doctor-card:hover {
+  border-color: #6064e3;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.ivf-doctor-card.selected {
+  border-color: #6064e3;
+  background-color: #f0f1ff;
+}
+
+.ivf-doctor-card.selected::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 18px;
+  height: 18px;
+  background-color: #6064e3;
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+  background-size: 12px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.ivf-doctor-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 10px;
+  border: 2px solid #e8e8e8;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.ivf-doctor-card.selected .ivf-doctor-avatar {
+  border-color: #6064e3;
+}
+
+.ivf-doctor-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ivf-doctor-info {
+  flex: 1;
+}
+
+.ivf-doctor-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #333;
+  line-height: 1.3;
+}
+
+.ivf-doctor-specialty {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Button styling */
+.ivf-form-submit-btn {
+  background: linear-gradient(90deg, #6064e3, #8172f7) !important;
+  border: none !important;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  height: 42px;
+  padding: 0 24px;
+  min-width: 180px;
+  margin: 10px auto;
+  display: block;
+}
+
+.ivf-form-submit-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Required field marker */
+.ivf-required {
+  color: #f5222d;
+  margin-right: 4px;
+}
+
+/* Disclaimer text */
+.ivf-disclaimer {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.ivf-disclaimer a {
+  color: #6064e3;
+}
+
+/* Success message styling */
+.ivf-success-message {
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.ivf-success-icon {
+  font-size: 60px;
+  color: #52c41a;
+  margin-bottom: 20px;
+}
+
+.ivf-success-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.ivf-success-text {
+  font-size: 14px;
+  color: #666;
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+/* Date select section */
+.date-select {
+  max-width: 400px;
+}
+
+/* Custom datepicker */
+.ivf-date-picker.ant-picker {
+  width: 100%;
+  height: 44px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}
+
+.ivf-date-picker .ant-picker-input > input {
+  font-size: 14px;
+}
+
+/* Service selection styling */
+.ivf-service-select.ant-select .ant-select-selector {
+  height: 44px;
+  padding: 4px 11px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+}
+
+.ivf-service-select.ant-select .ant-select-selection-item {
+  line-height: 34px;
+}
+
+/* Notes textarea */
+.ivf-notes-textarea {
+  min-height: 80px;
+  resize: none;
+  border-radius: 6px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive styling */
+@media (max-width: 992px) {
+  .ivf-doctor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .ivf-doctor-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  
+  .ivf-form-submit-btn {
+    width: 100%;
+  }
+}
