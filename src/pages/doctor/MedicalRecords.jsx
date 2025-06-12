@@ -434,7 +434,7 @@ const MedicalRecords = () => {
             <TabPane tab="Kết quả xét nghiệm" key="results">
               <p>Kết quả xét nghiệm sẽ được hiển thị tại đây</p>
             </TabPane>
-            <TabPane tab="Phác đồ điều trị" key="treatment">
+            <TabPane tab="Tiến trình điều trị" key="treatment">
               <p>Thông tin phác đồ điều trị sẽ được hiển thị tại đây</p>
             </TabPane>
             <TabPane tab="Ghi chú" key="notes">
