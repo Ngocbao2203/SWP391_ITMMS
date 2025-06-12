@@ -6,7 +6,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 const mockBlogs = [
   {
     id: '1',
-    title: 'Hành trình điều trị IVF thành công',
+    title: 'Hành trình điều trị IVF thành công.................',
     summary: 'Chia sẻ từ một cặp vợ chồng sau 5 năm điều trị',
     content: `Sau 5 năm chạy chữa hiếm muộn, vợ chồng tôi đã may mắn có được con đầu lòng nhờ phương pháp thụ tinh trong ống nghiệm (IVF). 
 

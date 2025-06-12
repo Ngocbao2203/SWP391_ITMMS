@@ -52,10 +52,14 @@ export default function UserService() {
       window.removeEventListener('resize', equalizeCardHeights);
     };
   }, []);
-
   const showRegistrationForm = (service) => {
     // Điều hướng đến trang đăng ký dịch vụ mới với ID dịch vụ
-    navigate(`/service-register/${service.id}`);
+    navigate(`/bookappointment/${service.id}`, { 
+      state: { 
+        service: service,
+        source: 'UserService' 
+      }
+    });
   };
 
   const dataServices = [
@@ -169,8 +173,7 @@ export default function UserService() {
               <span className="stat-number">5000+</span>
               <span className="stat-text">Ca điều trị thành công</span>
             </div>
-          </div>
-          <div className="hero-buttons">
+          </div>          <div className="hero-buttons">
             <Button type="primary" size="large" className="primary-btn" onClick={() => navigate('/bookappointment')}>
               Đặt lịch hẹn <RightOutlined />
             </Button>
@@ -226,16 +229,21 @@ export default function UserService() {
                   }}
                 >
                   Tìm hiểu thêm <RightOutlined />
-                </Button>
-                <Button
+                </Button>                <Button
                   type="default"
                   className="btn-register"
                   onClick={(e) => {
                     e.stopPropagation();
-                    showRegistrationForm(service);
+                    // Sử dụng form đăng ký mới
+                    navigate(`/bookappointment/${service.id}`, { 
+                      state: { 
+                        service,
+                        source: 'UserService' 
+                      } 
+                    });
                   }}
                 >
-                  <CalendarOutlined /> Đăng ký
+                  <CalendarOutlined /> Đăng ký ngay
                 </Button>
               </div>
             </Card>
@@ -342,12 +350,13 @@ export default function UserService() {
               <div className="cta-feature">
                 <StarFilled /> Dịch vụ 5 sao
               </div>
-            </div>
-            <Button 
+            </div>            <Button 
               size="large"
               type="primary"
               className="cta-button"
-              onClick={() => showRegistrationForm({ id: "consult", title: "Tư vấn miễn phí", type: "CONSULT" })}>
+              onClick={() => navigate('/bookappointment', { 
+                state: { service: { id: "consult", title: "Tư vấn miễn phí", type: "CONSULT" } } 
+              })}>
               Tư vấn miễn phí ngay
             </Button>
           </div>
