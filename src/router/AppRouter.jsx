@@ -54,24 +54,13 @@ const AppRouter = () => {
       {/* Blog Routes */}
       <Route path="/blog" element={<BlogList />} />
       <Route path="/blog/:id" element={<BlogDetail />} />
-<<<<<<< HEAD
+      <Route path="/doctors" element={<DoctorList />} />
+      <Route path="/doctors/:id" element={<DoctorProfile />} />{" "}
+      <Route path="/services/:serviceId" element={<ServiceDetail />} />
+      <Route path="/doctors" element={<DoctorList />} />
+      <Route path="/doctors/:id" element={<DoctorProfile />} />{" "}
+      <Route path="/services/:serviceId" element={<ServiceDetail />} />
 
-      <Route path="/doctors" element={<DoctorList />} />
-      <Route path="/doctors/:id" element={<DoctorProfile />} />{" "}
-      <Route path="/services/:serviceId" element={<ServiceDetail />} />
-=======
-      <Route path="/doctors" element={<DoctorList />} />
-      <Route path="/doctors/:id" element={<DoctorProfile />} />{" "}
-      <Route path="/services/:serviceId" element={<ServiceDetail />} />
-      <Route
-        path="/service-register"
-        element={<SimpleServiceRegistrationPage />}
-      />
-      <Route
-        path="/service-register/:serviceId"
-        element={<SimpleServiceRegistrationPage />}
-      />
->>>>>>> 87afded1e06c8a3e826ea148cad47b0f00c070bd
       <Route path="/bookappointment" element={<BookAppointment />} />
       <Route path="/bookappointment/:serviceId" element={<BookAppointment />} />
       {/* Doctor Routes */}
