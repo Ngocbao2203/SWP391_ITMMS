@@ -1,22 +1,345 @@
-.book-appointment-container {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+.book-appointment-hero {
+  position: relative;
+  background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(23, 36, 64, 0.9)), 
+              url('https://ivi-fertility.com/wp-content/uploads/2023/03/desktop-header-ivi-home-dubai.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 40px 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden; /* Prevent any potential overflow */
+  min-height: 100vh;
 }
 
-.book-appointment-header {
+.book-appointment-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 100%;
+}
+
+.appointment-content-row {
+  min-height: auto;
+  align-items: center;
+  height: 100%;
+}
+
+.appointment-left-content {
+  color: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.appointment-text-content {
+  padding: 1rem 0;
+  max-width: 600px;
+}
+
+.appointment-header-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  padding: 5px 12px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #5c9ce6;
+}
+
+.badge-icon {
+  margin-right: 6px;
+  color: #5c9ce6;
+}
+
+.appointment-text-content h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+  opacity: 0.9;
+  line-height: 1.5;
+  max-width: 500px;
+}
+
+.appointment-features {
+  margin: 1rem 0;
+}
+
+.appointment-feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 15px;
+  transition: all 0.3s ease;
+}
+
+.appointment-feature-item:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-3px);
+}
+
+.feature-icon {
+  font-size: 1.6rem;
+  margin-right: 1rem;
+  color: #5c9ce6;
+  background: rgba(92, 156, 230, 0.1);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(92, 156, 230, 0.3);
+}
+
+.feature-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-text .ant-typography {
+  color: #fff;
+  margin: 0;
+}
+
+.feature-text .ant-typography-secondary {
+  opacity: 0.8;
+}
+
+.appointment-badges {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.appointment-badge {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px 12px;
+  flex: 1;
   text-align: center;
-  margin-bottom: 2rem;
+  min-width: 80px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.badge-number {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.badge-text {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.2;
+}
+
+.appointment-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 1.5rem;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  height: 42px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.action-btn.info-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.action-btn.info-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.action-btn.back-btn {
+  margin-right: 10px;
+  border-color: #1890ff;
+  color: #1890ff;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.action-btn.back-btn:hover, .action-btn.back-btn:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(24, 144, 255, 0.3);
+  border-color: #1890ff;
+  color: #fff;
+  background-color: #1890ff;
+}
+
+.action-btn.back-btn .anticon {
+  margin-right: 6px;
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.action-btn.back-btn:hover .anticon {
+  transform: translateX(-2px);
+}
+
+.appointment-contact {
+  display: flex;
+  align-items: center;
+  background: rgba(92, 156, 230, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  display: inline-flex;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.appointment-contact:hover {
+  background: rgba(92, 156, 230, 0.3);
+  transform: translateY(-2px);
+}
+
+.contact-icon {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+  color: #5c9ce6;
+}
+
+.contact-label {
+  display: block;
+  color: #fff;
+  opacity: 0.8;
+  font-size: 0.8rem;
+}
+
+.contact-phone {
+  color: #fff !important;
+  margin: 0 !important;
+  font-size: 1.1rem !important;
+}
+
+.appointment-right-content {
+  display: flex;
+  justify-content: center;
+}
+
+.appointment-form-wrapper {
+  width: 100%;
+  max-height: 95vh;
+  overflow: auto;
+  position: relative;
+  padding: 0;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: subtle-pulse 2s infinite alternate ease-in-out;
+  background: white;
+}
+
+@keyframes subtle-pulse {
+  0% {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transform: translateY(0);
+  }
+  100% {
+    box-shadow: 0 15px 35px rgba(28, 41, 65, 0.3);
+    transform: translateY(-5px);
+  }
+}
+
+.appointment-form-header {
+  text-align: center;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.appointment-form-header h3 {
+  color: #1c2941;
+  margin-bottom: 5px;
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
 .appointment-form-container {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 100%;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .appointment-card {
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading overlay styling */
+.form-loading {
+  position: relative;
+}
+
+.form-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+
+/* Success message styling */
+.registration-success-message {
+  text-align: center;
+  padding: 20px 10px;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.registration-success-message .success-icon {
+  font-size: 48px;
+  color: #52c41a;
+  margin-bottom: 15px;
+}
+
+.registration-success-message h4 {
+  color: #52c41a;
+  margin-bottom: 10px;
 }
 
 .appointment-steps {
@@ -65,21 +388,114 @@
   margin-top: 2rem;
 }
 
+/* Styles for Back Button */
+.back-button-container {
+  margin-top: 20px;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.back-button-container .ant-btn {
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-button-container .ant-btn:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.back-button-container .anticon {
+  font-size: 14px;
+}
+
+@media (max-width: 992px) {
+  .book-appointment-hero {
+    padding: 40px 0;
+  }
+  
+  .appointment-content-row {
+    flex-direction: column !important;
+    min-height: auto;
+  }
+
+  .appointment-text-content h1 {
+    font-size: 2.2rem;
+  }
+  
+  .feature-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .book-appointment-container {
-    padding: 0 0.5rem;
+    padding: 0 1rem;
   }
   
-  .step-content {
-    margin: 1rem 0;
+  .book-appointment-hero {
+    padding: 20px 0 40px;
   }
   
-  .action-buttons {
+  .appointment-text-content {
+    text-align: center;
+    padding: 1rem 0;
+  }
+  
+  .appointment-feature-item {
     flex-direction: column;
-    gap: 0.5rem;
+    text-align: center;
   }
   
-  .action-buttons button {
+  .feature-icon {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .appointment-contact {
+    justify-content: center;
+    margin: 1rem auto;
+    display: flex;
+  }
+  
+  .appointment-form-wrapper {
+    padding: 0;
+    margin-top: 2rem;
+  }
+  
+  .appointment-badges {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .appointment-feature-item {
+    margin-bottom: 0.6rem;
+    padding: 8px 12px;
+  }
+  
+  .appointment-actions {
+    justify-content: center;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .appointment-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .action-btn.back-btn, .action-btn.info-btn {
+    margin: 5px 0;
     width: 100%;
+    text-align: center;
+    justify-content: center;
   }
 }

@@ -57,10 +57,14 @@ const ServiceDetail = () => {
     
     fetchServiceData();
   }, [serviceId]);
-
   // Điều hướng đến trang đăng ký dịch vụ
   const handleRegisterService = () => {
-    navigate(`/service-register/${serviceId}`);
+    navigate(`/bookappointment/${serviceId}`, {
+      state: { 
+        service,
+        source: 'ServiceDetail'
+      }
+    });
   };
 
   if (loading) {
