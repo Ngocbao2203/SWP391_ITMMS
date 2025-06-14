@@ -25,7 +25,17 @@ const Register = () => {
     if (currentUser) {
       navigate('/');
     }
-  }, [navigate]);
+    
+    // Xóa giá trị tự động điền khi component được mount
+    setTimeout(() => {
+      form.resetFields();
+      // Thêm giải pháp tùy chỉnh để ngăn autofill
+      const inputs = document.querySelectorAll('.medical-register-form input');
+      inputs.forEach(input => {
+        input.setAttribute('autocomplete', 'new-password');
+      });
+    }, 100);
+  }, [navigate, form]);
   
   const onFinish = async (values) => {
     setLoading(true);
@@ -66,8 +76,7 @@ const Register = () => {
           
           <Title level={2} className="register-title">Đăng Ký Tài Khoản</Title>
           <p className="register-subtitle">Điền thông tin cá nhân của bạn để bắt đầu</p>
-          
-          <Form 
+            <Form 
             form={form}
             name="medical_register" 
             onFinish={onFinish} 
@@ -75,7 +84,8 @@ const Register = () => {
             size="large"
             className="medical-register-form"
             scrollToFirstError
-          >            <Row gutter={16}>
+            autoComplete="off"
+          ><Row gutter={16}>
               <Col span={24}>
                 <Form.Item
                   name="fullName"
@@ -86,6 +96,7 @@ const Register = () => {
                     prefix={<UserOutlined className="register-icon" />} 
                     placeholder="Họ và tên đầy đủ"
                     className="register-input"
+                    autoComplete="new-name"
                   />
                 </Form.Item>
               </Col>
@@ -105,6 +116,7 @@ const Register = () => {
                     prefix={<MailOutlined className="register-icon" />} 
                     placeholder="Email"
                     className="register-input"
+                    autoComplete="new-email"
                   />
                 </Form.Item>
               </Col>
@@ -121,6 +133,7 @@ const Register = () => {
                     prefix={<PhoneOutlined className="register-icon" />} 
                     placeholder="Số điện thoại"
                     className="register-input"
+                    autoComplete="new-phone"
                   />
                 </Form.Item>
               </Col>
@@ -135,6 +148,7 @@ const Register = () => {
                 prefix={<HomeOutlined className="register-icon" />} 
                 placeholder="Địa chỉ liên hệ"
                 className="register-input"
+                autoComplete="new-address"
               />
             </Form.Item>
             
@@ -151,7 +165,8 @@ const Register = () => {
                 >                  <Input.Password 
                     prefix={<LockOutlined className="register-icon" />}
                     placeholder="Mật khẩu"
-                    className="register-input" 
+                    className="register-input"
+                    autoComplete="new-password"
                   />
                 </Form.Item>
               </Col>
@@ -175,7 +190,8 @@ const Register = () => {
                 >                  <Input.Password 
                     prefix={<LockOutlined className="register-icon" />}
                     placeholder="Xác nhận mật khẩu"
-                    className="register-input" 
+                    className="register-input"
+                    autoComplete="new-password" 
                   />
                 </Form.Item>
               </Col>

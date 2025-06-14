@@ -320,3 +320,17 @@
     font-size: 24px;
   }
 }
+
+/* Khắc phục hiệu ứng autofill của trình duyệt */
+.medical-login-form input:-webkit-autofill,
+.medical-login-form input:-webkit-autofill:hover,
+.medical-login-form input:-webkit-autofill:focus,
+.medical-login-form input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: #333 !important;
+}
+
+/* Ngăn chặn trình duyệt lưu thông tin đăng nhập */
+.medical-login-form input {
+  background-clip: content-box !important;
+}

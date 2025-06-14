@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/UserService.css";
 import MainLayout from "../../layouts/MainLayout";
-import { Button, Row, Col, Card, Rate, Collapse, Tooltip, Tag, Divider } from 'antd';
+import { Button, Row, Col, Card, Rate, Collapse, Tag } from 'antd';
+import FreeConsultationModal from "../../components/public/FreeConsultationModal";
 import { 
   HeartOutlined, 
   RightOutlined, 
@@ -20,6 +21,7 @@ const { Panel } = Collapse;
 export default function UserService() {
   const navigate = useNavigate();
   const [expandedService, setExpandedService] = useState(null);
+  const [consultationModalVisible, setConsultationModalVisible] = useState(false);
 
   React.useEffect(() => {
     // Đảm bảo các card có chiều cao đồng nhất
@@ -52,15 +54,6 @@ export default function UserService() {
       window.removeEventListener('resize', equalizeCardHeights);
     };
   }, []);
-  const showRegistrationForm = (service) => {
-    // Điều hướng đến trang đăng ký dịch vụ mới với ID dịch vụ
-    navigate(`/bookappointment/${service.id}`, { 
-      state: { 
-        service: service,
-        source: 'UserService' 
-      }
-    });
-  };
 
   const dataServices = [
     {
@@ -354,14 +347,17 @@ export default function UserService() {
               size="large"
               type="primary"
               className="cta-button"
-              onClick={() => navigate('/bookappointment', { 
-                state: { service: { id: "consult", title: "Tư vấn miễn phí", type: "CONSULT" } } 
-              })}>
+              onClick={() => setConsultationModalVisible(true)}>
               Tư vấn miễn phí ngay
-            </Button>
-          </div>
+            </Button>          </div>
         </div>
       </section>
+      
+      {/* Modal đăng ký tư vấn miễn phí */}
+      <FreeConsultationModal 
+        visible={consultationModalVisible}
+        onCancel={() => setConsultationModalVisible(false)}
+      />
     </MainLayout>
   );
 }

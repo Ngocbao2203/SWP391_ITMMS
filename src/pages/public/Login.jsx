@@ -10,13 +10,25 @@ const { Title } = Typography;
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
-  // Kiểm tra xem người dùng đã đăng nhập chưa
+    // Kiểm tra xem người dùng đã đăng nhập chưa và xóa dữ liệu tự động điền
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
     if (currentUser) {
       // Nếu đã đăng nhập, chuyển hướng về trang chủ
       navigate('/');
+    }
+    
+    // Xóa giá trị tự động điền khi component được mount
+    const form = document.querySelector('form.medical-login-form');
+    if (form) {
+      setTimeout(() => {
+        form.reset();
+        // Thêm giải pháp tùy chỉnh để ngăn autofill
+        const inputs = document.querySelectorAll('.medical-login-form input');
+        inputs.forEach(input => {
+          input.setAttribute('autocomplete', 'new-password');
+        });
+      }, 100);
     }
   }, [navigate]);
   
@@ -58,7 +70,14 @@ const Login = () => {
           </div>
           <Title level={2}>Đăng nhập</Title>
           <p className="login-subtitle">Vui lòng đăng nhập để tiếp tục</p>
-          <Form name="login" onFinish={onFinish} layout="vertical" size="large" className="medical-login-form">
+          <Form 
+            name="login" 
+            onFinish={onFinish} 
+            layout="vertical" 
+            size="large" 
+            className="medical-login-form"
+            autoComplete="off"
+          >
             <Form.Item
               name="email"
               rules={[{ required: true, message: "Vui lòng nhập email!" }]}
@@ -67,6 +86,7 @@ const Login = () => {
                 placeholder="Email" 
                 type="email" 
                 className="login-input"
+                autoComplete="new-email"
               />
             </Form.Item>
             
@@ -76,7 +96,8 @@ const Login = () => {
             >              <Input.Password 
                 prefix={<LockOutlined className="login-icon" />}
                 placeholder="Mật khẩu"
-                className="login-input" 
+                className="login-input"
+                autoComplete="new-password" 
               />
             </Form.Item>
             
