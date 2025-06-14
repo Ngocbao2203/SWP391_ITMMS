@@ -10,7 +10,7 @@
   z-index: 1000;
 }
 
-.logo-section {
+.logo-section-hd {
   display: flex;
   align-items: center;
   margin-right: 40px;
@@ -100,7 +100,7 @@
     height: 60px;
   }
 
-  .logo-section {
+  .logo-section-hd {
     margin-right: 16px;
   }
 
