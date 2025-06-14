@@ -1,74 +1,362 @@
+/* ManagerSidebar.css - Modern & Professional Design */
+
 .manager-sidebar {
-  position: fixed;
+  position: fixed !important;
   top: 0;
   left: 0;
   height: 100vh;
-  background: linear-gradient(180deg, #065f46, #047857);
-  color: #e0f2f1;
+  width: 300px !important;
+  background: linear-gradient(135deg, #0f766e 0%, #134e4a 50%, #064e3b 100%);
+  color: #f0fdf4;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-  z-index: 100;
-  width: 300px !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
 }
 
-.manager-sidebar .logo {
-  font-size: 1.6rem;
+.manager-sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.02)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.02)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.01)"/><circle cx="20" cy="60" r="0.5" fill="rgba(255,255,255,0.01)"/><circle cx="80" cy="40" r="0.5" fill="rgba(255,255,255,0.01)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+/* Logo Section */
+.logo-section {
+  display: flex;
+  align-items: center;
+  padding: 24px 20px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+  z-index: 2;
+}
+
+.logo-section::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #10b981 50%, transparent 100%);
+  opacity: 0.6;
+}
+
+/* Sidebar Logo */
+.sidebar-logo {
+  width: 48px;
+  height: 48px;
+  margin-right: 16px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-logo::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 30%, rgba(16, 185, 129, 0.3) 50%, transparent 70%);
+  transform: rotate(45deg);
+  transition: all 0.6s ease;
+  opacity: 0;
+}
+
+.sidebar-logo:hover {
+  transform: scale(1.1) rotate(5deg);
+  border-color: #10b981;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+.sidebar-logo:hover::before {
+  opacity: 1;
+  animation: shimmer 0.6s ease-in-out;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* Sidebar Title */
+.sidebar-title {
+  font-size: 1.75rem;
   font-weight: 800;
-  text-align: center;
-  padding: 20px 0;
-  color: #a7f3d0;
-  background: linear-gradient(90deg, #6ee7b7, #34d399);
+  color: #ffffff;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
   background-clip: text;
   -webkit-background-clip: text;
-  color: transparent;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
 }
 
+.sidebar-title::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  transition: width 0.6s ease;
+}
+
+.logo-section:hover .sidebar-title::after {
+  width: 100%;
+}
+
+/* Menu Wrapper */
 .menu-wrapper {
   flex: 1;
   overflow-y: auto;
-  padding: 8px;
+  padding: 16px 12px;
+  position: relative;
+  z-index: 2;
 }
 
+.menu-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-wrapper::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.menu-wrapper::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.menu-wrapper::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+/* Menu Styling */
 .manager-sidebar .ant-menu {
-  background: transparent;
-  border-right: none;
+  background: transparent !important;
+  border: none !important;
+  color: #f0fdf4;
 }
 
 .manager-sidebar .ant-menu-item {
-  border-radius: 12px;
-  padding: 10px 16px;
-  color: #e0f2f1;
-  transition: all 0.2s ease;
+  border-radius: 12px !important;
+  padding: 14px 20px !important;
+  margin: 6px 0 !important;
+  color: #d1fae5 !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  height: auto !important;
+  line-height: 1.4 !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(10px);
 }
 
+.manager-sidebar .ant-menu-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.manager-sidebar .ant-menu-item:hover::before {
+  left: 100%;
+}
+
+/* Menu Item Hover Effect */
 .manager-sidebar .ant-menu-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateX(5px);
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #ffffff !important;
+  transform: translateX(8px) scale(1.02) !important;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.2) !important;
+  border-left: 4px solid #10b981 !important;
 }
 
+/* Selected Menu Item */
 .manager-sidebar .ant-menu-item-selected {
-  background-color: #10b981;
-  color: #ffffff;
-  font-weight: bold;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(52, 211, 153, 0.15)) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3) !important;
+  border-left: 4px solid #10b981 !important;
+  position: relative !important;
 }
 
+.manager-sidebar .ant-menu-item-selected::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 0 12px #10b981;
+}
+
+/* Menu Item Link */
 .manager-sidebar .ant-menu-item a {
-  color: inherit;
-  font-size: 16px;
+  color: inherit !important;
+  text-decoration: none !important;
+  font-weight: inherit !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
 }
 
-.logout {
-  padding: 16px;
-  text-align: center;
-  color: #f87171;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* Icon Styling */
+.manager-sidebar .ant-menu-item .anticon {
+  font-size: 18px !important;
+  margin-right: 14px !important;
+  transition: all 0.4s ease !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-.logout:hover {
-  color: #ffffff;
-  transform: translateX(5px);
+.manager-sidebar .ant-menu-item:hover .anticon {
+  transform: scale(1.2) !important;
+  color: #10b981 !important;
+}
+
+.manager-sidebar .ant-menu-item-selected .anticon {
+  color: #10b981 !important;
+  transform: scale(1.1) !important;
+}
+
+/* Logout Menu Item Special Styling */
+.manager-sidebar .ant-menu-item[key="logout"] {
+  margin-top: 20px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding-top: 20px !important;
+  color: #fca5a5 !important;
+  font-weight: 600 !important;
+}
+
+.manager-sidebar .ant-menu-item[key="logout"]:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #ffffff !important;
+  border-left-color: #ef4444 !important;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2) !important;
+}
+
+.manager-sidebar .ant-menu-item[key="logout"] .anticon {
+  color: #fca5a5 !important;
+}
+
+.manager-sidebar .ant-menu-item[key="logout"]:hover .anticon {
+  color: #ef4444 !important;
+}
+
+/* Animation for menu items */
+.manager-sidebar .ant-menu-item {
+  animation: slideInLeft 0.6s ease forwards;
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.manager-sidebar .ant-menu-item:nth-child(1) { animation-delay: 0.1s; }
+.manager-sidebar .ant-menu-item:nth-child(2) { animation-delay: 0.2s; }
+.manager-sidebar .ant-menu-item:nth-child(3) { animation-delay: 0.3s; }
+.manager-sidebar .ant-menu-item:nth-child(4) { animation-delay: 0.4s; }
+.manager-sidebar .ant-menu-item:nth-child(5) { animation-delay: 0.5s; }
+.manager-sidebar .ant-menu-item:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes slideInLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .manager-sidebar {
+    width: 280px !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .manager-sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .manager-sidebar.ant-layout-sider-collapsed {
+    transform: translateX(-100%) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .manager-sidebar {
+    width: 260px !important;
+  }
+
+  .logo-section {
+    padding: 20px 16px;
+  }
+
+  .sidebar-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+  }
+
+  .sidebar-title {
+    font-size: 1.5rem;
+  }
+
+  .manager-sidebar .ant-menu-item {
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+  }
+
+  .manager-sidebar .ant-menu-item .anticon {
+    font-size: 16px !important;
+    margin-right: 12px !important;
+  }
+}
+
+/* Focus states for accessibility */
+.manager-sidebar .ant-menu-item:focus {
+  outline: 2px solid rgba(16, 185, 129, 0.6);
+  outline-offset: 2px;
+}
+
+/* Sidebar hover effect */
+.manager-sidebar:hover {
+  box-shadow: 6px 0 32px rgba(0, 0, 0, 0.35);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .manager-sidebar {
+    background: linear-gradient(135deg, #064e3b 0%, #022c22 50%, #001a14 100%);
+  }
 }

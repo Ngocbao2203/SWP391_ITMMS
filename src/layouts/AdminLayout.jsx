@@ -9,8 +9,7 @@ const AdminLayout = ({ children }) => {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <AdminSidebar />
-      <Layout className="main-layout">
-        <div className="page-header">Admin Panel</div>
+      <Layout className="admin-main-layout">
         <Content className="admin-content">{children}</Content>
       </Layout>
     </Layout>

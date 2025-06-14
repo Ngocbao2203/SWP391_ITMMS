@@ -787,11 +787,6 @@ body {
   animation: fadeInUp 0.8s ease forwards;
 }
 
-/* Fix for Antd */
-.ant-btn-primary {
-  background-color: var(--primary-color);
-}
-
 .ant-rate-star-full .ant-rate-star-first,
 .ant-rate-star-full .ant-rate-star-second {
   color: #ffb400 !important;

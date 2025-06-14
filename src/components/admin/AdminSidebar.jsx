@@ -26,9 +26,9 @@ const AdminSidebar = () => {
       breakpoint="lg"
       collapsedWidth="0"
       className="admin-sidebar"
-      width={220}
+      width={300}
     >
-      <div className="logo">ADMIN</div>
+      <div className="logo-admin">ADMIN</div>
 
       <div className="menu-wrapper">
         <Menu mode="inline" selectedKeys={[location.pathname]}>
