@@ -82,10 +82,10 @@ const Register = () => {
                   label="Họ và tên"
                   required
                   rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
-                >
-                  <Input 
+                >                  <Input 
                     prefix={<UserOutlined className="register-icon" />} 
-                    placeholder="Họ và tên đầy đủ" 
+                    placeholder="Họ và tên đầy đủ"
+                    className="register-input"
                   />
                 </Form.Item>
               </Col>
@@ -101,10 +101,10 @@ const Register = () => {
                     { required: true, message: "Vui lòng nhập email!" }, 
                     { type: 'email', message: "Email không hợp lệ!" }
                   ]}
-                >
-                  <Input 
+                >                  <Input 
                     prefix={<MailOutlined className="register-icon" />} 
-                    placeholder="Email" 
+                    placeholder="Email"
+                    className="register-input"
                   />
                 </Form.Item>
               </Col>
@@ -117,10 +117,10 @@ const Register = () => {
                     { required: true, message: "Vui lòng nhập số điện thoại!" },
                     { pattern: /^[0-9]{10}$/, message: "Số điện thoại không hợp lệ!" }
                   ]}
-                >
-                  <Input 
+                >                  <Input 
                     prefix={<PhoneOutlined className="register-icon" />} 
-                    placeholder="Số điện thoại" 
+                    placeholder="Số điện thoại"
+                    className="register-input"
                   />
                 </Form.Item>
               </Col>
@@ -131,10 +131,10 @@ const Register = () => {
               label="Địa chỉ"
               required
               rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
-            >
-              <Input 
+            >              <Input 
                 prefix={<HomeOutlined className="register-icon" />} 
-                placeholder="Địa chỉ liên hệ" 
+                placeholder="Địa chỉ liên hệ"
+                className="register-input"
               />
             </Form.Item>
             
@@ -148,10 +148,10 @@ const Register = () => {
                     { required: true, message: "Vui lòng nhập mật khẩu!" },
                     { min: 8, message: "Mật khẩu phải có ít nhất 8 ký tự!" }
                   ]}
-                >
-                  <Input.Password 
+                >                  <Input.Password 
                     prefix={<LockOutlined className="register-icon" />}
-                    placeholder="Mật khẩu" 
+                    placeholder="Mật khẩu"
+                    className="register-input" 
                   />
                 </Form.Item>
               </Col>
@@ -172,10 +172,10 @@ const Register = () => {
                       },
                     }),
                   ]}
-                >
-                  <Input.Password 
+                >                  <Input.Password 
                     prefix={<LockOutlined className="register-icon" />}
-                    placeholder="Xác nhận mật khẩu" 
+                    placeholder="Xác nhận mật khẩu"
+                    className="register-input" 
                   />
                 </Form.Item>
               </Col>

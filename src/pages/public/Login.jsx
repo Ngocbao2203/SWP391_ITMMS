@@ -62,21 +62,21 @@ const Login = () => {
             <Form.Item
               name="email"
               rules={[{ required: true, message: "Vui lòng nhập email!" }]}
-            >
-              <Input 
-                prefix={<UserOutlined className="site-form-item-icon" />}
+            >              <Input 
+                prefix={<UserOutlined className="login-icon" />}
                 placeholder="Email" 
                 type="email" 
+                className="login-input"
               />
             </Form.Item>
             
             <Form.Item
               name="password"
               rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
-            >
-              <Input.Password 
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                placeholder="Mật khẩu" 
+            >              <Input.Password 
+                prefix={<LockOutlined className="login-icon" />}
+                placeholder="Mật khẩu"
+                className="login-input" 
               />
             </Form.Item>
             

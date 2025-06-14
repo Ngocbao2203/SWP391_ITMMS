@@ -110,6 +110,40 @@
   position: relative;
 }
 
+/* Input fields alignment fixes */
+.register-input {
+  height: 45px !important;
+}
+
+.medical-register-form .ant-input-affix-wrapper {
+  padding: 0 11px;
+  display: flex;
+  align-items: center;
+}
+
+.medical-register-form .ant-input-prefix {
+  margin-right: 10px;
+}
+
+.medical-register-form .ant-form-item-label {
+  padding-bottom: 4px;
+  text-align: left;
+  height: 22px;
+  line-height: 22px;
+}
+
+.medical-register-form .ant-form-item-label > label {
+  height: auto;
+  color: #333;
+  font-weight: 500;
+}
+
+.medical-register-form .ant-form-item-label > label::after {
+  content: ":";
+  position: relative;
+  margin: 0 8px 0 2px;
+}
+
 .medical-register-logo {
   margin-bottom: 20px;
 }
@@ -178,7 +212,7 @@
 }
 
 .medical-register-form .ant-form-item {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .medical-register-form .ant-form-item-label {
@@ -194,6 +228,13 @@
   border: 1px solid #e8e8e8;
   transition: all 0.3s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.medical-register-form .ant-input-affix-wrapper > input.ant-input {
+  height: 100%;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .medical-register-form .ant-input-affix-wrapper:hover,
@@ -216,6 +257,8 @@
 .medical-register-form .ant-form-item-label > label {
   color: #333;
   font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
 /* Làm nổi bật dấu * đỏ cho trường bắt buộc */
@@ -224,11 +267,17 @@
   font-size: 16px;
   margin-right: 4px;
   display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
 }
 
 .register-icon {
   color: #3f87f5;
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .medical-register-form .ant-checkbox + span {
@@ -349,4 +398,61 @@
   .register-title {
     font-size: 24px;
   }
+}
+
+/* Extra fixes for field alignments */
+.medical-register-form .ant-col {
+  padding: 0;
+}
+
+/* Ensure consistent field width especially on mobile */
+@media (max-width: 575px) {
+  .medical-register-form [class*=ant-col] {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+  
+  .medical-register-form .ant-row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+  
+  .medical-register-card {
+    width: 100%;
+  }
+  
+  .medical-register-right {
+    padding: 30px 20px;
+  }
+}
+
+/* Specific styles for form items and fields */
+.medical-register-form .ant-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.medical-register-form .ant-form-item-control-input {
+  min-height: 45px;
+}
+
+.medical-register-form .ant-form-item-explain {
+  min-height: 18px;
+}
+
+/* Fix for password field alignment */
+.medical-register-form .ant-input-affix-wrapper-status-error .ant-input,
+.medical-register-form .ant-input-affix-wrapper-status-warning .ant-input {
+  background: transparent;
+}
+
+/* Fix for label position */
+.medical-register-form .ant-form-item-label > label {
+  margin-bottom: 0;
+}
+
+/* Allow icons within inputs to be properly aligned */
+.medical-register-form .ant-input-affix-wrapper .anticon {
+  display: flex;
+  align-items: center;
 }
