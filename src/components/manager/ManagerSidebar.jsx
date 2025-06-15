@@ -3,7 +3,6 @@ import { Layout, Menu } from "antd";
 import {
   UserOutlined,
   ScheduleOutlined,
-  AuditOutlined,
   NotificationOutlined,
   LogoutOutlined,
   FileTextOutlined,
@@ -38,9 +37,6 @@ const ManagerSidebar = () => {
         <Menu mode="inline" selectedKeys={[location.pathname]}>
           <Menu.Item key="/manager/doctors" icon={<UserOutlined />}>
             <Link to="/manager/doctors">Doctors</Link>
-          </Menu.Item>
-          <Menu.Item key="/manager/assignments" icon={<AuditOutlined />}>
-            <Link to="/manager/assignments">Assignments</Link>
           </Menu.Item>
           <Menu.Item key="/manager/schedules" icon={<ScheduleOutlined />}>
             <Link to="/manager/schedules">Schedules</Link>

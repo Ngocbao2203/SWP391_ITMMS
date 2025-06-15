@@ -29,7 +29,6 @@ import Manager from "../pages/admin/Manager";
 // Manager
 import ManagerLayout from "../layouts/ManagerLayout";
 import Doctors from "../pages/manager/Doctors";
-import Assignments from "../pages/manager/Assignments";
 import Schedules from "../pages/manager/Schedules";
 import Notifications from "../pages/manager/Notifications";
 import BlogManagement from "../pages/manager/BlogManagement";
@@ -134,14 +133,6 @@ const AppRouter = () => {
         element={
           <ManagerLayout>
             <Doctors />
-          </ManagerLayout>
-        }
-      />
-      <Route
-        path="/manager/assignments"
-        element={
-          <ManagerLayout>
-            <Assignments />
           </ManagerLayout>
         }
       />

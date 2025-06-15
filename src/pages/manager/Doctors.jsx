@@ -1,6 +1,25 @@
 import React, { useState } from 'react';
-import { Table, Tag, Space, Button, Modal, Form, Input, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import {
+  Table,
+  Space,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Select,
+  Popconfirm,
+  message,
+  Switch,
+  Tooltip,
+} from 'antd';
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { debounce } from 'lodash';
+import '../../styles/Doctors.css';
 
 const { Option } = Select;
 
@@ -30,16 +49,43 @@ const Doctors = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [searchText, setSearchText] = useState('');
+  const [editingDoctor, setEditingDoctor] = useState(null);
 
-  const handleAddDoctor = (values) => {
-    const newDoctor = {
-      key: Date.now().toString(),
-      ...values,
-    };
-    setData((prev) => [...prev, newDoctor]);
+  const handleAddOrEditDoctor = (values) => {
+    if (editingDoctor) {
+      const updated = data.map((item) =>
+        item.key === editingDoctor.key ? { ...item, ...values } : item
+      );
+      setData(updated);
+      message.success('Đã cập nhật thông tin bác sĩ');
+    } else {
+      const newDoctor = {
+        key: Date.now().toString(),
+        ...values,
+      };
+      setData((prev) => [...prev, newDoctor]);
+      message.success('Thêm bác sĩ thành công');
+    }
     setIsModalVisible(false);
     form.resetFields();
+    setEditingDoctor(null);
   };
+
+  const handleDelete = (key) => {
+    setData((prev) => prev.filter((item) => item.key !== key));
+    message.success('Đã xóa bác sĩ');
+  };
+
+  const handleStatusChange = (key, checked) => {
+    const newData = data.map((item) =>
+      item.key === key ? { ...item, status: checked ? 'Active' : 'Inactive' } : item
+    );
+    setData(newData);
+  };
+
+  const handleSearch = debounce((value) => {
+    setSearchText(value);
+  }, 300);
 
   const filteredData = data.filter(
     (item) =>
@@ -52,80 +98,117 @@ const Doctors = () => {
       title: 'Họ và Tên',
       dataIndex: 'name',
       key: 'name',
+      render: (text) => <span className="doctor-name">{text}</span>,
     },
     {
       title: 'Chuyên môn',
       dataIndex: 'specialty',
       key: 'specialty',
+      render: (text) => <span className="doctor-specialty">{text}</span>,
     },
     {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
-      render: (status) => (
-        <Tag color={status === 'Active' ? 'green' : 'volcano'}>
-          {status === 'Active' ? 'Đang hoạt động' : 'Tạm nghỉ'}
-        </Tag>
+      render: (status, record) => (
+        <Switch
+          className="doctors-status-switch"
+          checked={status === 'Active'}
+          onChange={(checked) => handleStatusChange(record.key, checked)}
+          checkedChildren="Hoạt động"
+          unCheckedChildren="Tạm nghỉ"
+        />
       ),
     },
     {
       title: 'Thao tác',
       key: 'action',
       render: (_, record) => (
-        <Space>
-          <Button type="link">Xem</Button>
-          <Button type="link" danger>
-            Xóa
-          </Button>
+        <Space className="doctors-actions">
+          <Tooltip title="Chỉnh sửa">
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => {
+                setEditingDoctor(record);
+                setIsModalVisible(true);
+                form.setFieldsValue(record);
+              }}
+            />
+          </Tooltip>
+          <Popconfirm
+            title="Bạn có chắc muốn xóa bác sĩ này?"
+            onConfirm={() => handleDelete(record.key)}
+            okText="Xóa"
+            cancelText="Hủy"
+          >
+            <Tooltip title="Xóa">
+              <Button danger icon={<DeleteOutlined />} />
+            </Tooltip>
+          </Popconfirm>
         </Space>
       ),
     },
   ];
 
   return (
-    <div style={{ padding: 24 }}>
-      <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>Danh sách bác sĩ</h2>
+    <div className="doctors-container">
+      <div className="doctors-header">
+        <div className="doctors-header-left">
+          <UserOutlined style={{ fontSize: 28, marginRight: 12, color: '#fff' }} />
+          <h2 className="doctors-title">Danh sách bác sĩ</h2>
+        </div>
+        <p className="doctors-subtitle">
+          Có <span className="doctors-count">{filteredData.length}</span> bác sĩ được hiển thị.
+        </p>
+      </div>
 
-      {/* Thanh công cụ: Tìm kiếm + Thêm bác sĩ */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 16,
-          flexWrap: 'wrap',
-          gap: 8,
-        }}
-      >
+      <div className="doctors-toolbar">
         <Input.Search
+          className="doctors-search"
           placeholder="Tìm kiếm theo tên hoặc chuyên môn"
           allowClear
-          style={{ width: 300 }}
-          onSearch={(value) => setSearchText(value)}
-          onChange={(e) => setSearchText(e.target.value)}
+          onSearch={handleSearch}
+          onChange={(e) => handleSearch(e.target.value)}
         />
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalVisible(true)}>
+        <Button
+          className="doctors-add-btn"
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setEditingDoctor(null);
+            form.resetFields();
+            setIsModalVisible(true);
+          }}
+        >
           Thêm bác sĩ
         </Button>
       </div>
 
-      <Table columns={columns} dataSource={filteredData} />
+      <Table
+        className="doctors-table"
+        columns={columns}
+        dataSource={filteredData}
+        pagination={{ pageSize: 5 }}
+      />
 
-      {/* Form thêm bác sĩ */}
       <Modal
-        title="Thêm bác sĩ mới"
+        className="doctors-modal"
+        title={editingDoctor ? 'Chỉnh sửa bác sĩ' : 'Thêm bác sĩ mới'}
         open={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
+        onCancel={() => {
+          setIsModalVisible(false);
+          setEditingDoctor(null);
+        }}
         onOk={() => {
           form
             .validateFields()
-            .then(handleAddDoctor)
+            .then(handleAddOrEditDoctor)
             .catch((info) => console.log('Validate Failed:', info));
         }}
-        okText="Thêm"
+        okText={editingDoctor ? 'Cập nhật' : 'Thêm'}
         cancelText="Hủy"
       >
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" className="doctors-form">
           <Form.Item
             name="name"
             label="Họ và Tên"
