@@ -207,6 +207,7 @@ const Doctors = () => {
         }}
         okText={editingDoctor ? 'Cập nhật' : 'Thêm'}
         cancelText="Hủy"
+        closable={false}
       >
         <Form form={form} layout="vertical" className="doctors-form">
           <Form.Item

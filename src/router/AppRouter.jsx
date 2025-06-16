@@ -21,7 +21,6 @@ import AppointmentSchedule from "../pages/doctor/AppointmentSchedule";
 
 import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/admin/Dashboard";
-import Services from "../pages/admin/Services";
 import Feedback from "../pages/admin/Feedback";
 import Reports from "../pages/admin/Reports";
 import Manager from "../pages/admin/Manager";
@@ -29,8 +28,7 @@ import Manager from "../pages/admin/Manager";
 // Manager
 import ManagerLayout from "../layouts/ManagerLayout";
 import Doctors from "../pages/manager/Doctors";
-import Schedules from "../pages/manager/Schedules";
-import Notifications from "../pages/manager/Notifications";
+import Services from "../pages/manager/Services";
 import BlogManagement from "../pages/manager/BlogManagement";
 
 // Patient Dashboard and related pages
@@ -51,9 +49,6 @@ const AppRouter = () => {
       {/* Blog Routes */}
       <Route path="/blog" element={<BlogList />} />
       <Route path="/blog/:id" element={<BlogDetail />} />
-      <Route path="/doctors" element={<DoctorList />} />
-      <Route path="/doctors/:id" element={<DoctorProfile />} />{" "}
-      <Route path="/services/:serviceId" element={<ServiceDetail />} />
       <Route path="/doctors" element={<DoctorList />} />
       <Route path="/doctors/:id" element={<DoctorProfile />} />{" "}
       <Route path="/services/:serviceId" element={<ServiceDetail />} />
@@ -96,14 +91,6 @@ const AppRouter = () => {
         }
       />
       <Route
-        path="/admin/services"
-        element={
-          <AdminLayout>
-            <Services />
-          </AdminLayout>
-        }
-      />
-      <Route
         path="/admin/feedback"
         element={
           <AdminLayout>
@@ -137,18 +124,10 @@ const AppRouter = () => {
         }
       />
       <Route
-        path="/manager/schedules"
+        path="/manager/services"
         element={
           <ManagerLayout>
-            <Schedules />
-          </ManagerLayout>
-        }
-      />
-      <Route
-        path="/manager/notifications"
-        element={
-          <ManagerLayout>
-            <Notifications />
+            <Services />
           </ManagerLayout>
         }
       />

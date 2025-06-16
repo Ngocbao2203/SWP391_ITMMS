@@ -152,8 +152,7 @@ const BookAppointment = () => {
                     <span className="badge-number">10k+</span>
                     <span className="badge-text">Khách hàng hài lòng</span>
                   </div>
-                </div>
-                  <div className="appointment-actions">
+                </div>                  <div className="appointment-actions">
                   <Button 
                     type="primary" 
                     ghost
@@ -162,14 +161,6 @@ const BookAppointment = () => {
                     onClick={() => navigate(sourceRoute)}
                   >
                     Quay lại trang dịch vụ
-                  </Button>
-                  <Button 
-                    type="default" 
-                    className="action-btn info-btn" 
-                    icon={<FileTextOutlined />} 
-                    onClick={() => navigate('/services')}
-                  >
-                    Xem tất cả dịch vụ
                   </Button>
                   <Tooltip title="Gọi ngay để được tư vấn">
                     <div className="appointment-contact">

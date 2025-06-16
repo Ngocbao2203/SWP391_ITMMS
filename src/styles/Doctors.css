@@ -255,17 +255,6 @@
   font-weight: 600;
 }
 
-.doctors-modal .ant-modal-close {
-  color: white;
-  opacity: 0.8;
-  transition: all 0.3s ease;
-}
-
-.doctors-modal .ant-modal-close:hover {
-  opacity: 1;
-  transform: scale(1.1);
-}
-
 .doctors-modal .ant-modal-body {
   padding: 24px;
   background: #fafbfc;

@@ -2,8 +2,7 @@ import React from "react";
 import { Layout, Menu } from "antd";
 import {
   UserOutlined,
-  ScheduleOutlined,
-  NotificationOutlined,
+  AppstoreOutlined,
   LogoutOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
@@ -36,19 +35,16 @@ const ManagerSidebar = () => {
       <div className="menu-wrapper">
         <Menu mode="inline" selectedKeys={[location.pathname]}>
           <Menu.Item key="/manager/doctors" icon={<UserOutlined />}>
-            <Link to="/manager/doctors">Doctors</Link>
+            <Link to="/manager/doctors">Quản lí Bác Sĩ</Link>
           </Menu.Item>
-          <Menu.Item key="/manager/schedules" icon={<ScheduleOutlined />}>
-            <Link to="/manager/schedules">Schedules</Link>
-          </Menu.Item>
-          <Menu.Item key="/manager/notifications" icon={<NotificationOutlined />}>
-            <Link to="/manager/notifications">Notifications</Link>
+          <Menu.Item key="/manager/services" icon={<AppstoreOutlined />}>
+            <Link to="/manager/services">Quản lí dịch Vụ</Link>
           </Menu.Item>
           <Menu.Item key="/manager/blogs" icon={<FileTextOutlined />}>
             <Link to="/manager/blogs">Quản lý blog</Link>
           </Menu.Item>
           <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
-            Logout
+            Đăng Xuất
           </Menu.Item>
         </Menu>
       </div>
