@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import {
   Calendar,
   Badge,
@@ -175,28 +175,29 @@ const AppointmentSchedule = () => {
 
     fetchAppointments();
   }, []);
+  const dateCellRender = useCallback(
+    (value) => {
+      const formattedDate = value.format("YYYY-MM-DD");
+      const listData = appointments.filter(
+        (appointment) => appointment.date === formattedDate
+      );
 
-  const dateCellRender = (value) => {
-    const formattedDate = value.format("YYYY-MM-DD");
-    const listData = appointments.filter(
-      (appointment) => appointment.date === formattedDate
-    );
-
-    return (
-      <ul className="events">
-        {listData.map((item) => (
-          <li key={item.id}>
-            {" "}
-            <Badge
-              status={getStatusBadge(item.status)}
-              text={`${item.patientName}`}
-              className="appointment-badge"
-            />
-          </li>
-        ))}
-      </ul>
-    );
-  };
+      return (
+        <ul className="events">
+          {listData.map((item) => (
+            <li key={item.id}>
+              <Badge
+                status={getStatusBadge(item.status)}
+                text={`${item.patientName}`}
+                className="appointment-badge"
+              />
+            </li>
+          ))}
+        </ul>
+      );
+    },
+    [appointments]
+  );
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -243,12 +244,10 @@ const AppointmentSchedule = () => {
     setCurrentAppointment(appointment);
     setIsAppointmentDetailsVisible(true);
   };
-
   const showUpdateStatusModal = (appointment) => {
     setCurrentAppointment(appointment);
     statusForm.setFieldsValue({
       status: appointment.status,
-      notes: "",
     });
     setIsUpdateStatusVisible(true);
   };
@@ -297,15 +296,13 @@ const AppointmentSchedule = () => {
 
         message.success("Appointment status updated successfully");
         statusForm.resetFields();
-        setIsUpdateStatusVisible(false);
-
-        // Update local state (mock implementation)
+        setIsUpdateStatusVisible(false); // Update local state (mock implementation)
         const updatedAppointments = appointments.map((appointment) => {
           if (appointment.id === currentAppointment.id) {
             return {
               ...appointment,
               status: values.status,
-              notes: appointment.notes + "\\n" + values.notes,
+              // Không cập nhật notes
             };
           }
           return appointment;
@@ -317,15 +314,14 @@ const AppointmentSchedule = () => {
         console.log("Validation Failed:", info);
       });
   };
-
-  const getDailyAppointments = () => {
+  const getDailyAppointments = useCallback(() => {
     const formattedDate = selectedDate.format("YYYY-MM-DD");
     return appointments.filter(
       (appointment) => appointment.date === formattedDate
     );
-  };
+  }, [appointments, selectedDate]);
 
-  const getUpcomingAppointments = () => {
+  const getUpcomingAppointments = useCallback(() => {
     const today = dayjs().format("YYYY-MM-DD");
     return appointments.filter(
       (appointment) =>
@@ -333,7 +329,7 @@ const AppointmentSchedule = () => {
         appointment.status !== "completed" &&
         appointment.status !== "cancelled"
     );
-  };
+  }, [appointments]);
   const columns = [
     {
       title: "Patient",
@@ -461,6 +457,7 @@ const AppointmentSchedule = () => {
           key="1"
         >
           <div className="calendar-container">
+            {" "}
             {loading ? (
               <div className="loading-container">
                 <Spin size="large" />
@@ -470,9 +467,9 @@ const AppointmentSchedule = () => {
                 dateCellRender={dateCellRender}
                 onSelect={handleDateSelect}
                 value={selectedDate}
+                key="appointment-calendar"
               />
             )}
-
             <div className="daily-appointments">
               <Card
                 title={
@@ -491,6 +488,7 @@ const AppointmentSchedule = () => {
                   </Button>
                 }
               >
+                {/* Tránh gọi useMemo trong điều kiện */}
                 <Table
                   dataSource={getDailyAppointments()}
                   columns={columns}
@@ -511,6 +509,7 @@ const AppointmentSchedule = () => {
           }
           key="2"
         >
+          {" "}
           {loading ? (
             <div className="loading-container">
               <Spin size="large" />
@@ -757,8 +756,7 @@ const AppointmentSchedule = () => {
                 <Text strong>Current Status:</Text>{" "}
                 {getStatusTag(currentAppointment.status)}
               </p>
-            </div>
-
+            </div>{" "}
             <Form.Item
               name="status"
               label="Update Status"
@@ -770,17 +768,6 @@ const AppointmentSchedule = () => {
                 <Option value="completed">Completed</Option>
                 <Option value="cancelled">Cancelled</Option>
               </Select>
-            </Form.Item>
-
-            <Form.Item
-              name="notes"
-              label="Additional Notes"
-              rules={[{ required: true, message: "Please add notes" }]}
-            >
-              <Input.TextArea
-                rows={4}
-                placeholder="Enter notes about the status change"
-              />
             </Form.Item>
           </Form>
         )}

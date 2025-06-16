@@ -180,6 +180,7 @@ const PatientTimeline = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [currentProgress, setCurrentProgress] = useState(null);
   const [showPatientDetail, setShowPatientDetail] = useState(false);
+  const [searchPatientText, setSearchPatientText] = useState("");
   const [form] = Form.useForm();
   const patient = patientsList.find((p) => p.id === selectedPatient);
   const currentSteps = (progressData[selectedPatient] || [])
@@ -187,7 +188,7 @@ const PatientTimeline = () => {
     .sort(
       (a, b) =>
         new Date(a.time || "2100-01-01") - new Date(b.time || "2100-01-01")
-    ); // Removed search filtering functionality
+    );
 
   const doneCount = currentSteps.filter((s) => s.status === "done").length;
   const percent =
@@ -418,15 +419,13 @@ const PatientTimeline = () => {
             style={{ marginBottom: 16 }}
           >
             Quay lại danh sách bệnh nhân
-          </Button>
-
+          </Button>{" "}
           <AntdProgress
             percent={percent}
             status={globalStatus === "Hoàn thành" ? "success" : "active"}
             format={(p) => `${globalStatus} – ${p}%`}
             style={{ marginBottom: 24 }}
           />
-
           <Card
             title={`Tiến trình điều trị hiếm muộn của ${patient?.name}`}
             className="progress-card"
@@ -452,11 +451,20 @@ const PatientTimeline = () => {
       ) : (
         <>
           {" "}
-          {/* Patient list header - search functionality removed */}{" "}
+          <div style={{ marginBottom: 16 }}>
+            <Input.Search
+              placeholder="Tìm kiếm bệnh nhân"
+              allowClear
+              onChange={(e) => setSearchPatientText(e.target.value)}
+              style={{ width: 300, marginBottom: 16 }}
+            />
+          </div>
           <Card title="Danh sách bệnh nhân điều trị hiếm muộn">
             <List
               itemLayout="horizontal"
-              dataSource={patientsList}
+              dataSource={patientsList.filter((p) =>
+                p.name.toLowerCase().includes(searchPatientText.toLowerCase())
+              )}
               renderItem={(patient) => {
                 const counts = countPatientProgressStatus(patient.id);
                 return (
