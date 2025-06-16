@@ -20,7 +20,9 @@ import {
   Col,
   Typography,
   Empty,
+  List,
 } from "antd";
+import dayjs from "dayjs";
 import {
   SearchOutlined,
   FileTextOutlined,
@@ -35,8 +37,10 @@ import {
   ClockCircleTwoTone,
   MinusCircleTwoTone,
   DeleteOutlined,
+  ArrowRightOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
-import dayjs from "dayjs";
+
 import "../../styles/TreatmentProgressPage.css";
 // import axios from "axios";
 
@@ -171,13 +175,13 @@ const PatientTimeline = () => {
       },
     ],
   });
-
   const [selectedPatient, setSelectedPatient] = useState("p1");
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [currentProgress, setCurrentProgress] = useState(null);
+  const [showPatientDetail, setShowPatientDetail] = useState(false);
+  const [searchPatientText, setSearchPatientText] = useState("");
   const [form] = Form.useForm();
-
   const patient = patientsList.find((p) => p.id === selectedPatient);
   const currentSteps = (progressData[selectedPatient] || [])
     .slice()
@@ -301,7 +305,6 @@ const PatientTimeline = () => {
         console.log("Validate Failed:", info);
       });
   };
-
   const handleDeleteProgress = (progressId) => {
     // Filter out the progress entry to be deleted
     const updatedProgress = progressData[selectedPatient].filter(
@@ -315,6 +318,29 @@ const PatientTimeline = () => {
     });
 
     message.success("Tiến độ điều trị đã được xóa thành công!");
+  };
+
+  // Function to count progress statuses for each patient
+  const countPatientProgressStatus = (patientId) => {
+    const steps = progressData[patientId] || [];
+    const doneCount = steps.filter((s) => s.status === "done").length;
+    const doingCount = steps.filter((s) => s.status === "doing").length;
+    const pendingCount = steps.filter((s) => s.status === "pending").length;
+
+    return {
+      total: steps.length,
+      done: doneCount,
+      doing: doingCount,
+      pending: pendingCount,
+    };
+  };
+  const handlePatientSelect = (patientId) => {
+    setSelectedPatient(patientId);
+    setShowPatientDetail(true);
+  };
+
+  const handleBackToList = () => {
+    setShowPatientDetail(false);
   };
 
   // Create a custom timeline component that renders the timeline horizontally
@@ -375,56 +401,126 @@ const PatientTimeline = () => {
             </div>
           </div>
         ))}
-      </div>
+      </div>{" "}
     </div>
   );
+
   return (
     <div className="horizontal-timeline-container">
       <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>
         Tiến trình điều trị hiếm muộn
-      </h2>
-      <div
-        className="patient-selector"
-        style={{ marginBottom: "16px", display: "flex", alignItems: "center" }}
-      >
-        <Select
-          placeholder="Chọn bệnh nhân/cặp đôi"
-          value={selectedPatient}
-          style={{ width: 280, marginBottom: 16 }}
-          onChange={(val) => setSelectedPatient(val)}
-        >
-          {patientsList.map((p) => (
-            <Option key={p.id} value={p.id}>
-              {p.name}
-            </Option>
-          ))}
-        </Select>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={showAddModal}
-          style={{ marginLeft: "16px" }}
-        >
-          Thêm tiến độ điều trị hiếm muộn
-        </Button>
-      </div>
-      <AntdProgress
-        percent={percent}
-        status={globalStatus === "Hoàn thành" ? "success" : "active"}
-        format={(p) => `${globalStatus} – ${p}%`}
-        style={{ marginBottom: 24 }}
-      />{" "}
-      <Card
-        title={`Tiến trình điều trị hiếm muộn của ${patient?.name}`}
-        className="progress-card"
-        style={{ maxHeight: "100%", overflowY: "auto" }}
-      >
-        {currentSteps.length === 0 ? (
-          <Empty description="Chưa có tiến trình điều trị" />
-        ) : (
-          <HorizontalTimeline steps={currentSteps} />
-        )}
-      </Card>
+      </h2>{" "}
+      {showPatientDetail ? (
+        <>
+          <Button
+            type="default"
+            onClick={handleBackToList}
+            icon={<ArrowLeftOutlined />}
+            style={{ marginBottom: 16 }}
+          >
+            Quay lại danh sách bệnh nhân
+          </Button>{" "}
+          <AntdProgress
+            percent={percent}
+            status={globalStatus === "Hoàn thành" ? "success" : "active"}
+            format={(p) => `${globalStatus} – ${p}%`}
+            style={{ marginBottom: 24 }}
+          />
+          <Card
+            title={`Tiến trình điều trị hiếm muộn của ${patient?.name}`}
+            className="progress-card"
+            style={{ maxHeight: "100%", overflowY: "auto" }}
+            extra={
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={showAddModal}
+                size="small"
+              >
+                Thêm tiến độ
+              </Button>
+            }
+          >
+            {currentSteps.length === 0 ? (
+              <Empty description="Chưa có tiến trình điều trị" />
+            ) : (
+              <HorizontalTimeline steps={currentSteps} />
+            )}
+          </Card>
+        </>
+      ) : (
+        <>
+          {" "}
+          <div style={{ marginBottom: 16 }}>
+            <Input.Search
+              placeholder="Tìm kiếm bệnh nhân"
+              allowClear
+              onChange={(e) => setSearchPatientText(e.target.value)}
+              style={{ width: 300, marginBottom: 16 }}
+            />
+          </div>
+          <Card title="Danh sách bệnh nhân điều trị hiếm muộn">
+            <List
+              itemLayout="horizontal"
+              dataSource={patientsList.filter((p) =>
+                p.name.toLowerCase().includes(searchPatientText.toLowerCase())
+              )}
+              renderItem={(patient) => {
+                const counts = countPatientProgressStatus(patient.id);
+                return (
+                  <List.Item
+                    key={patient.id}
+                    actions={[
+                      <Button
+                        type="primary"
+                        onClick={() => handlePatientSelect(patient.id)}
+                        icon={<ArrowRightOutlined />}
+                      >
+                        Xem chi tiết
+                      </Button>,
+                    ]}
+                  >
+                    <List.Item.Meta
+                      title={
+                        <a onClick={() => handlePatientSelect(patient.id)}>
+                          {patient.name}
+                        </a>
+                      }
+                      description={
+                        <Space direction="vertical">
+                          <Text>Tổng số tiến độ: {counts.total}</Text>
+                          <Space>
+                            <Tag color="green">Hoàn thành: {counts.done}</Tag>
+                            <Tag color="blue">
+                              Đang thực hiện: {counts.doing}
+                            </Tag>
+                            <Tag color="default">
+                              Chưa thực hiện: {counts.pending}
+                            </Tag>
+                          </Space>
+                          <AntdProgress
+                            percent={
+                              counts.total > 0
+                                ? Math.round((counts.done / counts.total) * 100)
+                                : 0
+                            }
+                            size="small"
+                            status={
+                              counts.done === counts.total
+                                ? "success"
+                                : "active"
+                            }
+                          />
+                        </Space>
+                      }
+                    />
+                  </List.Item>
+                );
+              }}
+            />
+          </Card>
+        </>
+      )}
       {/* Add Progress Modal */}{" "}
       <Modal
         title="Thêm tiến độ điều trị hiếm muộn mới"

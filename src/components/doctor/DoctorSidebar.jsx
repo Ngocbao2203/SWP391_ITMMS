@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../../styles/DoctorSidebar.css";
 import {
@@ -14,12 +14,11 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
-const DoctorSidebar = () => {
-  const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
+const DoctorSidebar = ({ isCollapsed, onToggle }) => {
+  const location = useLocation(); // Sidebar toggle functionality đã bị vô hiệu hóa
   const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
+    // Không làm gì cả vì chúng ta đã fix sidebar luôn ở trạng thái mở rộng
+    return;
   };
 
   const menuItems = [
@@ -36,19 +35,15 @@ const DoctorSidebar = () => {
       icon: <FaClipboardList />,
     },
   ];
-
   return (
     <div className={`doctor-sidebar ${isCollapsed ? "collapsed" : ""}`}>
       <div className="sidebar-header">
         <div className="logo-container">
           <img src="" alt="Logo" className="logo" />
           {!isCollapsed && <h2>Trung tâm Hỗ trợ Sinh sản</h2>}
-        </div>
-        <button className="toggle-btn" onClick={toggleSidebar}>
-          {isCollapsed ? ">" : "<"}
-        </button>
+        </div>{" "}
+        {/* Nút toggle đã bị ẩn để ngăn người dùng tương tác với nó */}
       </div>
-
       <div className="doctor-info">
         {!isCollapsed && (
           <>
@@ -71,7 +66,6 @@ const DoctorSidebar = () => {
           />
         )}
       </div>
-
       <nav className="menu">
         <ul>
           {menuItems.map((item, index) => (
@@ -79,6 +73,7 @@ const DoctorSidebar = () => {
               key={index}
               className={location.pathname === item.path ? "active" : ""}
             >
+              {" "}
               <Link to={item.path}>
                 <span className="icon">{item.icon}</span>
                 {!isCollapsed && <span className="text">{item.name}</span>}
@@ -87,13 +82,12 @@ const DoctorSidebar = () => {
           ))}
         </ul>
       </nav>
-
       <div className="sidebar-footer">
         <Link to="/logout" className="logout-btn">
           <FaSignOutAlt />
           {!isCollapsed && <span>Đăng xuất</span>}
         </Link>
-      </div>
+      </div>{" "}
     </div>
   );
 };
