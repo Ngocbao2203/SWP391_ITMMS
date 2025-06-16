@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import {
   Calendar,
   Badge,
@@ -175,28 +175,29 @@ const AppointmentSchedule = () => {
 
     fetchAppointments();
   }, []);
+  const dateCellRender = useCallback(
+    (value) => {
+      const formattedDate = value.format("YYYY-MM-DD");
+      const listData = appointments.filter(
+        (appointment) => appointment.date === formattedDate
+      );
 
-  const dateCellRender = (value) => {
-    const formattedDate = value.format("YYYY-MM-DD");
-    const listData = appointments.filter(
-      (appointment) => appointment.date === formattedDate
-    );
-
-    return (
-      <ul className="events">
-        {listData.map((item) => (
-          <li key={item.id}>
-            {" "}
-            <Badge
-              status={getStatusBadge(item.status)}
-              text={`${item.patientName}`}
-              className="appointment-badge"
-            />
-          </li>
-        ))}
-      </ul>
-    );
-  };
+      return (
+        <ul className="events">
+          {listData.map((item) => (
+            <li key={item.id}>
+              <Badge
+                status={getStatusBadge(item.status)}
+                text={`${item.patientName}`}
+                className="appointment-badge"
+              />
+            </li>
+          ))}
+        </ul>
+      );
+    },
+    [appointments]
+  );
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -235,7 +236,6 @@ const AppointmentSchedule = () => {
     form.resetFields();
     form.setFieldsValue({
       date: selectedDate,
-      duration: 30,
     });
     setIsModalVisible(true);
   };
@@ -244,12 +244,10 @@ const AppointmentSchedule = () => {
     setCurrentAppointment(appointment);
     setIsAppointmentDetailsVisible(true);
   };
-
   const showUpdateStatusModal = (appointment) => {
     setCurrentAppointment(appointment);
     statusForm.setFieldsValue({
       status: appointment.status,
-      notes: "",
     });
     setIsUpdateStatusVisible(true);
   };
@@ -269,17 +267,13 @@ const AppointmentSchedule = () => {
 
         message.success("Appointment added successfully");
         form.resetFields();
-        setIsModalVisible(false);
-
-        // Add to local state (mock implementation)
+        setIsModalVisible(false); // Add to local state (mock implementation)
         const newAppointment = {
           id: appointments.length + 1,
-          patientId: values.patientId,
           patientName: values.patientName,
           patientPhone: values.patientPhone,
           patientEmail: values.patientEmail,
           date: values.date.format("YYYY-MM-DD"),
-          duration: values.duration,
           service: values.service,
           status: "pending",
           notes: values.notes,
@@ -302,15 +296,13 @@ const AppointmentSchedule = () => {
 
         message.success("Appointment status updated successfully");
         statusForm.resetFields();
-        setIsUpdateStatusVisible(false);
-
-        // Update local state (mock implementation)
+        setIsUpdateStatusVisible(false); // Update local state (mock implementation)
         const updatedAppointments = appointments.map((appointment) => {
           if (appointment.id === currentAppointment.id) {
             return {
               ...appointment,
               status: values.status,
-              notes: appointment.notes + "\\n" + values.notes,
+              // Không cập nhật notes
             };
           }
           return appointment;
@@ -322,15 +314,14 @@ const AppointmentSchedule = () => {
         console.log("Validation Failed:", info);
       });
   };
-
-  const getDailyAppointments = () => {
+  const getDailyAppointments = useCallback(() => {
     const formattedDate = selectedDate.format("YYYY-MM-DD");
     return appointments.filter(
       (appointment) => appointment.date === formattedDate
     );
-  };
+  }, [appointments, selectedDate]);
 
-  const getUpcomingAppointments = () => {
+  const getUpcomingAppointments = useCallback(() => {
     const today = dayjs().format("YYYY-MM-DD");
     return appointments.filter(
       (appointment) =>
@@ -338,7 +329,7 @@ const AppointmentSchedule = () => {
         appointment.status !== "completed" &&
         appointment.status !== "cancelled"
     );
-  };
+  }, [appointments]);
   const columns = [
     {
       title: "Patient",
@@ -350,12 +341,6 @@ const AppointmentSchedule = () => {
       title: "Service",
       dataIndex: "service",
       key: "service",
-    },
-    {
-      title: "Duration",
-      dataIndex: "duration",
-      key: "duration",
-      render: (duration) => `${duration} min`,
     },
     {
       title: "Status",
@@ -458,7 +443,6 @@ const AppointmentSchedule = () => {
           Add Appointment
         </Button>
       </div>
-
       <Tabs
         activeKey={activeTab}
         onChange={(key) => setActiveTab(key)}
@@ -473,6 +457,7 @@ const AppointmentSchedule = () => {
           key="1"
         >
           <div className="calendar-container">
+            {" "}
             {loading ? (
               <div className="loading-container">
                 <Spin size="large" />
@@ -482,9 +467,9 @@ const AppointmentSchedule = () => {
                 dateCellRender={dateCellRender}
                 onSelect={handleDateSelect}
                 value={selectedDate}
+                key="appointment-calendar"
               />
             )}
-
             <div className="daily-appointments">
               <Card
                 title={
@@ -503,6 +488,7 @@ const AppointmentSchedule = () => {
                   </Button>
                 }
               >
+                {/* Tránh gọi useMemo trong điều kiện */}
                 <Table
                   dataSource={getDailyAppointments()}
                   columns={columns}
@@ -523,6 +509,7 @@ const AppointmentSchedule = () => {
           }
           key="2"
         >
+          {" "}
           {loading ? (
             <div className="loading-container">
               <Spin size="large" />
@@ -538,8 +525,7 @@ const AppointmentSchedule = () => {
           )}
         </TabPane>
       </Tabs>
-
-      {/* Add Appointment Modal */}
+      {/* Add Appointment Modal */}{" "}
       <Modal
         title="Add New Appointment"
         open={isModalVisible}
@@ -549,16 +535,7 @@ const AppointmentSchedule = () => {
       >
         <Form form={form} layout="vertical">
           <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="patientId"
-                label="Patient ID"
-                rules={[{ required: true, message: "Please input patient ID" }]}
-              >
-                <Input placeholder="Enter patient ID" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
+            <Col span={24}>
               <Form.Item
                 name="patientName"
                 label="Patient Name"
@@ -602,9 +579,9 @@ const AppointmentSchedule = () => {
                 <DatePicker style={{ width: "100%" }} />
               </Form.Item>
             </Col>
-          </Row>
+          </Row>{" "}
           <Row gutter={16}>
-            <Col span={12}>
+            <Col span={24}>
               <Form.Item
                 name="service"
                 label="Service"
@@ -628,29 +605,12 @@ const AppointmentSchedule = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item
-                name="duration"
-                label="Duration (minutes)"
-                rules={[{ required: true, message: "Please select duration" }]}
-              >
-                <Select placeholder="Select duration">
-                  <Option value={15}>15 minutes</Option>
-                  <Option value={30}>30 minutes</Option>
-                  <Option value={45}>45 minutes</Option>
-                  <Option value={60}>60 minutes</Option>
-                  <Option value={90}>90 minutes</Option>
-                  <Option value={120}>120 minutes</Option>
-                </Select>
-              </Form.Item>
-            </Col>
           </Row>
           <Form.Item name="notes" label="Notes">
             <Input.TextArea rows={4} placeholder="Enter additional notes" />
           </Form.Item>
         </Form>
       </Modal>
-
       {/* Appointment Details Modal */}
       <Modal
         title="Appointment Details"
@@ -688,6 +648,7 @@ const AppointmentSchedule = () => {
                   }
                   className="details-card"
                 >
+                  {" "}
                   <Row gutter={16}>
                     <Col span={12}>
                       <p>
@@ -696,10 +657,6 @@ const AppointmentSchedule = () => {
                       </p>
                       <p>
                         <Text strong>Time:</Text> {currentAppointment.time}
-                      </p>
-                      <p>
-                        <Text strong>Duration:</Text>{" "}
-                        {currentAppointment.duration} minutes
                       </p>
                       <p>
                         <Text strong>Service:</Text>{" "}
@@ -729,12 +686,9 @@ const AppointmentSchedule = () => {
                   }
                   className="details-card"
                 >
+                  {" "}
                   <Row gutter={16}>
                     <Col span={12}>
-                      <p>
-                        <Text strong>Patient ID:</Text>{" "}
-                        {currentAppointment.patientId}
-                      </p>
                       <p>
                         <Text strong>Name:</Text>{" "}
                         {currentAppointment.patientName}
@@ -751,7 +705,6 @@ const AppointmentSchedule = () => {
                       </p>
                     </Col>
                   </Row>
-
                   <div className="medical-history-section">
                     <Text strong>Medical History:</Text>
                     <p>
@@ -778,7 +731,6 @@ const AppointmentSchedule = () => {
           </div>
         )}
       </Modal>
-
       {/* Update Status Modal */}
       <Modal
         title="Update Appointment Status"
@@ -804,8 +756,7 @@ const AppointmentSchedule = () => {
                 <Text strong>Current Status:</Text>{" "}
                 {getStatusTag(currentAppointment.status)}
               </p>
-            </div>
-
+            </div>{" "}
             <Form.Item
               name="status"
               label="Update Status"
@@ -817,17 +768,6 @@ const AppointmentSchedule = () => {
                 <Option value="completed">Completed</Option>
                 <Option value="cancelled">Cancelled</Option>
               </Select>
-            </Form.Item>
-
-            <Form.Item
-              name="notes"
-              label="Additional Notes"
-              rules={[{ required: true, message: "Please add notes" }]}
-            >
-              <Input.TextArea
-                rows={4}
-                placeholder="Enter notes about the status change"
-              />
             </Form.Item>
           </Form>
         )}

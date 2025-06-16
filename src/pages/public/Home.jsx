@@ -75,10 +75,10 @@ const Home = () => {
         >
           <div className="banner-content">
             <Title level={2} className="banner-title">
-              Điều trị hiếm muộn – Chuyên sâu & Tận tâm
+              ITMMS – Chuyên sâu & Tận tâm
             </Title>
             <Paragraph className="home-subtext">
-              My Clinic là địa chỉ tin cậy trong lĩnh vực điều trị vô sinh – hiếm muộn tại Việt Nam, nơi bạn được đồng hành và chăm sóc toàn diện trên hành trình tìm kiếm con yêu.
+              ITMMS là địa chỉ tin cậy trong lĩnh vực điều trị vô sinh – hiếm muộn tại Việt Nam, nơi bạn được đồng hành và chăm sóc toàn diện trên hành trình tìm kiếm con yêu.
             </Paragraph>
           </div>
         </div>

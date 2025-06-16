@@ -119,23 +119,6 @@
   text-align: center;
 }
 
-.ant-btn-primary {
-  background-color: #2563eb;
-  border-color: #2563eb;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 1.1rem;
-  font-weight: 500;
-  height: auto;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.ant-btn-primary:hover {
-  background-color: #1d4ed8;
-  border-color: #1d4ed8;
-  transform: translateY(-2px);
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .service-detail-container {
@@ -162,11 +145,6 @@
   .doctor-photo {
     width: 60px;
     height: 60px;
-  }
-
-  .ant-btn-primary {
-    font-size: 1rem;
-    padding: 10px 20px;
   }
 }
 
