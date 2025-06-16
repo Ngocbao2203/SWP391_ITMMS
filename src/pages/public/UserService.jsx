@@ -236,7 +236,7 @@ export default function UserService() {
                     });
                   }}
                 >
-                  <CalendarOutlined /> Đăng ký ngay
+                  <CalendarOutlined /> Đặt Lịch
                 </Button>
               </div>
             </Card>

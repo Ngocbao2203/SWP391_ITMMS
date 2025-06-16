@@ -174,7 +174,7 @@ const ServiceDetail = () => {
                   className="register-button"
                   onClick={handleRegisterService}
                 >
-                  Đăng ký dịch vụ
+                  Đặt Lịch
                 </Button>
               </div>
             </Col>
