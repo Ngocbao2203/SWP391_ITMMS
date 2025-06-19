@@ -362,7 +362,6 @@ const AppointmentSchedule = () => {
         <Space size="small">
           <Tooltip title="View Details">
             <Button
-              type="primary"
               icon={<InfoCircleOutlined />}
               size="small"
               onClick={() => showAppointmentDetails(record)}

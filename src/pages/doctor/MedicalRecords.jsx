@@ -201,6 +201,7 @@ const MedicalRecords = () => {
       title: "SĐT",
       dataIndex: "phone",
       key: "phone",
+      render: (text) => <span style={{ color: "#000000" }}>{text}</span>,
     },
     {
       title: "Phương pháp điều trị",
@@ -243,9 +244,9 @@ const MedicalRecords = () => {
       key: "actions",
       render: (_, record) => (
         <Space size="small">
+          {" "}
           <Tooltip title="Xem hồ sơ">
             <Button
-              type="primary"
               icon={<FileTextOutlined />}
               onClick={() => handleViewPatient(record)}
             />
@@ -289,7 +290,7 @@ const MedicalRecords = () => {
 
       <div style={{ marginBottom: "20px" }}>
         <Input.Search
-          placeholder="Tìm kiếm theo tên, số điện thoại hoặc email"
+          placeholder="Tìm kiếm theo tên, số điện thoại"
           allowClear
           enterButton={<SearchOutlined />}
           size="large"
