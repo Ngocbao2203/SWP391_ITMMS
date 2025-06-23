@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Calendar,
   Badge,
   Modal,
   Button,
   Form,
-  Input,
   Select,
-  TimePicker,
-  DatePicker,
   message,
   Tabs,
   Table,
@@ -23,16 +20,9 @@ import {
 } from "antd";
 import {
   CalendarOutlined,
-  ClockCircleOutlined,
   UserOutlined,
-  PhoneOutlined,
-  MailOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  ExclamationCircleOutlined,
   EditOutlined,
   InfoCircleOutlined,
-  ArrowRightOutlined,
   TeamOutlined,
   BarsOutlined,
 } from "@ant-design/icons";
@@ -44,17 +34,26 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 
+// CSS inline để đảm bảo bảng hiển thị đúng
+const tableStyle = {
+  width: "100%",
+  tableLayout: "fixed",
+};
+
+const columnStyle = {
+  textAlign: "left",
+  fontWeight: "bold",
+};
+
 const AppointmentSchedule = () => {
   const [appointments, setAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAppointmentDetailsVisible, setIsAppointmentDetailsVisible] =
     useState(false);
   const [isUpdateStatusVisible, setIsUpdateStatusVisible] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("1");
-  const [form] = Form.useForm();
   const [statusForm] = Form.useForm();
   // Mock data - replace with actual API calls
   useEffect(() => {
@@ -213,31 +212,42 @@ const AppointmentSchedule = () => {
         return "default";
     }
   };
-
   const getStatusTag = (status) => {
     switch (status) {
       case "confirmed":
-        return <Tag color="blue">Confirmed</Tag>;
+        return (
+          <Tag color="blue" className="status-tag">
+            Confirmed
+          </Tag>
+        );
       case "pending":
-        return <Tag color="orange">Pending</Tag>;
+        return (
+          <Tag color="orange" className="status-tag">
+            Pending
+          </Tag>
+        );
       case "completed":
-        return <Tag color="green">Completed</Tag>;
+        return (
+          <Tag color="green" className="status-tag">
+            Completed
+          </Tag>
+        );
       case "cancelled":
-        return <Tag color="red">Cancelled</Tag>;
+        return (
+          <Tag color="red" className="status-tag">
+            Cancelled
+          </Tag>
+        );
       default:
-        return <Tag color="default">{status}</Tag>;
+        return (
+          <Tag color="default" className="status-tag">
+            {status}
+          </Tag>
+        );
     }
   };
-
   const handleDateSelect = (value) => {
     setSelectedDate(value);
-  };
-  const showAddAppointmentModal = () => {
-    form.resetFields();
-    form.setFieldsValue({
-      date: selectedDate,
-    });
-    setIsModalVisible(true);
   };
 
   const showAppointmentDetails = (appointment) => {
@@ -251,40 +261,9 @@ const AppointmentSchedule = () => {
     });
     setIsUpdateStatusVisible(true);
   };
-
   const handleCancel = () => {
-    setIsModalVisible(false);
     setIsAppointmentDetailsVisible(false);
     setIsUpdateStatusVisible(false);
-  };
-
-  const handleAddAppointment = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        // Replace with API call to add appointment
-        // axios.post('/api/appointments', values)
-
-        message.success("Appointment added successfully");
-        form.resetFields();
-        setIsModalVisible(false); // Add to local state (mock implementation)
-        const newAppointment = {
-          id: appointments.length + 1,
-          patientName: values.patientName,
-          patientPhone: values.patientPhone,
-          patientEmail: values.patientEmail,
-          date: values.date.format("YYYY-MM-DD"),
-          service: values.service,
-          status: "pending",
-          notes: values.notes,
-          createdAt: dayjs().format("YYYY-MM-DD"),
-        };
-
-        setAppointments([...appointments, newAppointment]);
-      })
-      .catch((info) => {
-        console.log("Validation Failed:", info);
-      });
   };
 
   const handleUpdateStatus = () => {
@@ -332,20 +311,23 @@ const AppointmentSchedule = () => {
   }, [appointments]);
   const columns = [
     {
-      title: "Patient",
+      title: "PATIENT",
       dataIndex: "patientName",
       key: "patientName",
+      width: "30%",
       sorter: (a, b) => a.patientName.localeCompare(b.patientName),
     },
     {
-      title: "Service",
+      title: "SERVICE",
       dataIndex: "service",
       key: "service",
+      width: "30%",
     },
     {
-      title: "Status",
+      title: "STATUS",
       dataIndex: "status",
       key: "status",
+      width: "20%",
       render: (status) => getStatusTag(status),
       filters: [
         { text: "Confirmed", value: "confirmed" },
@@ -356,8 +338,9 @@ const AppointmentSchedule = () => {
       onFilter: (value, record) => record.status === value,
     },
     {
-      title: "Actions",
+      title: "ACTIONS",
       key: "actions",
+      width: "20%",
       render: (_, record) => (
         <Space size="small">
           <Tooltip title="View Details">
@@ -380,33 +363,37 @@ const AppointmentSchedule = () => {
       ),
     },
   ];
-
   const upcomingColumns = [
     {
-      title: "Date",
+      title: "DATE",
       dataIndex: "date",
       key: "date",
+      width: "15%",
       sorter: (a, b) => dayjs(a.date).unix() - dayjs(b.date).unix(),
     },
     {
-      title: "Patient",
+      title: "PATIENT",
       dataIndex: "patientName",
       key: "patientName",
+      width: "25%",
     },
     {
-      title: "Service",
+      title: "SERVICE",
       dataIndex: "service",
       key: "service",
+      width: "25%",
     },
     {
-      title: "Status",
+      title: "STATUS",
       dataIndex: "status",
       key: "status",
+      width: "15%",
       render: (status) => getStatusTag(status),
     },
     {
-      title: "Actions",
+      title: "ACTIONS",
       key: "actions",
+      width: "20%",
       render: (_, record) => (
         <Space size="small">
           <Tooltip title="View Details">
@@ -434,13 +421,6 @@ const AppointmentSchedule = () => {
     <div className="appointment-schedule-container">
       <div className="appointment-schedule-header">
         <Title level={2}>Appointment Schedule</Title>
-        <Button
-          type="primary"
-          icon={<CalendarOutlined />}
-          onClick={showAddAppointmentModal}
-        >
-          Add Appointment
-        </Button>
       </div>
       <Tabs
         activeKey={activeTab}
@@ -477,17 +457,8 @@ const AppointmentSchedule = () => {
                     {selectedDate.format("MMMM D, YYYY")}
                   </span>
                 }
-                extra={
-                  <Button
-                    type="primary"
-                    onClick={showAddAppointmentModal}
-                    size="small"
-                  >
-                    Add
-                  </Button>
-                }
               >
-                {/* Tránh gọi useMemo trong điều kiện */}
+                {/* Tránh gọi useMemo trong điều kiện */}{" "}
                 <Table
                   dataSource={getDailyAppointments()}
                   columns={columns}
@@ -495,6 +466,9 @@ const AppointmentSchedule = () => {
                   size="small"
                   pagination={false}
                   locale={{ emptyText: "No appointments for this date" }}
+                  style={tableStyle}
+                  bordered
+                  className="appointment-table"
                 />
               </Card>
             </div>
@@ -520,96 +494,13 @@ const AppointmentSchedule = () => {
               rowKey="id"
               pagination={{ pageSize: 10 }}
               locale={{ emptyText: "No upcoming appointments" }}
+              style={tableStyle}
+              bordered
+              className="appointment-table"
             />
           )}
-        </TabPane>
+        </TabPane>{" "}
       </Tabs>
-      {/* Add Appointment Modal */}{" "}
-      <Modal
-        title="Add New Appointment"
-        open={isModalVisible}
-        onOk={handleAddAppointment}
-        onCancel={handleCancel}
-        width={600}
-      >
-        <Form form={form} layout="vertical">
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="patientName"
-                label="Patient Name"
-                rules={[
-                  { required: true, message: "Please input patient name" },
-                ]}
-              >
-                <Input placeholder="Enter patient name" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="patientPhone"
-                label="Phone"
-                rules={[
-                  { required: true, message: "Please input phone number" },
-                ]}
-              >
-                <Input placeholder="Enter phone number" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="patientEmail"
-                label="Email"
-                rules={[{ type: "email", message: "Invalid email format" }]}
-              >
-                <Input placeholder="Enter email address" />
-              </Form.Item>
-            </Col>
-          </Row>{" "}
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="date"
-                label="Date"
-                rules={[{ required: true, message: "Please select date" }]}
-              >
-                <DatePicker style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-          </Row>{" "}
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="service"
-                label="Service"
-                rules={[{ required: true, message: "Please select service" }]}
-              >
-                <Select placeholder="Select a service">
-                  <Option value="Regular Checkup">Regular Checkup</Option>
-                  <Option value="Dental Cleaning">Dental Cleaning</Option>
-                  <Option value="Root Canal Treatment">
-                    Root Canal Treatment
-                  </Option>
-                  <Option value="Dental Implant">Dental Implant</Option>
-                  <Option value="Consultation">Consultation</Option>
-                  <Option value="Wisdom Tooth Extraction">
-                    Wisdom Tooth Extraction
-                  </Option>
-                  <Option value="Orthodontic Treatment">
-                    Orthodontic Treatment
-                  </Option>
-                  <Option value="Follow-up">Follow-up</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item name="notes" label="Notes">
-            <Input.TextArea rows={4} placeholder="Enter additional notes" />
-          </Form.Item>
-        </Form>
-      </Modal>
       {/* Appointment Details Modal */}
       <Modal
         title="Appointment Details"

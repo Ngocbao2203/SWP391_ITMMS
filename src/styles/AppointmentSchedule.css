@@ -1,6 +1,5 @@
-
 .appointment-schedule-container {
-  padding: 20px;
+  padding: 16px;
   background-color: #fff;
 }
 
@@ -107,4 +106,52 @@
   .ant-picker-calendar-date-content {
     height: 50px;
   }
+}
+
+/* Thêm các style cho bảng lịch hẹn */
+.appointment-table .ant-table-thead > tr > th {
+  text-transform: uppercase;
+  font-weight: bold;
+  background-color: #f7f7f7;
+  text-align: left;
+}
+
+.appointment-table .ant-table-tbody > tr > td {
+  vertical-align: middle;
+}
+
+/* Đảm bảo các nút action được căn giữa */
+.appointment-table .ant-space {
+  display: flex;
+  justify-content: center;
+}
+
+/* Thiết lập rõ ràng chiều rộng cột */
+.appointment-table .ant-table-column-title {
+  white-space: nowrap;
+}
+
+/* Đảm bảo status tag hiển thị đẹp */
+.appointment-table .ant-tag {
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Style cho status tag */
+.status-tag {
+  display: inline-block;
+  min-width: 90px;
+  text-align: center;
+  padding: 0 10px;
+  font-weight: 500;
+}
+
+/* Style cho card đựng bảng */
+.daily-appointments .ant-card {
+  margin-top: 16px;
+}
+
+/* Cải thiện hiển thị các nút action */
+.appointment-table .ant-btn {
+  margin: 0 4px;
 }

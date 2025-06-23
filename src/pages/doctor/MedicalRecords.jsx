@@ -13,6 +13,7 @@ import {
   Tooltip,
   message,
   Spin,
+  Upload,
 } from "antd";
 import {
   SearchOutlined,
@@ -21,6 +22,9 @@ import {
   EditOutlined,
   HistoryOutlined,
   MedicineBoxOutlined,
+  DownloadOutlined,
+  DeleteOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 // import axios from "axios";
@@ -165,14 +169,7 @@ const MedicalRecords = () => {
         return "default";
     }
   };
-
   const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      width: 70,
-    },
     {
       title: "Họ và tên",
       dataIndex: "name",
@@ -207,6 +204,9 @@ const MedicalRecords = () => {
       title: "Phương pháp điều trị",
       dataIndex: "treatmentType",
       key: "treatmentType",
+      render: (text) => (
+        <span style={{ color: "#000000", fontWeight: "normal" }}>{text}</span>
+      ),
       filters: [
         { text: "IVF", value: "IVF" },
         { text: "IUI", value: "IUI" },
@@ -226,18 +226,6 @@ const MedicalRecords = () => {
         { text: "Hoàn thành", value: "Hoàn thành" },
       ],
       onFilter: (value, record) => record.status === value,
-    },
-    {
-      title: "Lần khám gần nhất",
-      dataIndex: "lastVisit",
-      key: "lastVisit",
-      sorter: (a, b) => new Date(a.lastVisit) - new Date(b.lastVisit),
-    },
-    {
-      title: "Lịch hẹn tiếp theo",
-      dataIndex: "nextVisit",
-      key: "nextVisit",
-      sorter: (a, b) => new Date(a.nextVisit) - new Date(b.nextVisit),
     },
     {
       title: "Thao tác",
@@ -431,9 +419,101 @@ const MedicalRecords = () => {
             </TabPane>
             <TabPane tab="Lịch sử khám bệnh" key="history">
               <p>Dữ liệu lịch sử khám bệnh sẽ được hiển thị tại đây</p>
-            </TabPane>
+            </TabPane>{" "}
             <TabPane tab="Kết quả xét nghiệm" key="results">
-              <p>Kết quả xét nghiệm sẽ được hiển thị tại đây</p>
+              <div style={{ marginBottom: 16 }}>
+                {" "}
+                <h3>Tải lên kết quả xét nghiệm</h3>
+                <div>
+                  <Upload
+                    multiple={false}
+                    showUploadList={false}
+                    beforeUpload={() => {
+                      message.success(
+                        "File đã được chọn. Chức năng upload đang phát triển."
+                      );
+                      return false;
+                    }}
+                  >
+                    <Button type="primary" icon={<PlusOutlined />}>
+                      Chọn file
+                    </Button>
+                  </Upload>
+                </div>
+              </div>
+              <div>
+                <h3>Danh sách kết quả xét nghiệm</h3>
+                <Table
+                  dataSource={[
+                    {
+                      key: "1",
+                      name: "Kết quả xét nghiệm hormone.pdf",
+                      date: "20/05/2025",
+                      type: "PDF",
+                    },
+                    {
+                      key: "2",
+                      name: "Kết quả siêu âm buồng trứng.jpg",
+                      date: "15/05/2025",
+                      type: "Ảnh",
+                    },
+                  ]}
+                  columns={[
+                    {
+                      title: "Tên tài liệu",
+                      dataIndex: "name",
+                      key: "name",
+                    },
+                    {
+                      title: "Ngày tải lên",
+                      dataIndex: "date",
+                      key: "date",
+                    },
+                    {
+                      title: "Loại tài liệu",
+                      dataIndex: "type",
+                      key: "type",
+                    },
+                    {
+                      title: "Thao tác",
+                      key: "action",
+                      render: () => (
+                        <Space>
+                          <Tooltip title="Xem">
+                            <Button
+                              type="link"
+                              icon={<EyeOutlined />}
+                              onClick={() =>
+                                message.info("Chức năng đang phát triển")
+                              }
+                            />
+                          </Tooltip>
+                          <Tooltip title="Tải xuống">
+                            <Button
+                              type="link"
+                              icon={<DownloadOutlined />}
+                              onClick={() =>
+                                message.info("Chức năng đang phát triển")
+                              }
+                            />
+                          </Tooltip>
+                          <Tooltip title="Xóa">
+                            <Button
+                              type="link"
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() =>
+                                message.info("Chức năng đang phát triển")
+                              }
+                            />
+                          </Tooltip>
+                        </Space>
+                      ),
+                    },
+                  ]}
+                  pagination={false}
+                />
+              </div>
             </TabPane>
             <TabPane tab="Tiến trình điều trị" key="treatment">
               <p>Thông tin phác đồ điều trị sẽ được hiển thị tại đây</p>
