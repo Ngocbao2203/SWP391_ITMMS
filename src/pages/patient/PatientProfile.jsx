@@ -1,21 +1,81 @@
-import React, { useState } from 'react';
-import { Card, Row, Col, Avatar, Button, Input, Space, Select, DatePicker } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Row, Col, Avatar, Button, Input, Space, Select, DatePicker, message, Spin } from 'antd';
 import { UserOutlined, PhoneOutlined, MailOutlined, EditOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { authService } from '../../services';
 
 const { Option } = Select;
 
 const PatientProfile = () => {
   const [formData, setFormData] = useState({
-    firstName: 'Nguyễn Văn A',
-    lastName: 'A',
-    email: 'example@gmail.com',
-    phone: '0123456789',
-    address: '123 Đường ABC, Quận XYZ',
-    healthStatus: 'Có sức khỏe tốt',
+    fullName: '',
+    email: '',
+    phone: '',
+    address: '',
     gender: 'Nam',
-    birthDate: '01/01/1985'
+    birthDate: null
   });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    loadUserProfile();
+  }, []);
+
+  const loadUserProfile = async () => {
+    try {
+      const currentUser = authService.getCurrentUser();
+      if (!currentUser) {
+        message.error('Vui lòng đăng nhập để xem profile');
+        return;
+      }
+
+      setUser(currentUser);
+      
+      // Try to load profile from API, fallback to current user data
+      try {
+        const response = await authService.getUserProfile(currentUser.id);
+        
+        if (response) {
+          setFormData({
+            fullName: response.fullName || currentUser.fullName || '',
+            email: response.email || currentUser.email || '',
+            phone: response.phone || currentUser.phone || '',
+            address: response.address || '',
+            gender: response.gender || 'Nam',
+            birthDate: response.birthDate ? moment(response.birthDate) : null
+          });
+        } else {
+          // Fallback to current user data
+          setFormData({
+            fullName: currentUser.fullName || '',
+            email: currentUser.email || '',
+            phone: currentUser.phone || '',
+            address: '',
+            gender: 'Nam',
+            birthDate: null
+          });
+        }
+      } catch (apiError) {
+        // API profile endpoint not available, using current user data
+        
+        // Fallback to current user data if API fails
+        setFormData({
+          fullName: currentUser.fullName || '',
+          email: currentUser.email || '',
+          phone: currentUser.phone || '',
+          address: '',
+          gender: 'Nam',
+          birthDate: null
+        });
+      }
+    } catch (error) {
+      message.error('Không thể tải thông tin profile: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e, field) => {
     setFormData({ ...formData, [field]: e.target.value });
@@ -25,9 +85,50 @@ const PatientProfile = () => {
     setFormData({ ...formData, gender: value });
   };
 
-  const handleSave = () => {
-    console.log('Thông tin đã được lưu:', formData);
+  const handleDateChange = (date) => {
+    setFormData({ ...formData, birthDate: date });
   };
+
+  const handleSave = async () => {
+    if (!user) {
+      message.error('Không tìm thấy thông tin user');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const updateData = {
+        fullName: formData.fullName,
+        phone: formData.phone,
+        address: formData.address,
+        gender: formData.gender,
+        birthDate: formData.birthDate ? formData.birthDate.format('YYYY-MM-DD') : null
+      };
+
+      const result = await authService.updateProfile(user.id, updateData);
+      
+      if (result && result.success) {
+        message.success('Cập nhật profile thành công!');
+        // Reload profile to show updated data
+        await loadUserProfile();
+      } else {
+        message.error(result?.message || 'Không thể cập nhật profile');
+      }
+    } catch (error) {
+      message.error('Lỗi khi cập nhật profile: ' + error.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '50px' }}>
+        <Spin size="large" />
+        <p style={{ marginTop: '16px' }}>Đang tải thông tin profile...</p>
+      </div>
+    );
+  }
 
   return (
     <Card
@@ -52,19 +153,11 @@ const PatientProfile = () => {
         <Col xs={24} sm={18} md={20}>
           <Row gutter={[16, 16]}>
             {/* Họ tên */}
-            <Col xs={24} sm={12}>
+            <Col span={24}>
               <Input
-                value={formData.firstName}
-                onChange={(e) => handleInputChange(e, 'firstName')}
-                placeholder="Họ"
-                style={{ marginBottom: '16px' }}
-              />
-            </Col>
-            <Col xs={24} sm={12}>
-              <Input
-                value={formData.lastName}
-                onChange={(e) => handleInputChange(e, 'lastName')}
-                placeholder="Tên"
+                value={formData.fullName}
+                onChange={(e) => handleInputChange(e, 'fullName')}
+                placeholder="Họ và tên đầy đủ"
                 style={{ marginBottom: '16px' }}
               />
             </Col>
@@ -74,10 +167,11 @@ const PatientProfile = () => {
           <Row gutter={[16, 16]}>
             <Col span={24}>
               <DatePicker
-                value={formData.birthDate ? moment(formData.birthDate, 'DD/MM/YYYY') : null}
-                onChange={(date, dateString) => setFormData({ ...formData, birthDate: dateString })}
+                value={formData.birthDate}
+                onChange={handleDateChange}
                 style={{ width: '100%', marginBottom: '16px' }}
                 placeholder="Ngày sinh"
+                format="DD/MM/YYYY"
               />
             </Col>
           </Row>
@@ -101,10 +195,11 @@ const PatientProfile = () => {
             <Col span={24}>
               <Input
                 value={formData.email}
-                onChange={(e) => handleInputChange(e, 'email')}
                 prefix={<MailOutlined />}
                 placeholder="Email"
                 style={{ marginBottom: '16px' }}
+                disabled
+                title="Email không thể thay đổi"
               />
             </Col>
           </Row>
@@ -139,9 +234,11 @@ const PatientProfile = () => {
             <Button 
               type="primary" 
               onClick={handleSave}
+              loading={saving}
               icon={<EditOutlined />}
+              size="large"
             >
-              Lưu Thay Đổi
+              {saving ? 'Đang lưu...' : 'Lưu Thay Đổi'}
             </Button>
           </Row>
         </Col>

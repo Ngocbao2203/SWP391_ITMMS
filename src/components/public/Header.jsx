@@ -17,29 +17,97 @@ const { Header: AntHeader } = Layout;
 
 const Header = ({ user, onLogout }) => {
   const location = useLocation();
-  const userMenu = (
-    <Menu>
-      <Menu.Item key="profile" icon={<UserOutlined />}>
-        <Link to="/profile">Hồ sơ cá nhân</Link>
-      </Menu.Item>
-      <Menu.Item key="appointments" icon={<AppstoreOutlined />}>
-        <Link to="/bookappointment">Lịch hẹn</Link>
-      </Menu.Item>
-      <Menu.Item key="treatment" icon={<TeamOutlined />}>
-        <Link to="/profile">Tiến trình điều trị</Link>
-      </Menu.Item>
-      <Menu.Item key="medical-records" icon={<ReadOutlined />}>
-        <Link to="/profile">Hồ sơ y tế</Link>
-      </Menu.Item>
-      <Menu.Item key="settings" icon={<SettingOutlined />}>
-        <Link to="/profile">Cài đặt tài khoản</Link>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="logout" onClick={onLogout} icon={<LogoutOutlined />}>
-        Đăng xuất
-      </Menu.Item>
-    </Menu>
-  );
+  
+  const userMenuItems = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: <Link to="/profile">Hồ sơ cá nhân</Link>,
+    },
+    {
+      key: 'appointments',
+      icon: <AppstoreOutlined />,
+      label: <Link to="/bookappointment">Lịch hẹn</Link>,
+    },
+    {
+      key: 'treatment',
+      icon: <TeamOutlined />,
+      label: <Link to="/profile">Tiến trình điều trị</Link>,
+    },
+    {
+      key: 'medical-records',
+      icon: <ReadOutlined />,
+      label: <Link to="/profile">Hồ sơ y tế</Link>,
+    },
+    {
+      key: 'settings',
+      icon: <SettingOutlined />,
+      label: <Link to="/profile">Cài đặt tài khoản</Link>,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Đăng xuất',
+      onClick: onLogout,
+    },
+  ];
+
+  const navigationItems = [
+    {
+      key: '/',
+      icon: <HomeOutlined />,
+      label: <Link to="/">Trang chủ</Link>,
+    },
+    {
+      key: '/userservice',
+      icon: <AppstoreOutlined />,
+      label: <Link to="/userservice">Dịch vụ</Link>,
+    },
+    {
+      key: '/blog',
+      icon: <ReadOutlined />,
+      label: <Link to="/blog">Bài viết</Link>,
+    },
+    {
+      key: '/doctors',
+      icon: <TeamOutlined />,
+      label: <Link to="/doctors">Bác sĩ</Link>,
+    },
+    ...(user ? [
+      {
+        key: 'user',
+        className: 'user-menu',
+        label: (
+          <Dropdown 
+            menu={{ items: userMenuItems }} 
+            placement="bottomRight" 
+            trigger={['click']}
+          >
+            <Space className="avatar-dropdown" style={{ cursor: 'pointer' }}>
+              <Avatar 
+                src={user.avatar || null} 
+                icon={!user.avatar && <UserOutlined />} 
+                style={{ marginRight: 8 }} 
+              />
+              <span className="user-name">{user.fullName || user.firstName + ' ' + user.lastName}</span>
+            </Space>
+          </Dropdown>
+        ),
+      }
+    ] : [
+      {
+        key: '/login',
+        label: <Link to="/login">Đăng nhập</Link>,
+      },
+      {
+        key: '/register',
+        label: <Link to="/register">Đăng ký</Link>,
+      }
+    ])
+  ];
 
   return (
     <AntHeader className="app-header">
@@ -53,44 +121,8 @@ const Header = ({ user, onLogout }) => {
         mode="horizontal"
         selectedKeys={[location.pathname]}
         className="nav-menu"
-      >
-        <Menu.Item key="/" icon={<HomeOutlined />}>
-          <Link to="/">Trang chủ</Link>
-        </Menu.Item>
-        <Menu.Item key="/userservice" icon={<AppstoreOutlined />}>
-          <Link to="/userservice">Dịch vụ</Link>
-        </Menu.Item>
-        <Menu.Item key="/blog" icon={<ReadOutlined />}>
-          <Link to="/blog">Bài viết</Link>
-        </Menu.Item>
-        <Menu.Item key="/doctors" icon={<TeamOutlined />}>
-          <Link to="/doctors">Bác sĩ</Link>
-        </Menu.Item>
-
-        {user ? (
-          <Menu.Item key="user" className="user-menu">
-            <Dropdown overlay={userMenu} placement="bottomRight" trigger={['click']}>
-              <Space className="avatar-dropdown" style={{ cursor: 'pointer' }}>
-                <Avatar 
-                  src={user.avatar || null} 
-                  icon={!user.avatar && <UserOutlined />} 
-                  style={{ marginRight: 8 }} 
-                />
-                <span className="user-name">{user.firstName} {user.lastName}</span>
-              </Space>
-            </Dropdown>
-          </Menu.Item>
-        ) : (
-          <>
-            <Menu.Item key="/login">
-              <Link to="/login">Đăng nhập</Link>
-            </Menu.Item>
-            <Menu.Item key="/register">
-              <Link to="/register">Đăng ký</Link>
-            </Menu.Item>
-          </>
-        )}
-      </Menu>
+        items={navigationItems}
+      />
     </AntHeader>
   );
 };
