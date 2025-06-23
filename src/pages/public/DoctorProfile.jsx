@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Typography, Button, Rate, Breadcrumb, message, Tag } from "antd";
+import { Card, Typography, Button, Breadcrumb, message, Tag } from "antd";
 import {
   ArrowLeftOutlined,
   CalendarOutlined,
@@ -281,15 +281,10 @@ const DoctorProfile = () => {
       `Đã gửi yêu cầu đặt lịch tư vấn với ${doctor.name}. Chúng tôi sẽ liên hệ với bạn trong 24h!`
     );
   };
-
   const handleContactDoctor = () => {
     message.info(
       "Tính năng nhắn tin trực tiếp với bác sĩ sẽ được phát triển trong phiên bản tiếp theo."
     );
-  };
-
-  const handleBackToList = () => {
-    navigate("/doctors");
   };
 
   return (
@@ -362,16 +357,8 @@ const DoctorProfile = () => {
                   </svg>
                   {doctor.name}
                 </Breadcrumb.Item>
-              </Breadcrumb>
-            </div>{" "}
-            {/* Back Button */}
-            <Button
-              icon={<ArrowLeftOutlined />}
-              onClick={handleBackToList}
-              className="back-button"
-            >
-              Quay lại danh sách
-            </Button>
+              </Breadcrumb>{" "}
+            </div>
           </div>{" "}
           {/* Doctor Header */}
           <Card className="doctor-header-card" data-aos="fade-up">
@@ -391,33 +378,11 @@ const DoctorProfile = () => {
                 </div>
               </div>{" "}
               <div className="doctor-info-section">
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                  }}
-                >
+                {" "}
+                <div>
                   <Title level={1} className="doctor-profile-name">
                     {doctor.name}
                   </Title>
-
-                  <div className="doctor-rating-section">
-                    <span className="doctor-rating-number">
-                      {doctor.rating}
-                    </span>
-                    <div>
-                      <Rate
-                        disabled
-                        defaultValue={doctor.rating}
-                        allowHalf
-                        style={{ fontSize: "16px" }}
-                      />
-                      <div className="rating-count">
-                        ({doctor.reviewCount} đánh giá)
-                      </div>
-                    </div>
-                  </div>
                 </div>{" "}
                 <div className="doctor-quick-stats">
                   <div className="stat-item">
@@ -439,14 +404,7 @@ const DoctorProfile = () => {
                       {doctor.patientsCount}+
                     </span>
                     <span className="stat-label">Bệnh nhân</span>
-                    <div className="stat-background stat-background-patients"></div>
-                  </div>{" "}
-                  <div className="stat-item">
-                    <span className="stat-number stat-number-reviews">
-                      {doctor.reviewCount}
-                    </span>
-                    <span className="stat-label">Đánh giá</span>
-                    <div className="stat-background stat-background-reviews"></div>
+                    <div className="stat-background stat-background-patients"></div>{" "}
                   </div>
                 </div>{" "}
                 <Paragraph className="doctor-overview">

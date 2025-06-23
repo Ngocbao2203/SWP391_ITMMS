@@ -21,6 +21,7 @@ import {
   Typography,
   Empty,
   List,
+  Alert,
 } from "antd";
 import dayjs from "dayjs";
 import {
@@ -58,8 +59,13 @@ const PatientTimeline = () => {
     { id: "p3", name: "Lê Minh C và Phạm Thị N" },
     { id: "p4", name: "Phạm Hoàng D và Trần Thị P" },
   ];
+  // Progress data for each patient  // Thêm state để theo dõi tình trạng hoàn thành của tiến trình
+  const [completedTreatments, setCompletedTreatments] = useState([
+    "p3",
+    "p2",
+    "p1",
+  ]); // Gán cứng p3 và p2 đã hoàn thành để test
 
-  // Progress data for each patient
   const [progressData, setProgressData] = useState({
     p1: [
       {
@@ -338,9 +344,43 @@ const PatientTimeline = () => {
     setSelectedPatient(patientId);
     setShowPatientDetail(true);
   };
-
   const handleBackToList = () => {
     setShowPatientDetail(false);
+  };
+
+  // Function to handle completing all treatment for a patient
+  const handleCompleteAllTreatment = () => {
+    Modal.confirm({
+      title: "Xác nhận hoàn thành toàn bộ tiến trình",
+      content: `Bạn có chắc chắn muốn đánh dấu hoàn thành toàn bộ tiến trình điều trị của bệnh nhân ${patient?.name}? Hành động này sẽ đánh dấu toàn bộ tiến trình đã hoàn thành và không thể chỉnh sửa nữa.`,
+      okText: "Xác nhận",
+      cancelText: "Hủy",
+      onOk: () => {
+        // Update all steps to 'done' status
+        const updatedSteps = progressData[selectedPatient].map((step) => ({
+          ...step,
+          status: "done",
+        }));
+
+        // Update the progress data
+        setProgressData({
+          ...progressData,
+          [selectedPatient]: updatedSteps,
+        });
+
+        // Thêm bệnh nhân vào danh sách tiến trình đã hoàn thành
+        if (!completedTreatments.includes(selectedPatient)) {
+          setCompletedTreatments((prev) => [...prev, selectedPatient]);
+        }
+
+        message.success(
+          `Đã hoàn thành toàn bộ tiến trình điều trị của bệnh nhân ${patient?.name}. Tiến trình đã được khóa và không thể chỉnh sửa.`
+        );
+
+        // Quay lại danh sách bệnh nhân
+        setShowPatientDetail(false);
+      },
+    });
   };
 
   // Create a custom timeline component that renders the timeline horizontally
@@ -378,13 +418,14 @@ const PatientTimeline = () => {
               </div>
               {step.note && (
                 <div className="timeline-note">Ghi chú: {step.note}</div>
-              )}
+              )}{" "}
               <div className="timeline-actions">
                 <Button
                   type="primary"
                   icon={<EditOutlined />}
                   size="small"
                   onClick={() => showEditModal(step)}
+                  disabled={completedTreatments.includes(selectedPatient)}
                 >
                   Sửa
                 </Button>
@@ -394,13 +435,26 @@ const PatientTimeline = () => {
                   size="small"
                   onClick={() => handleDeleteProgress(step.id)}
                   style={{ marginLeft: 8 }}
+                  disabled={completedTreatments.includes(selectedPatient)}
                 >
                   Xóa
                 </Button>
+                {step.status !== "done" &&
+                  completedTreatments.includes(selectedPatient) && (
+                    <div
+                      style={{
+                        color: "green",
+                        marginLeft: 8,
+                        fontSize: "0.8em",
+                      }}
+                    >
+                      <CheckCircleOutlined /> Đã hoàn thành
+                    </div>
+                  )}
               </div>
             </div>
           </div>
-        ))}
+        ))}{" "}
       </div>{" "}
     </div>
   );
@@ -412,20 +466,48 @@ const PatientTimeline = () => {
       </h2>{" "}
       {showPatientDetail ? (
         <>
-          <Button
-            type="default"
-            onClick={handleBackToList}
-            icon={<ArrowLeftOutlined />}
-            style={{ marginBottom: 16 }}
+          {" "}
+          <div
+            style={{
+              display: "flex",
+              marginBottom: 16,
+            }}
           >
-            Quay lại danh sách bệnh nhân
-          </Button>{" "}
+            {" "}
+            <Button
+              type="default"
+              onClick={handleBackToList}
+              icon={<ArrowLeftOutlined />}
+            >
+              Quay lại danh sách bệnh nhân
+            </Button>{" "}
+            {!completedTreatments.includes(selectedPatient) && (
+              <Button
+                type="primary"
+                onClick={handleCompleteAllTreatment}
+                icon={<CheckCircleOutlined />}
+                style={{ marginLeft: 8 }}
+                danger
+              >
+                Hoàn thành điều trị
+              </Button>
+            )}
+          </div>
           <AntdProgress
             percent={percent}
             status={globalStatus === "Hoàn thành" ? "success" : "active"}
             format={(p) => `${globalStatus} – ${p}%`}
             style={{ marginBottom: 24 }}
           />
+          {completedTreatments.includes(selectedPatient) && (
+            <Alert
+              message="Tiến trình đã hoàn thành"
+              description="Tất cả các bước điều trị đã được đánh dấu là hoàn thành. Tiến trình này đã bị khóa và không thể chỉnh sửa."
+              type="success"
+              showIcon
+              style={{ marginBottom: 16 }}
+            />
+          )}
           <Card
             title={`Tiến trình điều trị hiếm muộn của ${patient?.name}`}
             className="progress-card"
@@ -436,6 +518,7 @@ const PatientTimeline = () => {
                 icon={<PlusOutlined />}
                 onClick={showAddModal}
                 size="small"
+                disabled={completedTreatments.includes(selectedPatient)}
               >
                 Thêm tiến độ
               </Button>
@@ -488,29 +571,41 @@ const PatientTimeline = () => {
                       }
                       description={
                         <Space direction="vertical">
-                          <Text>Tổng số tiến độ: {counts.total}</Text>
-                          <Space>
-                            <Tag color="green">Hoàn thành: {counts.done}</Tag>
-                            <Tag color="blue">
-                              Đang thực hiện: {counts.doing}
-                            </Tag>
-                            <Tag color="default">
-                              Chưa thực hiện: {counts.pending}
-                            </Tag>
-                          </Space>
-                          <AntdProgress
-                            percent={
-                              counts.total > 0
-                                ? Math.round((counts.done / counts.total) * 100)
-                                : 0
-                            }
-                            size="small"
-                            status={
-                              counts.done === counts.total
-                                ? "success"
-                                : "active"
-                            }
-                          />
+                          <Text>Tổng số tiến độ: {counts.total}</Text>{" "}
+                          {completedTreatments.includes(patient.id) ? (
+                            <Alert
+                              message="Đã hoàn thành điều trị"
+                              type="success"
+                              showIcon
+                              style={{ marginTop: 8 }}
+                            />
+                          ) : (
+                            <>
+                              <Space>
+                                <Tag color="blue">
+                                  Đang thực hiện: {counts.doing}
+                                </Tag>
+                                <Tag color="default">
+                                  Chưa thực hiện: {counts.pending}
+                                </Tag>
+                              </Space>
+                              <AntdProgress
+                                percent={
+                                  counts.total > 0
+                                    ? Math.round(
+                                        (counts.done / counts.total) * 100
+                                      )
+                                    : 0
+                                }
+                                size="small"
+                                status={
+                                  counts.done === counts.total
+                                    ? "success"
+                                    : "active"
+                                }
+                              />
+                            </>
+                          )}
                         </Space>
                       }
                     />
