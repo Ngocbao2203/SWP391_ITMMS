@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Typography, Button, Card, Tag, Row, Col } from 'antd';
-import { CheckCircleOutlined, HourglassOutlined, CloseCircleOutlined } from '@ant-design/icons'; // Thêm icon cho trạng thái
-import "../../styles/TreatmentHistory.css"; // Giả sử bạn có một file CSS để tùy chỉnh giao diện
+import { CheckCircleOutlined, HourglassOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import '../../styles/TreatmentHistory.css';
 const { Title, Text } = Typography;
 
 const treatments = [
@@ -23,10 +23,10 @@ const TreatmentHistory = () => {
               style={{ borderRadius: '10px', marginBottom: '16px' }}
               title={treatment.serviceName}
             >
-              <Text strong>Ngày: </Text>
+              <Text strong>Ngày:</Text>
               <Text>{treatment.date}</Text>
               <br />
-              <Text strong>Kết quả: </Text>
+              <Text strong>Kết quả:</Text>
               <Text>
                 {treatment.result === 'Thành công' && (
                   <Tag color="green" icon={<CheckCircleOutlined />}>

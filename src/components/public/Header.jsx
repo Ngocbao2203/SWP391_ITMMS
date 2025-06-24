@@ -17,6 +17,10 @@ const { Header: AntHeader } = Layout;
 
 const Header = ({ user, onLogout }) => {
   const location = useLocation();
+  
+  // Kiểm tra xem user có dữ liệu không
+  console.log("User data in Header:", user);
+  
   const userMenu = (
     <Menu>
       <Menu.Item key="profile" icon={<UserOutlined />}>
@@ -67,17 +71,16 @@ const Header = ({ user, onLogout }) => {
           <Link to="/doctors">Bác sĩ</Link>
         </Menu.Item>
 
-        {user ? (
-          <Menu.Item key="user" className="user-menu">
+        {user ? (          <Menu.Item key="user" className="user-menu">
             <Dropdown overlay={userMenu} placement="bottomRight" trigger={['click']}>
-              <Space className="avatar-dropdown" style={{ cursor: 'pointer' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar 
                   src={user.avatar || null} 
-                  icon={!user.avatar && <UserOutlined />} 
-                  style={{ marginRight: 8 }} 
+                  icon={!user.avatar && <UserOutlined />}
+                  style={{ marginRight: 4 }}
                 />
-                <span className="user-name">{user.firstName} {user.lastName}</span>
-              </Space>
+                <span className="nav-text">Nguyễn Thị B</span>
+              </div>
             </Dropdown>
           </Menu.Item>
         ) : (
