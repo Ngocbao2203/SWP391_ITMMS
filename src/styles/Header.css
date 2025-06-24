@@ -61,6 +61,12 @@
   color: #a6c1ee;
 }
 
+.nav-text {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
 .nav-menu .ant-menu-item-selected {
   background: rgba(255, 255, 255, 0.2) !important;
   color: #ffffff !important;
@@ -94,6 +100,10 @@
   transform: scale(1.1);
 }
 
+/* Removed old styles that are no longer needed */
+
+/* Removed old styles that are no longer needed */
+
 @media (max-width: 768px) {
   .app-header {
     padding: 0 16px;
@@ -115,5 +125,11 @@
 
   .logo-img {
     height: 36px;
+  }  .nav-text {
+    display: inline-block !important;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

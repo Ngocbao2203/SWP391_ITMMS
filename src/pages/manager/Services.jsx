@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
-import { Table, Button, Space, Switch, Modal, Form, Input, InputNumber } from 'antd';
-import '../../styles/Services.css'; 
+import React, { useState, useEffect } from 'react';
+import {
+  Table,
+  Button,
+  Space,
+  Switch,
+  Modal,
+  Form,
+  Input,
+  InputNumber,
+  Popconfirm,
+  message,
+} from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import '../../styles/ServicesManager.css';
+
 const Services = () => {
   const [services, setServices] = useState([
     {
       id: '01',
       key: '1',
-      name: 'General Checkup',
-      description: 'Basic health examination',
+      name: 'Khám Tổng Quát',
+      description: 'Kiểm tra sức khỏe cơ bản',
       price: 50,
       status: true,
       image: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
@@ -15,8 +28,8 @@ const Services = () => {
     {
       id: '02',
       key: '2',
-      name: 'Dental Cleaning',
-      description: 'Teeth cleaning and polishing',
+      name: 'Vệ Sinh Răng',
+      description: 'Làm sạch và đánh bóng răng',
       price: 75,
       status: false,
       image: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
@@ -24,8 +37,8 @@ const Services = () => {
     {
       id: '03',
       key: '3',
-      name: 'Eye Examination',
-      description: 'Vision and eye health check',
+      name: 'Khám Mắt',
+      description: 'Kiểm tra thị lực và sức khỏe mắt',
       price: 60,
       status: true,
       image: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
@@ -34,6 +47,11 @@ const Services = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+
+  // Tránh shift layout khi mở modal
+  useEffect(() => {
+    document.body.classList.toggle('modal-open', isModalOpen);
+  }, [isModalOpen]);
 
   const handleToggleStatus = (key) => {
     setServices((prev) =>
@@ -54,81 +72,102 @@ const Services = () => {
       setServices([...services, newService]);
       form.resetFields();
       setIsModalOpen(false);
+      message.success('Thêm dịch vụ thành công!');
     });
+  };
+
+  const handleDeleteService = (key) => {
+    setServices((prev) => prev.filter((s) => s.key !== key));
+    message.success('Đã xóa dịch vụ!');
   };
 
   const columns = [
     {
-      title: 'ID',
+      title: 'Mã',
       dataIndex: 'id',
       key: 'id',
       render: (id) => <code>{id}</code>,
       responsive: ['md'],
     },
     {
-      title: 'Image',
+      title: 'Hình Ảnh',
       dataIndex: 'image',
       key: 'image',
       render: (url) => (
         <img
           src={url}
-          alt="service"
+          alt="dịch vụ"
           style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 8 }}
         />
       ),
     },
     {
-      title: 'Service Name',
+      title: 'Tên Dịch Vụ',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Description',
+      title: 'Mô Tả',
       dataIndex: 'description',
       key: 'description',
     },
     {
-      title: 'Price',
+      title: 'Giá',
       dataIndex: 'price',
       key: 'price',
-      render: (price) => `$${price}`,
+      render: (price) => `${price} VNĐ`,
     },
     {
-      title: 'Status',
+      title: 'Trạng Thái',
       dataIndex: 'status',
       key: 'status',
       render: (status, record) => (
         <Switch
           checked={status}
           onChange={() => handleToggleStatus(record.key)}
-          checkedChildren="Active"
-          unCheckedChildren="Inactive"
+          checkedChildren="Kích Hoạt"
+          unCheckedChildren="Tắt"
         />
       ),
     },
     {
-      title: 'Action',
+      title: 'Hành Động',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Button type="link">Edit</Button>
-          <Button type="link" danger>
-            Delete
-          </Button>
+          <Button type="link" icon={<EditOutlined />} />
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa dịch vụ này không?"
+            onConfirm={() => handleDeleteService(record.key)}
+            okText="Xóa"
+            cancelText="Hủy"
+          >
+            <Button type="link" danger icon={<DeleteOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },
   ];
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Services</h2>
+    <div className="services-container">
+      <h2 className="services-title">Dịch Vụ</h2>
 
-      <Button type="primary" className="mb-4" onClick={() => setIsModalOpen(true)}>
-        Add Service
+      <Button
+        type="primary"
+        className="add-service-button"
+        onClick={() => setIsModalOpen(true)}
+        icon={<PlusOutlined />}
+      >
+        Thêm Dịch Vụ
       </Button>
 
-      <Table columns={columns} dataSource={services} />
+      <Table
+        columns={columns}
+        dataSource={services}
+        pagination={{ pageSize: 5 }}
+        rowKey="key"
+      />
 
       <Modal
         title="Thêm Dịch Vụ Mới"
@@ -137,18 +176,20 @@ const Services = () => {
         onCancel={() => setIsModalOpen(false)}
         okText="Thêm"
         cancelText="Hủy"
+        centered
+        closable={false}
       >
         <Form form={form} layout="vertical">
           <Form.Item
             name="name"
-            label="Tên dịch vụ"
+            label="Tên Dịch Vụ"
             rules={[{ required: true, message: 'Vui lòng nhập tên dịch vụ!' }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="description"
-            label="Mô tả"
+            label="Mô Tả"
             rules={[{ required: true, message: 'Vui lòng nhập mô tả!' }]}
           >
             <Input.TextArea rows={2} />
@@ -158,11 +199,11 @@ const Services = () => {
             label="Giá"
             rules={[{ required: true, message: 'Vui lòng nhập giá!' }]}
           >
-            <InputNumber min={1} className="w-full" />
+            <InputNumber min={1} className="full-width" />
           </Form.Item>
           <Form.Item
             name="image"
-            label="Link hình ảnh"
+            label="Link Hình Ảnh"
             rules={[{ required: true, message: 'Vui lòng nhập link hình ảnh!' }]}
           >
             <Input />

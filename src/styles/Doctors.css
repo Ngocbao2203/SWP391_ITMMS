@@ -1,0 +1,393 @@
+/* ===== CONTAINER & LAYOUT ===== */
+.doctors-container {
+  padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== HEADER SECTION ===== */
+.doctors-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.doctors-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(200%) rotate(45deg); }
+}
+
+.doctors-header-left {
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+.doctors-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(45deg, #fff, #e8f4fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.doctors-subtitle {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.9;
+  z-index: 1;
+  position: relative;
+}
+
+.doctors-count {
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+/* ===== TOOLBAR SECTION ===== */
+.doctors-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.doctors-search {
+  flex: 1;
+  max-width: 400px;
+}
+
+.doctors-search .ant-input {
+  border-radius: 8px;
+  border: 2px solid #e1e8ed;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  padding: 8px 16px;
+}
+
+.doctors-search .ant-input:focus,
+.doctors-search .ant-input:hover {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.doctors-add-btn {
+  height: 44px;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.doctors-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.doctors-add-btn:active {
+  transform: translateY(0);
+}
+
+/* ===== TABLE SECTION ===== */
+.doctors-table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.doctors-table .ant-table-thead > tr > th {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-bottom: 2px solid #e2e8f0;
+  font-weight: 600;
+  color: #334155;
+  font-size: 14px;
+  padding: 16px;
+}
+
+.doctors-table .ant-table-tbody > tr {
+  transition: all 0.3s ease;
+}
+
+.doctors-table .ant-table-tbody > tr:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  transform: scale(1.005);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.doctors-table .ant-table-tbody > tr > td {
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* ===== TABLE CONTENT STYLING ===== */
+.doctor-name {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 15px;
+}
+
+.doctor-specialty {
+  color: #64748b;
+  font-size: 14px;
+  background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+/* ===== STATUS SWITCH ===== */
+.doctors-status-switch.ant-switch-checked {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+.doctors-status-switch {
+  transition: all 0.3s ease;
+}
+
+.doctors-status-switch:hover {
+  transform: scale(1.05);
+}
+
+/* ===== ACTION BUTTONS ===== */
+.doctors-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.doctors-actions .ant-btn {
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.doctors-actions .ant-btn:not(.ant-btn-dangerous) {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.doctors-actions .ant-btn:not(.ant-btn-dangerous):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.doctors-actions .ant-btn-dangerous {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.doctors-actions .ant-btn-dangerous:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+/* ===== MODAL STYLING ===== */
+.doctors-modal .ant-modal-content {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.doctors-modal .ant-modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: none;
+  padding: 24px;
+}
+
+.doctors-modal .ant-modal-title {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.doctors-modal .ant-modal-body {
+  padding: 24px;
+  background: #fafbfc;
+}
+
+.doctors-modal .ant-modal-footer {
+  padding: 16px 24px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* ===== FORM STYLING ===== */
+.doctors-form .ant-form-item-label > label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.doctors-form .ant-input,
+.doctors-form .ant-select-selector {
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.doctors-form .ant-input:focus,
+.doctors-form .ant-select-focused .ant-select-selector {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.doctors-form .ant-input:hover,
+.doctors-form .ant-select:hover .ant-select-selector {
+  border-color: #9ca3af;
+}
+
+/* ===== PAGINATION ===== */
+.doctors-table .ant-pagination {
+  margin: 24px 0 8px 0;
+  text-align: center;
+}
+
+.doctors-table .ant-pagination-item {
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.doctors-table .ant-pagination-item:hover {
+  border-color: #667eea;
+  transform: translateY(-1px);
+}
+
+.doctors-table .ant-pagination-item-active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+}
+
+.doctors-table .ant-pagination-item-active a {
+  color: white;
+}
+
+/* ===== LOADING ANIMATION ===== */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.doctors-table .ant-table-tbody > tr:hover .doctor-name {
+  animation: pulse 0.6s ease-in-out;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .doctors-container {
+    padding: 16px;
+  }
+  
+  .doctors-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .doctors-header-left {
+    margin-bottom: 12px;
+  }
+  
+  .doctors-title {
+    font-size: 2rem;
+  }
+  
+  .doctors-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .doctors-search {
+    max-width: none;
+    margin-bottom: 12px;
+  }
+  
+  .doctors-table .ant-table-tbody > tr:hover {
+    transform: none;
+  }
+}
+
+/* ===== ADDITIONAL EFFECTS ===== */
+.doctors-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ===== ICON EFFECTS ===== */
+.doctors-header-left .anticon {
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.doctors-header-left .anticon:hover {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}

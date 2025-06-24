@@ -1,0 +1,323 @@
+/* ServicesManager.css - Clean & Modern Design */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Variables */
+:root {
+  --primary-color: #4f46e5;
+  --primary-light: #6366f1;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --text-dark: #1f2937;
+  --text-light: #6b7280;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+}
+
+/* Container chính */
+.services-container {
+  padding: 32px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Tiêu đề */
+.services-title {
+  color: var(--text-dark);
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  text-align: center;
+  position: relative;
+  background: var(--bg-primary);
+  padding: 24px 32px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+.services-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+  border-radius: 2px;
+}
+
+/* Nút thêm dịch vụ */
+.add-service-button {
+  background: var(--primary-color);
+  border: none;
+  color: white;
+  height: 48px;
+  padding: 0 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: var(--border-radius);
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.add-service-button:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.add-service-button:active {
+  transform: translateY(0);
+}
+
+/* Bảng */
+.ant-table {
+  background: var(--bg-primary);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+/* Header bảng */
+.ant-table-thead > tr > th {
+  background: var(--primary-color);
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  padding: 18px 16px;
+  text-align: center;
+}
+
+.ant-table-thead > tr > th::before {
+  display: none;
+}
+
+/* Hàng trong bảng */
+.ant-table-tbody > tr {
+  transition: var(--transition);
+}
+
+.ant-table-tbody > tr:hover {
+  background: var(--bg-tertiary);
+}
+
+.ant-table-tbody > tr > td {
+  padding: 18px 16px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+  vertical-align: middle;
+  color: var(--text-dark);
+}
+
+/* Hình ảnh */
+.ant-table-tbody img {
+  border: 2px solid var(--border-color);
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.ant-table-tbody img:hover {
+  transform: scale(1.05);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+}
+
+/* Mã dịch vụ */
+.ant-table-tbody code {
+  background: var(--primary-color);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Giá tiền */
+.ant-table-tbody td:nth-child(5) {
+  font-weight: 700;
+  color: var(--success-color);
+  font-size: 16px;
+}
+
+/* Switch */
+.ant-switch {
+  background-color: #d1d5db;
+  border: 1px solid #d1d5db;
+}
+
+.ant-switch-checked {
+  background-color: var(--success-color);
+  border-color: var(--success-color);
+}
+
+.ant-switch:hover {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Nút hành động */
+.ant-table-tbody .ant-btn {
+  border-radius: 8px;
+  height: 36px;
+  width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+}
+
+.ant-table-tbody .ant-btn:not(.ant-btn-dangerous):hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: scale(1.05);
+}
+
+.ant-table-tbody .ant-btn-dangerous:hover {
+  background: var(--danger-color);
+  color: white;
+  border-color: var(--danger-color);
+  transform: scale(1.05);
+}
+
+/* Modal */
+.ant-modal .ant-modal-content {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.ant-modal .ant-modal-header {
+  background: var(--primary-color);
+  border: none;
+  padding: 20px 24px;
+}
+
+.ant-modal .ant-modal-title {
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+
+.ant-modal .ant-modal-body {
+  padding: 24px;
+  background: var(--bg-primary);
+}
+
+.ant-modal .ant-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+/* Form */
+.ant-form-item-label > label {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 14px;
+}
+
+.ant-input,
+.ant-input-number,
+.ant-input-number-input {
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  padding: 10px 12px;
+  transition: var(--transition);
+  font-size: 14px;
+}
+
+.ant-input:focus,
+.ant-input-focused,
+.ant-input-number:focus,
+.ant-input-number-focused {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.full-width .ant-input-number {
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .services-container {
+    padding: 16px;
+  }
+  
+  .services-title {
+    font-size: 28px;
+    margin-bottom: 24px;
+    padding: 20px 24px;
+  }
+  
+  .add-service-button {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .ant-table-tbody img:hover {
+    transform: scale(1.02);
+  }
+  
+  .ant-table-tbody .ant-btn:hover {
+    transform: none;
+  }
+}
+
+/* Scrollbar */
+.services-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.services-container::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+.services-container::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+.services-container::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-light);
+}
+
+/* Animation nhẹ cho entrance */
+body.modal-open .services-container > * {
+  animation: none !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
