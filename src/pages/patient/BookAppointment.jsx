@@ -6,7 +6,7 @@ import IvfAppointmentForm from '../../components/public/IvfAppointmentForm';
 import '../../styles/BookAppointment.css';
 import { 
   PhoneOutlined, HeartOutlined, ClockCircleOutlined, SafetyCertificateOutlined, 
-  CheckCircleFilled, RightOutlined, StarFilled, FileTextOutlined, ArrowLeftOutlined
+  StarFilled, ArrowLeftOutlined
 } from '@ant-design/icons';
 import { getServiceById } from '../../services/serviceRegistration';
 
@@ -18,7 +18,7 @@ const BookAppointment = () => {
   const navigate = useNavigate();
   
   const [selectedService, setSelectedService] = useState(null);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [setRegistrationSuccess] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(serviceId ? true : false);
   const [sourceRoute, setSourceRoute] = useState('/userservice'); // Mặc định là userservice

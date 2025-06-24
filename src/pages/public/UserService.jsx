@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/UserService.css";
 import MainLayout from "../../layouts/MainLayout";
 import { Button, Row, Col, Card, Rate, Collapse, Tag } from 'antd';
-import FreeConsultationModal from "../../components/public/FreeConsultationModal";
 import { 
   HeartOutlined, 
   RightOutlined, 
@@ -21,7 +20,6 @@ const { Panel } = Collapse;
 export default function UserService() {
   const navigate = useNavigate();
   const [expandedService, setExpandedService] = useState(null);
-  const [consultationModalVisible, setConsultationModalVisible] = useState(false);
 
   React.useEffect(() => {
     // Đảm bảo các card có chiều cao đồng nhất
@@ -58,11 +56,9 @@ export default function UserService() {
   const dataServices = [
     {
       id: "ivf", // 👈 PHẢI THÊM id TƯƠNG ỨNG VỚI `useParams()` Ở ServiceDetail
-      img: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-      title: "Thụ tinh trong ống nghiệm (IVF)",
+      img: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",      title: "Thụ tinh trong ống nghiệm (IVF)",
       desc: "Phương pháp điều trị hiệu quả cao giúp các cặp vợ chồng hiếm muộn có cơ hội làm cha mẹ.",
       type: "IVF",
-      successRate: "65%",
       features: [
         "Phù hợp với nhiều nguyên nhân vô sinh hiếm muộn",
         "Quy trình chuẩn quốc tế",
@@ -72,11 +68,9 @@ export default function UserService() {
     },
     {
       id: "icsi",
-      img: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-      title: "Tiêm tinh trùng vào bào tương noãn (ICSI)",
+      img: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",      title: "Tiêm tinh trùng vào bào tương noãn (ICSI)",
       desc: "Kỹ thuật hỗ trợ sinh sản tiên tiến dành cho các trường hợp vô sinh do yếu tố nam.",
       type: "ICSI",
-      successRate: "70%",
       features: [
         "Giải pháp hiệu quả cho tinh trùng yếu hoặc bất thường",
         "Công nghệ vi thao tác tiên tiến",
@@ -86,11 +80,9 @@ export default function UserService() {
     },
     {
       id: "iui",
-      img: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-      title: "Bơm tinh trùng vào buồng tử cung (IUI)",
+      img: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",      title: "Bơm tinh trùng vào buồng tử cung (IUI)",
       desc: "Phương pháp đơn giản, ít xâm lấn giúp tăng khả năng thụ thai tự nhiên.",
       type: "IUI",
-      successRate: "25%",
       features: [
         "Quy trình đơn giản và nhanh chóng",
         "Chi phí thấp hơn các phương pháp khác",
@@ -187,12 +179,11 @@ export default function UserService() {
         </div>
 
         <div className="fertility-services-grid">
-          {dataServices.map((service) => (
-            <Card
+          {dataServices.map((service) => (            <Card
               key={service.id}
               hoverable
               className={`fertility-service-card ${expandedService === service.id ? 'expanded' : ''}`}
-              onClick={() => setExpandedService(expandedService === service.id ? null : service.id)}
+              onClick={() => navigate(`/services/${service.id}`)}
               cover={
                 <div className="service-image">
                   <img src={service.img} alt={service.title} />
@@ -201,9 +192,7 @@ export default function UserService() {
                   </div>
                 </div>
               }
-            >
-              <Tag color="#8e24aa" className="success-rate-tag">Tỷ lệ thành công: {service.successRate}</Tag>
-              <h3 className="service-title">{service.title}</h3>
+            ><h3 className="service-title">{service.title}</h3>
               <p className="service-description">{service.desc}</p>
               
               <div className="service-features">
@@ -216,10 +205,6 @@ export default function UserService() {
                 <Button
                   type="primary"
                   className="btn-more"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/services/${service.id}`);
-                  }}
                 >
                   Tìm hiểu thêm <RightOutlined />
                 </Button>                <Button
@@ -335,7 +320,7 @@ export default function UserService() {
             </p>
             <div className="cta-features">
               <div className="cta-feature">
-                <LikeOutlined /> Tư vấn riêng tư
+                <LikeOutlined /> Hỗ trợ chuyên nghiệp
               </div>
               <div className="cta-feature">
                 <SafetyCertificateOutlined /> Đảm bảo an toàn
@@ -347,17 +332,11 @@ export default function UserService() {
               size="large"
               type="primary"
               className="cta-button"
-              onClick={() => setConsultationModalVisible(true)}>
-              Tư vấn miễn phí ngay
+              onClick={() => navigate('/bookappointment')}>
+              Đăng ký dịch vụ
             </Button>          </div>
         </div>
       </section>
-      
-      {/* Modal đăng ký tư vấn miễn phí */}
-      <FreeConsultationModal 
-        visible={consultationModalVisible}
-        onCancel={() => setConsultationModalVisible(false)}
-      />
     </MainLayout>
   );
 }

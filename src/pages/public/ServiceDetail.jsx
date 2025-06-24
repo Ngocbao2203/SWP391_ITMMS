@@ -8,20 +8,13 @@ import {
   Button, 
   Tabs, 
   List, 
-  Avatar, 
-  Divider,
   Tag,
   Rate,
-  Spin,
-  notification
+  Spin
 } from 'antd';
 import { 
-  CalendarOutlined, 
   CheckCircleOutlined, 
-  TeamOutlined, 
-  ClockCircleOutlined, 
   ReadOutlined,
-  HeartOutlined,
   UserOutlined
 } from '@ant-design/icons';
 import MainLayout from '../../layouts/MainLayout';
@@ -316,11 +309,10 @@ const ServiceDetail = () => {
         
         {/* Call to action */}
         <Card className="cta-card">
-          <div className="cta-content">
-            <Title level={3}>Bạn còn thắc mắc về dịch vụ này?</Title>
+          <div className="cta-content">            <Title level={3}>Bạn quan tâm đến dịch vụ này?</Title>
             <Paragraph>
-              Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng giải đáp mọi thắc mắc và tư vấn chi tiết về dịch vụ.
-              Liên hệ ngay để được hỗ trợ tốt nhất.
+              Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng hỗ trợ và giải đáp mọi thắc mắc của bạn.
+              Đăng ký ngay để được phục vụ tốt nhất.
             </Paragraph>
             <Button 
               type="primary" 

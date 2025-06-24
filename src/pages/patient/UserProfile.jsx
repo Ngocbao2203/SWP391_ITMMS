@@ -16,8 +16,6 @@ import {
   Tag,
   Statistic,
   Progress,
-  Divider,
-  Modal,
   Upload,
   message,
   Badge,
@@ -60,7 +58,6 @@ import '../../styles/UserProfile.css';
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
 const { TabPane } = Tabs;
-const { TextArea } = Input;
 
 const UserProfile = () => {  const [form] = Form.useForm();
   const [editMode, setEditMode] = useState(false);
@@ -214,10 +211,9 @@ const UserProfile = () => {  const [form] = Form.useForm();
     };
     
     fetchTreatmentSchedule();
-  }, [activeTab, userInfo]);
-  // State cho tài liệu y tế
+  }, [activeTab, userInfo]);  // State cho tài liệu y tế
   const [documents, setDocuments] = useState([]);
-  const [loadingDocuments, setLoadingDocuments] = useState(false);
+  const [setLoadingDocuments] = useState(false);
   
   // Fetch documents từ API
   useEffect(() => {
