@@ -45,13 +45,21 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
       });
     }
   }, [service, form]);
-  
-  // Xử lý chọn bác sĩ
+    // Xử lý chọn hoặc bỏ chọn bác sĩ
   const handleDoctorSelect = (doctorId) => {
-    setSelectedDoctor(doctorId);
-    form.setFieldsValue({
-      doctorId
-    });
+    // Nếu click vào bác sĩ đã chọn, hủy chọn
+    if (selectedDoctor === doctorId) {
+      setSelectedDoctor(null);
+      form.setFieldsValue({
+        doctorId: undefined
+      });
+    } else {
+      // Nếu click vào bác sĩ khác, chọn bác sĩ đó
+      setSelectedDoctor(doctorId);
+      form.setFieldsValue({
+        doctorId
+      });
+    }
   };
   
   // Hàm kiểm tra ngày đã qua
@@ -158,21 +166,19 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
             
             <Col xs={24}>
               {/* Step 2: Chọn bác sĩ */}
-              <div className="ivf-form-section">
-                <div className="ivf-form-step-header">
+              <div className="ivf-form-section">                <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">2</div>
-                  <h3 className="ivf-form-step-title">Bác sĩ đăng ký khám</h3>
+                  <h3 className="ivf-form-step-title">Bác sĩ đăng ký khám (tùy chọn)</h3>
                 </div>
                 
                 <div className="ivf-form-control">
                   <Form.Item
                     name="doctorId"
-                    rules={[{ required: true, message: 'Vui lòng chọn bác sĩ' }]}
                   >
                     <Input type="hidden" />
                   </Form.Item>
-                  
-                  <div className="ivf-doctor-grid">
+                  <p className="ivf-optional-text">Bạn có thể chọn một bác sĩ cụ thể hoặc để trống để chúng tôi sắp xếp bác sĩ phù hợp.</p>
+                    <div className="ivf-doctor-grid">
                     {doctors.map(doctor => (
                       <div 
                         key={doctor.id} 
@@ -181,11 +187,22 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
                       >
                         <div className="ivf-doctor-avatar">
                           <img src={doctor.photo} alt={doctor.name} />
+                          {selectedDoctor === doctor.id && <div className="ivf-doctor-selected-indicator">✓</div>}
                         </div>
                         <h4 className="ivf-doctor-name">{doctor.name}</h4>
                         <p className="ivf-doctor-specialty">{doctor.specialty}</p>
                       </div>
                     ))}
+                  </div>
+                  <div className="ivf-selection-status">
+                    {selectedDoctor ? `Đã chọn bác sĩ: ${doctors.find(d => d.id === selectedDoctor)?.name}` : 'Chưa chọn bác sĩ nào'}
+                    {selectedDoctor && <Button 
+                      type="link" 
+                      className="ivf-clear-selection" 
+                      onClick={() => handleDoctorSelect(selectedDoctor)}
+                    >
+                      Bỏ chọn
+                    </Button>}
                   </div>
                 </div>
               </div>

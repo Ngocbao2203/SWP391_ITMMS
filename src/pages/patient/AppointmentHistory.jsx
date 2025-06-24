@@ -6,14 +6,12 @@ import {
   Row, 
   Col, 
   Card, 
-  Space, 
   Tabs, 
   Modal, 
   Empty, 
   Spin, 
   message,
-  Descriptions, 
-  Divider 
+  Descriptions
 } from 'antd';
 import { 
   CheckCircleOutlined, 
@@ -23,7 +21,7 @@ import {
   CalendarOutlined,
   InfoCircleOutlined
 } from '@ant-design/icons';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import '../../styles/AppointmentHistory.css';
 

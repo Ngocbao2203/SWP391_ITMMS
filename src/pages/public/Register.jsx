@@ -89,8 +89,6 @@ const Register = () => {
               <Col span={24}>
                 <Form.Item
                   name="fullName"
-                  label="Họ và tên"
-                  required
                   rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
                 >                  <Input 
                     prefix={<UserOutlined className="register-icon" />} 
@@ -105,9 +103,7 @@ const Register = () => {
             <Row gutter={16}>
               <Col xs={24} sm={12}>
                 <Form.Item
-                  name="email"
-                  label="Email"
-                  required
+                  name="email"  
                   rules={[
                     { required: true, message: "Vui lòng nhập email!" }, 
                     { type: 'email', message: "Email không hợp lệ!" }
@@ -123,8 +119,6 @@ const Register = () => {
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="phoneNumber"
-                  label="Số điện thoại"
-                  required
                   rules={[
                     { required: true, message: "Vui lòng nhập số điện thoại!" },
                     { pattern: /^[0-9]{10}$/, message: "Số điện thoại không hợp lệ!" }
@@ -141,8 +135,6 @@ const Register = () => {
             
             <Form.Item
               name="address"
-              label="Địa chỉ"
-              required
               rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
             >              <Input 
                 prefix={<HomeOutlined className="register-icon" />} 
@@ -156,8 +148,6 @@ const Register = () => {
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="password"
-                  label="Mật khẩu"
-                  required
                   rules={[
                     { required: true, message: "Vui lòng nhập mật khẩu!" },
                     { min: 8, message: "Mật khẩu phải có ít nhất 8 ký tự!" }
@@ -173,8 +163,6 @@ const Register = () => {
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="confirmPassword"
-                  label="Xác nhận mật khẩu"
-                  required
                   dependencies={["password"]}
                   rules={[
                     { required: true, message: "Vui lòng xác nhận mật khẩu!" },
