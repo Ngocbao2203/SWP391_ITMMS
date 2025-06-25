@@ -140,24 +140,18 @@ body {
   transition: var(--transition);
   flex: 1;
   font-size: 0.95rem;
-  cursor: pointer;
-  background: none;
 }
 
 .btn-more {
   background-color: #fff;
   color: var(--primary-color);
   border: 1px solid var(--primary-color);
-  cursor: pointer;
-  outline: none;
 }
 
 .btn-register {
   background-color: var(--primary-color);
   color: white;
   border: 1px solid var(--primary-color);
-  cursor: pointer;
-  outline: none;
 }
 
 .btn-more:hover {
@@ -167,7 +161,6 @@ body {
 .btn-register:hover {
   background-color: var(--secondary-color);
   border-color: var(--secondary-color);
-  color: white;
 }
 
 /* Call to action section */
@@ -233,7 +226,6 @@ body {
   font-size: 1.1rem;
   letter-spacing: 0.5px;
   box-shadow: 0 5px 15px rgba(92, 107, 192, 0.3);
-  outline: none;
 }
 
 .cta-button:hover {
