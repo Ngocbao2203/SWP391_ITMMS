@@ -1,16 +1,10 @@
-/* ========== PAGE HEADER (Admin Panel) ========== */
-.page-header {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 24px;
-  color: #111827;
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 16px 24px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+.admin-main-layout {
+  margin-left: 300px;
+  width: calc(100% - 300px);
+  transition: margin-left 0.3s ease;
+  padding-top: 24px;
 }
 
-/* ========== MAIN CONTENT ========== */
 .admin-content {
   margin: 0 24px 24px 24px;
   padding: 24px;
@@ -21,78 +15,16 @@
   font-size: 16px;
   line-height: 1.5;
   overflow: auto;
-  transition: all 0.3s ease;
 }
 
-/* Layout content đẩy theo sidebar 300px */
-.main-layout {
-  margin-left: 200px;
-  width: calc(100% - 300px);
-  transition: margin-left 0.3s ease;
-}
-
-/* ========== DASHBOARD ========== */
-.dashboard-container {
-  padding: 0;
-}
-
-.dashboard-card {
-  background: linear-gradient(135deg, #f9fafb, #ffffff);
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-statistic .ant-statistic-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: #6b7280;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.dashboard-statistic .ant-statistic-content {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1f2937;
-}
-
-/* ========== GLOBAL ========== */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.ant-layout {
-  background: #f5f7fa;
-  min-height: 100vh;
-}
-
-/* ========== RESPONSIVE ========== */
+/* Responsive */
 @media (max-width: 768px) {
-  .admin-sidebar {
-    width: 200px !important;
-  }
-
-  .main-layout {
+  .admin-main-layout {
     margin-left: 200px;
     width: calc(100% - 200px);
   }
 
   .admin-content {
     margin: 16px;
-    width: 100%;
-  }
-
-  .page-header {
-    margin: 16px;
-    padding: 12px 16px;
-    font-size: 18px;
   }
 }

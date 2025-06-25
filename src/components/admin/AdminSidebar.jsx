@@ -2,7 +2,6 @@ import React from "react";
 import { Layout, Menu } from "antd";
 import {
   DashboardOutlined,
-  AppstoreOutlined,
   MessageOutlined,
   FileTextOutlined,
   LogoutOutlined,
@@ -26,17 +25,14 @@ const AdminSidebar = () => {
       breakpoint="lg"
       collapsedWidth="0"
       className="admin-sidebar"
-      width={220}
+      width={300}
     >
-      <div className="logo">ADMIN</div>
+      <div className="logo-admin">ADMIN</div>
 
       <div className="menu-wrapper">
         <Menu mode="inline" selectedKeys={[location.pathname]}>
           <Menu.Item key="/admin/dashboard" icon={<DashboardOutlined />}>
             <Link to="/admin/dashboard">Dashboard</Link>
-          </Menu.Item>
-          <Menu.Item key="/admin/services" icon={<AppstoreOutlined />}>
-            <Link to="/admin/services">Services</Link>
           </Menu.Item>
           <Menu.Item key="/admin/Manager" icon={<FileTextOutlined />}>
             <Link to="/admin/Manager">Manager</Link>

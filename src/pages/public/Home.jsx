@@ -3,30 +3,12 @@ import { Button, Card, Carousel, Row, Col, Typography } from "antd";
 import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import "../../styles/Home.css";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { getPublishedBlogs } from "../../services/blogService";
 
 const { Title, Paragraph } = Typography;
-
-const services = [
-  {
-    title: "IUI - Bơm tinh trùng vào buồng tử cung",
-    desc: "Hỗ trợ sinh sản an toàn, hiệu quả cho các cặp vợ chồng.",
-    icon: "🧬",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-  {
-    title: "IVF - Thụ tinh trong ống nghiệm",
-    desc: "Công nghệ thụ tinh tiên tiến giúp gia đình bạn trọn vẹn.",
-    icon: "👶",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-  {
-    title: "Hỗ trợ sinh sản toàn diện",
-    desc: "Chăm sóc và tư vấn toàn diện cho hành trình của bạn.",
-    icon: "🤰",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-];
 
 const doctors = [
   {
@@ -44,41 +26,27 @@ const doctors = [
     specialty: "Chuyên gia nội tiết sinh sản",
     photo: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
-];
-
-const articles = [
   {
-    title: "Những câu chuyện thành công với IVF",
-    desc: "Chia sẻ thực tế từ bệnh nhân của chúng tôi.",
-    link: "/bai-viet/ivf-stories",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-  {
-    title: "Bí quyết duy trì sức khỏe sinh sản",
-    desc: "Chuẩn bị tốt nhất cho hành trình của bạn.",
-    link: "/bai-viet/fertility-tips",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-  },
-  {
-    title: "Tìm hiểu về phương pháp IUI",
-    desc: "Những điều bạn cần biết về quy trình.",
-    link: "/bai-viet/understanding-iui",
-    image: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
+    name: "Bác sĩ Lê Văn D",
+    specialty: "Chuyên gia nội tiết sinh sản",
+    photo: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
   },
 ];
 
+// Removed static articles as we'll use real blogs from blogService
 const testimonials = [
   {
-    content:
-      "Nhờ IVF tại đây, tôi đã đón con trai đầu lòng sau 7 năm hiếm muộn. Cảm ơn đội ngũ bác sĩ tận tâm!",
-    author: "- Chị Mai (Hà Nội)",
+    title: "LƯƠNG Y NHƯ TỪ MẪU",
+    content: `Tâm sáng, thông phương, tài dược\nĐiều trị bệnh như có phép tiên\nNhư tuôn nước nóng tan liền tuyết băng\nHỏi bao lần chòng mắt quầng đen\nPhải không những đêm dài thức trắng`,
+    author: "Lương y như từ mẫu",
   },
   {
-    content:
-      "Quy trình IUI rõ ràng, tư vấn dễ hiểu. Tôi thấy an tâm khi chọn My Clinic.",
-    author: "- Anh Hưng (TP.HCM)",
+    title: "LỜI CẢM ƠN",
+    content: `Mười ngày điều trị tại khoa (khoa ngoại)\nRa về chỉ có món quà bằng thơ\nThời gian đếm ngược từng giờ\nMong cho bệnh khỏi để còn về quê`,
+    author: "Lời cảm ơn Mười ngày điều trị tại khoa (khoa ngoại)",
   },
 ];
+
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -89,165 +57,174 @@ const Home = () => {
       setBlogs(blogData);
     };
     fetchBlogs();
-    
+
     // Save current path to sessionStorage when on the home page
     sessionStorage.setItem('previousPath', window.location.pathname);
   }, []);
-  
+
   return (
     <MainLayout>
       <div className="home-page">
         {/* Banner */}
-      <div
-        className="banner-section"
-        style={{
-          backgroundImage:
-            "url(https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png)",
-        }}
-      >
-        <div className="banner-content">
-          <Title level={2} className="banner-title">
-            Điều trị hiếm muộn – Chuyên sâu & Tận tâm
-          </Title>
-          <Paragraph className="home-subtext">
-            My Clinic là địa chỉ tin cậy trong lĩnh vực điều trị vô sinh – hiếm muộn tại Việt Nam, nơi bạn được đồng hành và chăm sóc toàn diện trên hành trình tìm kiếm con yêu.
-          </Paragraph>
+        <div
+          className="banner-section"
+          style={{
+            backgroundImage:
+              "url(https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png)",
+          }}
+        >
+          <div className="banner-content">
+            <Title level={2} className="banner-title">
+              ITMMS – Chuyên sâu & Tận tâm
+            </Title>
+            <Paragraph className="home-subtext">
+              ITMMS là địa chỉ tin cậy trong lĩnh vực điều trị vô sinh – hiếm muộn tại Việt Nam, nơi bạn được đồng hành và chăm sóc toàn diện trên hành trình tìm kiếm con yêu.
+            </Paragraph>
+          </div>
         </div>
-      </div>
 
-      {/* Featured Services */}
-      <div className="section services-section">
-        <Title level={3}>Dịch vụ nổi bật</Title>
-        <Row gutter={[24, 24]} justify="center">
-          {services.map((service) => (
-            <Col xs={24} sm={12} md={8} key={service.title}>
-              <Card
-                className="service-card"
-                bordered
-                cover={<img src={service.image} alt={service.title} />}
-              >
-                <div className="service-icon">{service.icon}</div>
-                <Title level={4}>{service.title}</Title>
-                <Paragraph>{service.desc}</Paragraph>
-                <Link to="/dich-vu">
-                  <Button type="primary" size="small">
-                    Xem tất cả dịch vụ
-                  </Button>
-                </Link>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
-
-      {/* Why Choose Us */}
-      <div className="section why-us-section">
-        <Title level={3}>Tại sao chọn chúng tôi?</Title>
-        <Row gutter={[16, 16]} justify="center">
-          <Col xs={24} sm={12} md={6}>
-            <Card bordered={false} className="why-us-box">
-              <div className="why-icon">🏥</div>
-              <Title level={5}>Cơ sở hiện đại</Title>
-              <Paragraph>
-                Trang thiết bị tiên tiến và môi trường đạt chuẩn quốc tế.
-              </Paragraph>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card bordered={false} className="why-us-box">
-              <div className="why-icon">👨‍⚕️</div>
-              <Title level={5}>Đội ngũ chuyên gia hàng đầu</Title>
-              <Paragraph>
-                Hơn 10 năm kinh nghiệm trong lĩnh vực điều trị hiếm muộn.
-              </Paragraph>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card bordered={false} className="why-us-box">
-              <div className="why-icon">💯</div>
-              <Title level={5}>Tỉ lệ thành công cao</Title>
-              <Paragraph>
-                Phác đồ điều trị cá nhân hóa cho từng bệnh nhân.
-              </Paragraph>
-            </Card>
-          </Col>
-        </Row>
-      </div>
-
-      {/* Doctors */}
-      <div className="section doctors-section">
-        <Title level={3}>Đội ngũ bác sĩ</Title>
-        <Carousel autoplay dots={false} className="doctors-carousel">
-          {doctors.map((doc) => (
-            <div key={doc.name} className="doctor-card">
+        {/* Lý do nên chọn My Clinic */}
+        <div className="section why-my-clinic">
+          <Row gutter={[32, 32]} align="middle">
+            <Col xs={24} md={10}>
               <img
-                src={doc.photo}
-                alt={doc.name}
-                className="doctor-photo"
+                src="https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png" // Đặt file `acfabdfb-0dd2-41f8-a2c6-f5298d3c157c.png` trong public/images/
+                alt="Nhân viên y tế"
+                className="clinic-hero-image"
               />
-              <Title level={5}>{doc.name}</Title>
-              <Paragraph>{doc.specialty}</Paragraph>
-            </div>
-          ))}
-        </Carousel>
-        <Link to="/bac-si">
-          <Button type="link" className="see-more-btn">
-            Xem thêm
-          </Button>
-        </Link>
-      </div>
-
-      {/* Testimonials */}
-      <div className="section testimonials-section">
-        <Title level={3}>Cảm nhận của bệnh nhân</Title>
-        <Carousel autoplay className="testimonials-carousel">
-          {testimonials.map((t, index) => (
-            <div key={index} className="testimonial-item">
-              <Paragraph>"{t.content}"</Paragraph>
-              <p>{t.author}</p>
-            </div>
-          ))}
-        </Carousel>
-      </div>      {/* Blog Posts */}
-      <div className="section articles-section">
-        <Title level={3}>Chia sẻ kinh nghiệm</Title>
-        <Row gutter={[24, 24]}>
-          {articles.map((art) => (
-            <Col xs={24} sm={12} md={8} key={art.title}>
-              <Card
-                title={art.title}
-                bordered
-                cover={<img alt={art.title} src={art.image} />}
-              >
-                <Paragraph>{art.desc}</Paragraph>
-                <Link to={art.link}>
-                  <Button type="link">Đọc thêm</Button>
-                </Link>
-              </Card>
             </Col>
-          ))}
-        </Row>        <Link to="/blog">
-          <Button type="link" className="see-more-btn">
-            Xem thêm
-          </Button>
-        </Link>
-      </div>
+            <Col xs={24} md={14}>
+              <Title level={3}>Tại sao nên chọn My Clinic?</Title>
+              <Row gutter={[16, 24]}>
+                <Col xs={24} sm={12}>
+                  <div className="clinic-box">
+                    <div className="clinic-icon">👩‍⚕️</div>
+                    <Title level={5}>Chuyên gia hiếm muộn</Title>
+                    <Paragraph>
+                      My Clinic quy tụ đội ngũ bác sĩ và điều dưỡng có chuyên môn sâu trong lĩnh vực IVF, IUI, nội tiết sinh sản.
+                    </Paragraph>
+                  </div>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <div className="clinic-box">
+                    <div className="clinic-icon">🌍</div>
+                    <Title level={5}>Tiêu chuẩn quốc tế</Title>
+                    <Paragraph>
+                      Quy trình điều trị và chăm sóc được kiểm soát nghiêm ngặt theo các tiêu chuẩn quốc tế về hỗ trợ sinh sản.
+                    </Paragraph>
+                  </div>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <div className="clinic-box">
+                    <div className="clinic-icon">🔬</div>
+                    <Title level={5}>Công nghệ hiện đại</Title>
+                    <Paragraph>
+                      Ứng dụng công nghệ xét nghiệm và thụ tinh tiên tiến nhằm tăng tỉ lệ thành công cho từng ca điều trị.
+                    </Paragraph>
+                  </div>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <div className="clinic-box">
+                    <div className="clinic-icon">💡</div>
+                    <Title level={5}>Nghiên cứu & cá thể hóa</Title>
+                    <Paragraph>
+                      Áp dụng nghiên cứu mới và xây dựng phác đồ cá nhân hóa giúp tối ưu hiệu quả điều trị cho từng bệnh nhân.
+                    </Paragraph>
+                  </div>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </div>
 
-      {/* Call to Action */}
-      <div className="section cta-section">
-        <Card className="cta-box">
-          <Title level={4}>Cần thêm thông tin?</Title>
-          <Paragraph>
-            Hãy để lại thông tin liên hệ, chúng tôi sẽ phản hồi bạn trong thời gian sớm nhất.
-          </Paragraph>
-          <Link to="/register">
-            <Button type="primary" size="large">
-              Đăng ký tư vấn miễn phí
+
+        <div className="section doctors-section">
+          <Title level={3} style={{ textAlign: "center" }}>ĐỘI NGŨ CHUYÊN GIA</Title>
+          <Carousel dots={false} arrows infinite slidesToShow={4} responsive={[
+            {
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 2,
+              },
+            },
+            {
+              breakpoint: 768,
+              settings: {
+                slidesToShow: 1,
+              },
+            },
+          ]}>
+            {doctors.map((doc, index) => (
+              <div className="doctor-profile" key={index}>
+                <img src={doc.photo} alt={doc.name} className="doctor-img" />
+                <div className="doctor-info">
+                  <div className="doctor-name">{doc.name}</div>
+                  <div className="doctor-title">{doc.specialty}</div>
+                </div>
+              </div>
+            ))}
+          </Carousel>
+        </div>
+
+        {/* Testimonials */}
+        <Slider
+          arrows
+          dots={false}
+          infinite
+          slidesToShow={2}
+          slidesToScroll={1}
+          responsive={[
+            {
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 1,
+              },
+            },
+          ]}
+          className="gratitude-carousel"
+        >
+          {testimonials.map((t, index) => (
+            <div key={index} className="gratitude-slide">
+              <Row gutter={[32, 0]} justify="center" align="middle">
+                <Col xs={24} md={12} className="gratitude-block">
+                  <div className="quote-mark">“</div>
+                  <Paragraph className="gratitude-text">{t.content}</Paragraph>
+                  <Link to="#" className="gratitude-detail">Chi tiết...</Link>
+                  <div className="gratitude-author">
+                    <strong>{t.title}</strong>
+                    <div>{t.author}</div>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          ))}
+        </Slider>
+        {/* Blog Posts */}
+        <div className="section articles-section">
+          <Title level={3}>Chia sẻ kinh nghiệm</Title>
+          <Row gutter={[24, 24]}>
+            {blogs.slice(0, 3).map((blog) => (
+              <Col xs={24} sm={12} md={8} key={blog.id}>
+                <Card
+                  title={blog.title}
+                  bordered
+                  cover={<img alt={blog.title} src={blog.coverImage} />}
+                >
+                  <Paragraph ellipsis={{ rows: 2 }}>{blog.summary}</Paragraph>
+                  <Link to={`/blog/${blog.id}?from=home`}>
+                    <Button type="link">Đọc thêm</Button>
+                  </Link>
+                </Card>
+              </Col>
+            ))}
+          </Row>        <Link to="/blog">
+            <Button type="link" className="see-more-btn">
+              Xem thêm bài viết
             </Button>
           </Link>
-        </Card>
-      </div>    </div>
-  </MainLayout>
+        </div>
+      </div>
+    </MainLayout>
   );
 };
 

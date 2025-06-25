@@ -1,0 +1,122 @@
+/* PatientDashboard.css */
+.patient-dashboard-container {
+  margin: 0 auto;
+  padding: 24px;
+  background-color: #f5f7fa; /* Màu nền nhẹ nhàng */
+}
+
+/* Header Section */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.dashboard-title {
+  color: #1a3c6c; /* Màu xanh đậm nhẹ */
+  font-weight: 600;
+}
+
+.reminder-button {
+  border-radius: 8px;
+  padding: 0 24px;
+  transition: all 0.3s ease;
+}
+
+.reminder-button:hover {
+  background-color: #40a9ff;
+  transform: translateY(-2px);
+}
+
+/* Card Styling */
+.section-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  background-color: #ffffff;
+  padding: 24px;
+  width: 100%; /* Đảm bảo card lấp đầy không gian container */
+}
+
+/* Tabs Styling */
+.custom-tabs {
+  width: 100%; /* Tabs lấp đầy chiều rộng */
+}
+
+.custom-tabs .ant-tabs-tab {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.custom-tabs .ant-tabs-tab:hover {
+  color: #1890ff;
+}
+
+.custom-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1890ff !important;
+  font-weight: 600;
+}
+
+.custom-tabs .ant-tabs-ink-bar {
+  background-color: #1890ff;
+  height: 3px;
+}
+
+/* Service Card Styling */
+.service-card {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  width: 100%; /* Đảm bảo service card lấp đầy cột */
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.action-button {
+  border-radius: 8px;
+  font-size: 16px;
+  height: 48px;
+  transition: all 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #40a9ff;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .patient-dashboard-container {
+    max-width: 100%; /* Trên mobile, container lấp đầy toàn bộ chiều rộng */
+    padding: 16px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reminder-button {
+    margin-top: 16px;
+    width: 100%;
+  }
+
+  .custom-tabs .ant-tabs-tab {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .section-card {
+    padding: 16px;
+  }
+
+  .action-button {
+    height: 40px;
+    font-size: 14px;
+  }
+}
