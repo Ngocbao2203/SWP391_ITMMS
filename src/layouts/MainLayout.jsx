@@ -19,6 +19,31 @@ const MainLayout = ({ children }) => {
     if (currentUser) {
       setUser(currentUser);
     }
+    
+    // Set up storage event listener to update user when localStorage changes
+    const handleStorageChange = () => {
+      const updatedUser = authService.getCurrentUser();
+      if (updatedUser) {
+        setUser(updatedUser);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Custom event for directly updating the user in the same window
+    const handleUserUpdate = () => {
+      const updatedUser = authService.getCurrentUser();
+      if (updatedUser) {
+        setUser(updatedUser);
+      }
+    };
+    
+    window.addEventListener('userDataUpdated', handleUserUpdate);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userDataUpdated', handleUserUpdate);
+    };
   }, []);
   
   // Xử lý đăng xuất

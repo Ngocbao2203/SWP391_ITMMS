@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Card, Row, Col, Avatar, Button, Space, 
   Typography, Tabs, Descriptions, Tag, Divider, Statistic,
-  Menu, Dropdown, List, Timeline, Empty
+  Menu, Dropdown, List, Timeline, Empty, Input, Form,
+  DatePicker, Select, message
 } from 'antd';
 import { 
   UserOutlined, EditOutlined, 
@@ -13,6 +14,7 @@ import {
   LogoutOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
+import authService from '../../services/authService';
 import '../../styles/PatientProfile.css';
 import 'moment/locale/vi';
 
@@ -105,13 +107,72 @@ const patientData = {
 const PatientProfile = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [editMode, setEditMode] = useState(false);
+  const [userData, setUserData] = useState(patientData);
+  const [editableData, setEditableData] = useState({...patientData});
+  
+  // Load user data from localStorage on component mount
+  useEffect(() => {
+    const storedUser = authService.getCurrentUser();
+    if (storedUser) {
+      // Merge stored user data with patient data
+      setUserData(prevData => ({
+        ...prevData,
+        fullName: storedUser.name || prevData.fullName,
+        firstName: storedUser.firstName || prevData.firstName,
+        lastName: storedUser.lastName || prevData.lastName,
+        email: storedUser.email || prevData.email,
+      }));
+      setEditableData(prevData => ({
+        ...prevData,
+        fullName: storedUser.name || prevData.fullName,
+        firstName: storedUser.firstName || prevData.firstName,
+        lastName: storedUser.lastName || prevData.lastName,
+        email: storedUser.email || prevData.email,
+      }));
+    }
+  }, []);
+
   const handleTabChange = (key) => {
     setActiveTab(key);
   };
 
   const handleEditToggle = () => {
+    if (editMode) {
+      // Discard changes if canceling
+      setEditableData({...userData});
+    }
     setEditMode(!editMode);
-  };  // Used inline dropdown items instead
+  };
+
+  const handleSaveChanges = () => {
+    // Save the changes
+    const updatedUserData = {...editableData};
+    setUserData(updatedUserData);
+    
+    // Update localStorage to persist changes
+    const user = authService.getCurrentUser() || {};
+    const updatedUser = { 
+      ...user, 
+      name: updatedUserData.fullName,
+      firstName: updatedUserData.firstName || updatedUserData.fullName.split(' ')[0],
+      lastName: updatedUserData.lastName || updatedUserData.fullName.split(' ').slice(1).join(' '),
+      email: updatedUserData.email || user.email
+    };
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    // Dispatch a custom event to notify other components of the update
+    window.dispatchEvent(new CustomEvent('userDataUpdated'));
+    
+    setEditMode(false);
+    message.success('Thông tin cá nhân đã được cập nhật');
+  };
+
+  const handleInputChange = (fieldName, value) => {
+    setEditableData(prev => ({
+      ...prev,
+      [fieldName]: value
+    }));
+  };
 
   return (
     <div className="patient-profile-container">
@@ -121,15 +182,15 @@ const PatientProfile = () => {
             <Dropdown menu={{ items: [
               {
                 key: 'name',
-                label: patientData.fullName,
+                label: userData.fullName,
                 disabled: true,
                 style: { color: '#1890ff', fontWeight: 'bold' }
               },
               { type: 'divider' },
               {
-                key: 'settings',
-                label: 'Cài đặt tài khoản',
-                icon: <SettingOutlined />
+                key: 'profile',
+                label: 'Hồ sơ cá nhân',
+                icon: <UserOutlined />
               },
               { type: 'divider' },
               {
@@ -148,13 +209,13 @@ const PatientProfile = () => {
             </Dropdown>
             <div className="patient-basic-info">
               <div className="patient-name-id">
-                <Title level={3} className="patient-name">{patientData.fullName}</Title>
-                <Tag color="blue" className="patient-id">ID: {patientData.id}</Tag>
+                <Title level={3} className="patient-name">{userData.fullName}</Title>
+                <Tag color="blue" className="patient-id">ID: {userData.id}</Tag>
               </div>
               <div className="patient-metadata">
-                <Tag icon={<CalendarOutlined />}>{moment(patientData.birthDate).format('DD/MM/YYYY')} ({patientData.age} tuổi)</Tag>
-                <Tag icon={<SafetyOutlined />}>{patientData.bloodType}</Tag>
-                {patientData.status === 'Đang điều trị' && (
+                <Tag icon={<CalendarOutlined />}>{moment(userData.birthDate).format('DD/MM/YYYY')} ({userData.age} tuổi)</Tag>
+                <Tag icon={<SafetyOutlined />}>{userData.bloodType}</Tag>
+                {userData.status === 'Đang điều trị' && (
                   <Tag color="processing" icon={<HourglassOutlined />}>Đang điều trị</Tag>
                 )}
               </div>
@@ -170,7 +231,7 @@ const PatientProfile = () => {
                 {editMode ? "Hủy" : "Chỉnh sửa"}
               </Button>
               {editMode && (
-                <Button type="primary" icon={<CheckCircleOutlined />}>
+                <Button type="primary" icon={<CheckCircleOutlined />} onClick={handleSaveChanges}>
                   Lưu thay đổi
                 </Button>
               )}
@@ -202,15 +263,93 @@ const PatientProfile = () => {
                   column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
                   labelStyle={{ fontWeight: '500' }}
                 >
-                  <Descriptions.Item label="Họ và tên">{patientData.fullName}</Descriptions.Item>
-                  <Descriptions.Item label="Ngày sinh">{moment(patientData.birthDate).format('DD/MM/YYYY')}</Descriptions.Item>
-                  <Descriptions.Item label="Giới tính">{patientData.gender}</Descriptions.Item>
-                  <Descriptions.Item label="Nhóm máu">{patientData.bloodType}</Descriptions.Item>
-                  <Descriptions.Item label="Số điện thoại">{patientData.phone}</Descriptions.Item>
-                  <Descriptions.Item label="Email">{patientData.email}</Descriptions.Item>
-                  <Descriptions.Item label="Địa chỉ" span={2}>{patientData.address}</Descriptions.Item>
-                  <Descriptions.Item label="Bảo hiểm y tế">{patientData.healthInsurance}</Descriptions.Item>
-                  <Descriptions.Item label="Dị ứng">{patientData.allergies?.length > 0 ? patientData.allergies.join(', ') : 'Không'}</Descriptions.Item>
+                  <Descriptions.Item label="Họ và tên">
+                    {editMode ? (
+                      <Input 
+                        value={editableData.fullName} 
+                        onChange={e => handleInputChange('fullName', e.target.value)}
+                      />
+                    ) : userData.fullName}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Ngày sinh">
+                    {editMode ? (
+                      <DatePicker 
+                        value={moment(editableData.birthDate)} 
+                        onChange={date => handleInputChange('birthDate', date ? date.format('YYYY-MM-DD') : null)}
+                        format="DD/MM/YYYY"
+                      />
+                    ) : moment(userData.birthDate).format('DD/MM/YYYY')}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Giới tính">
+                    {editMode ? (
+                      <Select 
+                        value={editableData.gender} 
+                        onChange={value => handleInputChange('gender', value)}
+                      >
+                        <Select.Option value="Nam">Nam</Select.Option>
+                        <Select.Option value="Nữ">Nữ</Select.Option>
+                        <Select.Option value="Khác">Khác</Select.Option>
+                      </Select>
+                    ) : userData.gender}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Nhóm máu">
+                    {editMode ? (
+                      <Select 
+                        value={editableData.bloodType} 
+                        onChange={value => handleInputChange('bloodType', value)}
+                      >
+                        <Select.Option value="A+">A+</Select.Option>
+                        <Select.Option value="A-">A-</Select.Option>
+                        <Select.Option value="B+">B+</Select.Option>
+                        <Select.Option value="B-">B-</Select.Option>
+                        <Select.Option value="AB+">AB+</Select.Option>
+                        <Select.Option value="AB-">AB-</Select.Option>
+                        <Select.Option value="O+">O+</Select.Option>
+                        <Select.Option value="O-">O-</Select.Option>
+                      </Select>
+                    ) : userData.bloodType}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Số điện thoại">
+                    {editMode ? (
+                      <Input 
+                        value={editableData.phone} 
+                        onChange={e => handleInputChange('phone', e.target.value)}
+                      />
+                    ) : userData.phone}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Email">
+                    {editMode ? (
+                      <Input 
+                        value={editableData.email} 
+                        onChange={e => handleInputChange('email', e.target.value)}
+                      />
+                    ) : userData.email}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Địa chỉ" span={2}>
+                    {editMode ? (
+                      <Input.TextArea 
+                        value={editableData.address} 
+                        onChange={e => handleInputChange('address', e.target.value)}
+                        rows={2}
+                      />
+                    ) : userData.address}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Bảo hiểm y tế">
+                    {editMode ? (
+                      <Input 
+                        value={editableData.healthInsurance} 
+                        onChange={e => handleInputChange('healthInsurance', e.target.value)}
+                      />
+                    ) : userData.healthInsurance}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Dị ứng">
+                    {editMode ? (
+                      <Input 
+                        value={editableData.allergies?.join(', ')} 
+                        onChange={e => handleInputChange('allergies', e.target.value.split(',').map(a => a.trim()))}
+                      />
+                    ) : userData.allergies?.length > 0 ? userData.allergies.join(', ') : 'Không'}
+                  </Descriptions.Item>
                 </Descriptions>
               </Card>
             </Col>
@@ -220,12 +359,12 @@ const PatientProfile = () => {
                 <div className="medical-statistics">
                   <Statistic 
                     title="Chiều cao" 
-                    value={patientData.height} 
+                    value={userData.height} 
                     prefix={<InfoCircleOutlined />} 
                   />
                   <Statistic 
                     title="Cân nặng" 
-                    value={patientData.weight}
+                    value={userData.weight}
                     prefix={<InfoCircleOutlined />} 
                   />
                 </div>
@@ -234,10 +373,10 @@ const PatientProfile = () => {
                 
                 <div className="upcoming-appointment">
                   <Title level={5}>Lịch hẹn sắp tới</Title>
-                  {patientData.appointments.filter(app => app.status === 'scheduled').length > 0 ? (
+                  {userData.appointments.filter(app => app.status === 'scheduled').length > 0 ? (
                     <List
                       itemLayout="horizontal"
-                      dataSource={patientData.appointments.filter(app => app.status === 'scheduled')}
+                      dataSource={userData.appointments.filter(app => app.status === 'scheduled')}
                       renderItem={appointment => (
                         <List.Item>
                           <List.Item.Meta
@@ -257,8 +396,8 @@ const PatientProfile = () => {
             
             <Col xs={24}>
               <Card title="Điều trị hiện tại" className="current-treatment-card">
-                {patientData.treatments.filter(t => t.status === 'in-progress').length > 0 ? (
-                  patientData.treatments
+                {userData.treatments.filter(t => t.status === 'in-progress').length > 0 ? (
+                  userData.treatments
                     .filter(t => t.status === 'in-progress')
                     .map(treatment => (
                       <div key={treatment.id} className="treatment-progress">
@@ -295,7 +434,7 @@ const PatientProfile = () => {
           <div className="treatments-content">
             <Card className="treatments-list-card" title="Quá trình điều trị">
               <Timeline mode="left">
-                {patientData.treatments.map(treatment => (
+                {userData.treatments.map(treatment => (
                   <Timeline.Item 
                     key={treatment.id} 
                     color={treatment.status === 'in-progress' ? 'blue' : 'green'}

@@ -65,6 +65,12 @@
   color: #fff;
   font-size: 1rem;
   font-weight: 500;
+  margin-left: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+  display: inline-block;
 }
 
 .nav-menu .ant-menu-item-selected {
@@ -84,6 +90,7 @@
   color: #fff;
   font-weight: 500;
   transition: all 0.3s ease;
+  padding: 0 8px;
 }
 
 .user-menu .ant-dropdown-trigger:hover {
@@ -92,17 +99,16 @@
 
 .user-menu .ant-avatar {
   background: #1890ff;
-  margin-right: 10px;
+  margin-right: 8px;
   transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .user-menu .ant-avatar:hover {
   transform: scale(1.1);
 }
-
-/* Removed old styles that are no longer needed */
-
-/* Removed old styles that are no longer needed */
 
 @media (max-width: 768px) {
   .app-header {
@@ -125,11 +131,9 @@
 
   .logo-img {
     height: 36px;
-  }  .nav-text {
-    display: inline-block !important;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  }
+  
+  .nav-text {
+    max-width: 80px;
   }
 }

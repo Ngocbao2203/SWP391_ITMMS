@@ -26,18 +26,6 @@ const Header = ({ user, onLogout }) => {
       <Menu.Item key="profile" icon={<UserOutlined />}>
         <Link to="/profile">Hồ sơ cá nhân</Link>
       </Menu.Item>
-      <Menu.Item key="appointments" icon={<AppstoreOutlined />}>
-        <Link to="/bookappointment">Lịch hẹn</Link>
-      </Menu.Item>
-      <Menu.Item key="treatment" icon={<TeamOutlined />}>
-        <Link to="/profile">Tiến trình điều trị</Link>
-      </Menu.Item>
-      <Menu.Item key="medical-records" icon={<ReadOutlined />}>
-        <Link to="/profile">Hồ sơ y tế</Link>
-      </Menu.Item>
-      <Menu.Item key="settings" icon={<SettingOutlined />}>
-        <Link to="/profile">Cài đặt tài khoản</Link>
-      </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="logout" onClick={onLogout} icon={<LogoutOutlined />}>
         Đăng xuất
@@ -71,15 +59,16 @@ const Header = ({ user, onLogout }) => {
           <Link to="/doctors">Bác sĩ</Link>
         </Menu.Item>
 
-        {user ? (          <Menu.Item key="user" className="user-menu">
+        {user ? (
+          <Menu.Item key="user" className="user-menu">
             <Dropdown overlay={userMenu} placement="bottomRight" trigger={['click']}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar 
+                  size="default"
                   src={user.avatar || null} 
                   icon={!user.avatar && <UserOutlined />}
-                  style={{ marginRight: 4 }}
                 />
-                <span className="nav-text">Nguyễn Thị B</span>
+                <span className="nav-text">{user?.name || 'Người dùng'}</span>
               </div>
             </Dropdown>
           </Menu.Item>

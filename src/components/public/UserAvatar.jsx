@@ -21,22 +21,7 @@ const UserAvatar = ({ user, onLogout }) => {
     <Menu>
       <Menu.Item key="profile">
         <Link to="/profile">
-          <EditOutlined /> Hồ sơ cá nhân
-        </Link>
-      </Menu.Item>
-      <Menu.Item key="appointments">
-        <Link to="/bookappointment">
-          <CalendarOutlined /> Lịch hẹn
-        </Link>
-      </Menu.Item>
-      <Menu.Item key="treatment">
-        <Link to="/profile">
-          <FileTextOutlined /> Tiến trình điều trị
-        </Link>
-      </Menu.Item>
-      <Menu.Item key="medical-records">
-        <Link to="/profile">
-          <MedicineBoxOutlined /> Hồ sơ y tế
+          <UserOutlined /> Hồ sơ cá nhân
         </Link>
       </Menu.Item>
       <Menu.Item key="logout" onClick={onLogout} icon={<LoginOutlined />}>
