@@ -11,7 +11,8 @@ import {
   Empty, 
   Spin, 
   message,
-  Descriptions
+  Descriptions,
+  Input
 } from 'antd';
 import { 
   CheckCircleOutlined, 
@@ -23,66 +24,17 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { 
+  appointmentService, 
+  patientService, 
+  authService, 
+  formatErrorMessage 
+} from '../../services';
 import '../../styles/AppointmentHistory.css';
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
-
-// Mock data - lịch sử cuộc hẹn và các yêu cầu đang chờ duyệt
-const mockAppointments = [
-  { 
-    id: 1,
-    date: '2025-05-20', 
-    requestedDate: '2025-05-20',
-    requestedTime: '10:00',
-    doctor: 'Dr. Nguyễn Văn A', 
-    service: 'Khám tổng quát',
-    reason: 'Khám kiểm tra định kỳ',
-    status: 'completed', 
-    time: '10:00', 
-    location: 'Phòng khám A',
-    notes: 'Cần tái khám sau 6 tháng'
-  },
-  { 
-    id: 2,
-    date: '2025-05-28', 
-    requestedDate: '2025-05-28',
-    requestedTime: '15:00',
-    doctor: 'Dr. Trần Thị B', 
-    service: 'Tẩy trắng răng',
-    reason: 'Răng bị ố vàng',
-    status: 'approved', 
-    time: '15:00', 
-    location: 'Phòng khám B',
-    notes: 'Xác nhận lịch hẹn'
-  },
-  { 
-    id: 3,
-    date: '2025-06-10', 
-    requestedDate: '2025-06-10',
-    requestedTime: '09:30',
-    doctor: null, 
-    service: 'Nhổ răng khôn',
-    reason: 'Răng khôn mọc lệch gây đau nhức',
-    status: 'pending', 
-    time: '09:30', 
-    location: null,
-    notes: ''
-  },
-  { 
-    id: 4,
-    date: '2025-04-15', 
-    requestedDate: '2025-04-15',
-    requestedTime: '14:00',
-    doctor: 'Dr. Lê Quốc C', 
-    service: 'Trám răng',
-    reason: 'Răng bị sâu',
-    status: 'cancelled', 
-    time: '14:00', 
-    location: 'Phòng khám C',
-    notes: 'Hủy bởi bệnh nhân'
-  },
-];
+const { TextArea } = Input;
 
 const AppointmentHistory = () => {
   const [appointments, setAppointments] = useState([]);
@@ -92,43 +44,47 @@ const AppointmentHistory = () => {
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [cancelReason, setCancelReason] = useState('');
+  const [cancelling, setCancelling] = useState(false);
   
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Giả lập việc gọi API để lấy dữ liệu
     const fetchAppointments = async () => {
       try {
         setLoading(true);
-        // Trong thực tế sẽ gọi API để lấy dữ liệu
-        // const response = await axios.get('/api/patient/appointments');
-        // setAppointments(response.data);
+        const user = authService.getCurrentUser();
         
-        // Mock data
-        setTimeout(() => {
-          setAppointments(mockAppointments);
-          setLoading(false);
-        }, 1000);
+        if (!user) {
+          message.error('Vui lòng đăng nhập để xem lịch hẹn');
+          navigate('/login');
+          return;
+        }
+
+        // Lấy tất cả appointments của customer
+        const appointmentData = await patientService.getPatientAppointments(user.id);
+        setAppointments(appointmentData.appointments || []);
+        
       } catch (error) {
-        console.error('Lỗi khi tải lịch hẹn:', error);
-        message.error('Không thể tải lịch hẹn. Vui lòng thử lại sau!');
+        console.error('Error fetching appointments:', error);
+        message.error(formatErrorMessage(error));
+      } finally {
         setLoading(false);
       }
     };
     
     fetchAppointments();
-  }, []);
+  }, [navigate]);
   
   // Lọc các cuộc hẹn sắp tới (pending và approved)
   const upcomingAppointments = appointments.filter(
-    app => (app.status === 'pending' || app.status === 'approved') && 
-    dayjs(app.date).isAfter(dayjs())
+    app => (['Scheduled', 'Confirmed'].includes(app.status)) && 
+    dayjs(app.appointmentDate).isAfter(dayjs())
   );
   
   // Lịch sử cuộc hẹn đã hoàn thành hoặc hủy
   const pastAppointments = appointments.filter(
-    app => app.status === 'completed' || app.status === 'cancelled' || 
-    (app.status === 'approved' && dayjs(app.date).isBefore(dayjs()))
+    app => ['Completed', 'Cancelled', 'No Show'].includes(app.status) || 
+    (['Scheduled', 'Confirmed'].includes(app.status) && dayjs(app.appointmentDate).isBefore(dayjs()))
   );
   
   // Xử lý hiển thị chi tiết cuộc hẹn
@@ -152,36 +108,57 @@ const AppointmentHistory = () => {
   };
   
   // Xử lý hủy cuộc hẹn
-  const handleCancelAppointment = () => {
+  const handleCancelAppointment = async () => {
     if (!selectedAppointment) return;
     
-    // Trong thực tế sẽ gọi API để hủy cuộc hẹn
-    // axios.post(`/api/appointments/${selectedAppointment.id}/cancel`, { reason: cancelReason })
-    
-    // Mock hủy cuộc hẹn
-    const updatedAppointments = appointments.map(app => {
-      if (app.id === selectedAppointment.id) {
-        return { ...app, status: 'cancelled', notes: `Lý do hủy: ${cancelReason}` };
+    try {
+      setCancelling(true);
+      
+      // Gọi API để hủy cuộc hẹn
+      const result = await appointmentService.cancelAppointment(selectedAppointment.id);
+      
+      if (result.success) {
+        // Cập nhật danh sách appointments
+        const updatedAppointments = appointments.map(app => {
+          if (app.id === selectedAppointment.id) {
+            return { 
+              ...app, 
+              status: 'Cancelled', 
+              notes: app.notes + (cancelReason ? ` | Lý do hủy: ${cancelReason}` : '')
+            };
+          }
+          return app;
+        });
+        
+        setAppointments(updatedAppointments);
+        message.success('Hủy lịch hẹn thành công');
+        handleCloseModal();
+      } else {
+        message.error(result.message);
       }
-      return app;
-    });
-    
-    setAppointments(updatedAppointments);
-    message.success('Hủy lịch hẹn thành công');
-    handleCloseModal();
+    } catch (error) {
+      console.error('Error cancelling appointment:', error);
+      message.error(formatErrorMessage(error));
+    } finally {
+      setCancelling(false);
+    }
   };
   
   // Lấy tag trạng thái dựa trên status của cuộc hẹn
   const getStatusTag = (status) => {
     switch (status) {
-      case 'completed':
+      case 'Completed':
         return <Tag color="green" icon={<CheckCircleOutlined />}>Hoàn tất</Tag>;
-      case 'approved':
+      case 'Confirmed':
         return <Tag color="blue" icon={<CheckCircleOutlined />}>Đã xác nhận</Tag>;
-      case 'pending':
+      case 'Scheduled':
         return <Tag color="orange" icon={<HourglassOutlined />}>Chờ xác nhận</Tag>;
-      case 'cancelled':
+      case 'Cancelled':
         return <Tag color="red" icon={<CloseCircleOutlined />}>Đã hủy</Tag>;
+      case 'No Show':
+        return <Tag color="volcano" icon={<CloseCircleOutlined />}>Không đến</Tag>;
+      case 'In Progress':
+        return <Tag color="processing" icon={<HourglassOutlined />}>Đang khám</Tag>;
       default:
         return <Tag color="default">{status}</Tag>;
     }
@@ -224,61 +201,66 @@ const AppointmentHistory = () => {
             </div>
           ) : upcomingAppointments.length > 0 ? (
             <Row gutter={[16, 16]}>
-              {upcomingAppointments.map((appointment) => (
-                <Col xs={24} sm={12} md={8} key={appointment.id}>
-                  <Card
-                    hoverable
-                    className="appointment-card"
-                    title={
-                      <div className="appointment-card-title">
-                        <Text strong>{appointment.service}</Text>
-                        <div>{getStatusTag(appointment.status)}</div>
-                      </div>
-                    }
-                  >
-                    <div className="appointment-info">
-                      <div className="appointment-info-item">
-                        <Text strong>Ngày: </Text>
-                        <Text>{dayjs(appointment.date).format('DD/MM/YYYY')}</Text>
-                      </div>
-                      <div className="appointment-info-item">
-                        <Text strong>Giờ: </Text>
-                        <Text>{appointment.time}</Text>
-                      </div>
-                      {appointment.doctor && (
-                        <div className="appointment-info-item">
-                          <Text strong>Bác sĩ: </Text>
-                          <Text>{appointment.doctor}</Text>
+              {upcomingAppointments.map((appointment) => {
+                const appointmentDate = dayjs(appointment.appointmentDate).format('DD/MM/YYYY');
+                const timeSlot = appointment.timeSlot || 'Chưa xác định';
+                
+                return (
+                  <Col xs={24} sm={12} md={8} key={appointment.id}>
+                    <Card
+                      hoverable
+                      className="appointment-card"
+                      title={
+                        <div className="appointment-card-title">
+                          <Text strong>{appointment.type || 'Khám bệnh'}</Text>
+                          <div>{getStatusTag(appointment.status)}</div>
                         </div>
-                      )}
-                      {appointment.location && (
+                      }
+                    >
+                      <div className="appointment-info">
                         <div className="appointment-info-item">
-                          <Text strong>Địa điểm: </Text>
-                          <Text>{appointment.location}</Text>
+                          <Text strong>Ngày: </Text>
+                          <Text>{appointmentDate}</Text>
                         </div>
-                      )}
-                    </div>
-                    
-                    <div className="appointment-actions">
-                      <Button 
-                        type="primary"
-                        icon={<InfoCircleOutlined />}
-                        onClick={() => showAppointmentDetails(appointment)}
-                      >
-                        Chi tiết
-                      </Button>
-                      {appointment.status !== 'cancelled' && (
+                        <div className="appointment-info-item">
+                          <Text strong>Giờ: </Text>
+                          <Text>{timeSlot}</Text>
+                        </div>
+                        {appointment.doctor && (
+                          <div className="appointment-info-item">
+                            <Text strong>Bác sĩ: </Text>
+                            <Text>{appointment.doctor.name}</Text>
+                          </div>
+                        )}
+                        {appointment.doctor?.specialization && (
+                          <div className="appointment-info-item">
+                            <Text strong>Chuyên khoa: </Text>
+                            <Text>{appointment.doctor.specialization}</Text>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="appointment-actions">
                         <Button 
-                          type="danger"
-                          onClick={() => showCancelModal(appointment)}
+                          type="primary"
+                          icon={<InfoCircleOutlined />}
+                          onClick={() => showAppointmentDetails(appointment)}
                         >
-                          Hủy lịch hẹn
+                          Chi tiết
                         </Button>
-                      )}
-                    </div>
-                  </Card>
-                </Col>
-              ))}
+                        {!['Cancelled', 'No Show', 'Completed'].includes(appointment.status) && (
+                          <Button 
+                            type="danger"
+                            onClick={() => showCancelModal(appointment)}
+                          >
+                            Hủy lịch hẹn
+                          </Button>
+                        )}
+                      </div>
+                    </Card>
+                  </Col>
+                );
+              })}
             </Row>
           ) : (
             <Empty 
@@ -310,47 +292,52 @@ const AppointmentHistory = () => {
             </div>
           ) : pastAppointments.length > 0 ? (
             <Row gutter={[16, 16]}>
-              {pastAppointments.map((appointment) => (
-                <Col xs={24} sm={12} md={8} key={appointment.id}>
-                  <Card
-                    hoverable
-                    className="appointment-card"
-                    title={
-                      <div className="appointment-card-title">
-                        <Text strong>{appointment.service}</Text>
-                        <div>{getStatusTag(appointment.status)}</div>
-                      </div>
-                    }
-                  >
-                    <div className="appointment-info">
-                      <div className="appointment-info-item">
-                        <Text strong>Ngày: </Text>
-                        <Text>{dayjs(appointment.date).format('DD/MM/YYYY')}</Text>
-                      </div>
-                      <div className="appointment-info-item">
-                        <Text strong>Giờ: </Text>
-                        <Text>{appointment.time}</Text>
-                      </div>
-                      {appointment.doctor && (
-                        <div className="appointment-info-item">
-                          <Text strong>Bác sĩ: </Text>
-                          <Text>{appointment.doctor}</Text>
+              {pastAppointments.map((appointment) => {
+                const appointmentDate = dayjs(appointment.appointmentDate).format('DD/MM/YYYY');
+                const timeSlot = appointment.timeSlot || 'Chưa xác định';
+                
+                return (
+                  <Col xs={24} sm={12} md={8} key={appointment.id}>
+                    <Card
+                      hoverable
+                      className="appointment-card"
+                      title={
+                        <div className="appointment-card-title">
+                          <Text strong>{appointment.type || 'Khám bệnh'}</Text>
+                          <div>{getStatusTag(appointment.status)}</div>
                         </div>
-                      )}
-                    </div>
-                    
-                    <div className="appointment-actions">
-                      <Button 
-                        type="primary"
-                        icon={<InfoCircleOutlined />}
-                        onClick={() => showAppointmentDetails(appointment)}
-                      >
-                        Chi tiết
-                      </Button>
-                    </div>
-                  </Card>
-                </Col>
-              ))}
+                      }
+                    >
+                      <div className="appointment-info">
+                        <div className="appointment-info-item">
+                          <Text strong>Ngày: </Text>
+                          <Text>{appointmentDate}</Text>
+                        </div>
+                        <div className="appointment-info-item">
+                          <Text strong>Giờ: </Text>
+                          <Text>{timeSlot}</Text>
+                        </div>
+                        {appointment.doctor && (
+                          <div className="appointment-info-item">
+                            <Text strong>Bác sĩ: </Text>
+                            <Text>{appointment.doctor.name}</Text>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="appointment-actions">
+                        <Button 
+                          type="primary"
+                          icon={<InfoCircleOutlined />}
+                          onClick={() => showAppointmentDetails(appointment)}
+                        >
+                          Chi tiết
+                        </Button>
+                      </div>
+                    </Card>
+                  </Col>
+                );
+              })}
             </Row>
           ) : (
             <Empty 

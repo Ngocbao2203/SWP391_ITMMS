@@ -1,6 +1,5 @@
 // Blog service for handling blog operations
 // eslint-disable-next-line no-unused-vars
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 
 // Mock data for development
 const mockBlogs = [

@@ -8,7 +8,11 @@ import {
   PhoneOutlined, HeartOutlined, ClockCircleOutlined, SafetyCertificateOutlined, 
   StarFilled, ArrowLeftOutlined
 } from '@ant-design/icons';
-import { getServiceById } from '../../services/serviceRegistration';
+import { 
+  guestService, 
+  treatmentService, 
+  formatErrorMessage 
+} from '../../services';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -22,6 +26,11 @@ const BookAppointment = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(serviceId ? true : false);
   const [sourceRoute, setSourceRoute] = useState('/userservice'); // Mặc định là userservice
+  const [clinicStats, setClinicStats] = useState({
+    successRate: 95,
+    totalDoctors: '150+',
+    satisfiedCustomers: '10k+'
+  });
 
   // Tải thông tin dịch vụ nếu có serviceId từ URL
   useEffect(() => {
@@ -29,10 +38,12 @@ const BookAppointment = () => {
       if (serviceId) {
         setPageLoading(true);
         try {
-          const serviceData = await getServiceById(serviceId);
+          // Lấy service details từ API
+          const serviceData = await treatmentService.getTreatmentServiceDetails(serviceId);
           setSelectedService(serviceData);
         } catch (error) {
-          console.error("Lỗi khi tải thông tin dịch vụ:", error);
+          console.error("Error loading service data:", error);
+          message.error(formatErrorMessage(error));
         } finally {
           setPageLoading(false);
         }
@@ -57,19 +68,34 @@ const BookAppointment = () => {
           // Hiển thị thông báo nếu từ UserService
           if (location.state.source === 'UserService') {
             setTimeout(() => {
-              message.success('Bạn đã chọn dịch vụ ' + location.state.service.name);
+              message.success('Bạn đã chọn dịch vụ ' + location.state.service.serviceName);
             }, 500);
           }
         }
       }
     };
+
+    // Lấy clinic stats từ guest service
+    const loadClinicStats = async () => {
+      try {
+        const stats = await guestService.getSuccessStatistics();
+        setClinicStats({
+          successRate: stats.successRate || 95,
+          totalDoctors: stats.totalDoctors ? `${stats.totalDoctors}+` : '150+',
+          satisfiedCustomers: stats.totalPatients ? `${Math.floor(stats.totalPatients/1000)}k+` : '10k+'
+        });
+      } catch (error) {
+        console.error("Error loading clinic stats:", error);
+        // Use fallback data if API fails
+      }
+    };
     
     loadServiceData();
+    loadClinicStats();
   }, [serviceId, location]);
   
   // Xử lý thành công
   const handleRegistrationSuccess = (response) => {
-    setRegistrationSuccess(true);
     // Thêm animation thông báo thành công
     setTimeout(() => {
       setFormLoading(false);
@@ -80,6 +106,7 @@ const BookAppointment = () => {
   const handleFormSubmitting = () => {
     setFormLoading(true);
   };
+
   // Hiển thị loading khi đang tải thông tin dịch vụ
   if (pageLoading) {
     return (
@@ -98,6 +125,7 @@ const BookAppointment = () => {
       </MainLayout>
     );
   }
+
   return (
     <MainLayout>
       <div className="book-appointment-hero">
@@ -106,11 +134,17 @@ const BookAppointment = () => {
             <Col xs={24} md={12} lg={12} className="appointment-left-content">
               <div className="appointment-text-content">
                 <div className="appointment-header-badge">
-                  <StarFilled className="badge-icon" /> Dịch vụ IVF hàng đầu
+                  <StarFilled className="badge-icon" /> 
+                  {selectedService ? `Dịch vụ ${selectedService.serviceName}` : 'Dịch vụ điều trị hiếm muộn hàng đầu'}
                 </div>
-                <Title level={1}>Đăng ký dịch vụ IVF</Title>
+                <Title level={1}>
+                  {selectedService ? `Đăng ký ${selectedService.serviceName}` : 'Đăng ký dịch vụ điều trị'}
+                </Title>
                 <Paragraph className="hero-subtitle">
-                  Hãy để chúng tôi đồng hành cùng bạn trong hành trình làm cha mẹ với giải pháp điều trị hiệu quả
+                  {selectedService 
+                    ? selectedService.description || 'Hãy để chúng tôi đồng hành cùng bạn trong hành trình làm cha mẹ với giải pháp điều trị hiệu quả'
+                    : 'Hãy để chúng tôi đồng hành cùng bạn trong hành trình làm cha mẹ với giải pháp điều trị hiệu quả'
+                  }
                 </Paragraph>
                 
                 <div className="appointment-features">
@@ -141,18 +175,20 @@ const BookAppointment = () => {
                 
                 <div className="appointment-badges">
                   <div className="appointment-badge">
-                    <span className="badge-number">95%</span>
+                    <span className="badge-number">{clinicStats.successRate}%</span>
                     <span className="badge-text">Tỷ lệ thành công</span>
                   </div>
                   <div className="appointment-badge">
-                    <span className="badge-number">150+</span>
+                    <span className="badge-number">{clinicStats.totalDoctors}</span>
                     <span className="badge-text">Bác sĩ chuyên môn</span>
                   </div>
                   <div className="appointment-badge">
-                    <span className="badge-number">10k+</span>
+                    <span className="badge-number">{clinicStats.satisfiedCustomers}</span>
                     <span className="badge-text">Khách hàng hài lòng</span>
                   </div>
-                </div>                  <div className="appointment-actions">
+                </div>
+                
+                <div className="appointment-actions">
                   <Button 
                     type="primary" 
                     ghost
@@ -181,7 +217,8 @@ const BookAppointment = () => {
                   <div className="form-overlay">
                     <Spin size="large" />
                   </div>
-                )}                <div className="appointment-form-container">
+                )}
+                <div className="appointment-form-container">
                   <IvfAppointmentForm 
                     service={selectedService}
                     onRegistrationSuccess={handleRegistrationSuccess}

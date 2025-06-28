@@ -1,19 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar, Dropdown, Menu } from 'antd';
-import { 
-  UserOutlined, 
-  LoginOutlined, 
-  EditOutlined, 
-  CalendarOutlined, 
-  MedicineBoxOutlined, 
-  FileTextOutlined 
-} from '@ant-design/icons';
+import { UserOutlined, LoginOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import authService from '../../services/authService'; // Nhập authService
 
-// Component UserAvatar
 const UserAvatar = ({ user, onLogout }) => {
-  // Nếu không có user, hiển thị fallback
-  if (!user) {
+  const [userProfile, setUserProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (user?.id) {
+        try {
+          const profile = await authService.getUserProfile(user.id);
+          setUserProfile(profile); // Lưu profile vào state
+        } catch (error) {
+          console.error('Lỗi khi lấy profile:', error);
+        }
+      }
+    };
+    fetchUserProfile();
+  }, [user]);
+
+  if (!user || !userProfile) {
     return <div>Đang tải thông tin người dùng...</div>;
   }
 
@@ -36,8 +44,8 @@ const UserAvatar = ({ user, onLogout }) => {
         <div className="user-avatar">
           <Avatar size={64} icon={<UserOutlined />} />
           <div className="user-info">
-            <h3>{user?.name || 'Tên người dùng'}</h3>
-            <p>{user?.email || 'Email chưa có'}</p>
+            <h3>{userProfile?.fullName || 'Tên người dùng'}</h3>
+            <p>{userProfile?.email || 'Email chưa có'}</p>
           </div>
         </div>
       </Dropdown>
