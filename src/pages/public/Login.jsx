@@ -4,7 +4,6 @@ import {
   Input,
   Button,
   Typography,
-  message,
   Divider,
   Row,
   Col,
@@ -17,13 +16,15 @@ import {
 } from "@ant-design/icons";
 import "../../styles/Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import authService from "../../services/authService";
+import { toast } from "react-toastify"; // Nhập toast
+import { authService } from "../../services";
+import { formatErrorMessage } from "../../services/authService";
 
 const { Title } = Typography;
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm(); // <-- Tạo form instance
+  const [form] = Form.useForm();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,10 +33,8 @@ const Login = () => {
       navigate("/");
     }
 
-    // Reset form bằng Ant Design
     form.resetFields();
 
-    // Ép autofill ngừng hoạt động
     setTimeout(() => {
       const inputs = document.querySelectorAll(".medical-login-form input");
       inputs.forEach((input) => {
@@ -45,18 +44,48 @@ const Login = () => {
   }, [navigate, form]);
 
   const onFinish = async (values) => {
+    console.log("Login attempt with values:", values);
     setLoading(true);
+
     try {
+      console.log("Calling authService.login...");
       const result = await authService.login(values);
-      if (result.success) {
-        message.success(result.message);
-        navigate("/");
+      console.log("Login result:", result);
+
+      if (result && result.success) {
+        toast.success(result.message || "Đăng nhập thành công!"); // Dùng toast
+
+        const user = authService.getCurrentUser();
+        if (user) {
+          console.log("User logged in:", user);
+          switch (user.role) {
+            case "Admin":
+              navigate("/admin/dashboard");
+              break;
+            case "Manager":
+              navigate("/manager/doctors");
+              break;
+            case "Doctor":
+              navigate("/doctor/dashboard");
+              break;
+            case "Customer":
+              navigate("/profile");
+              break;
+            default:
+              navigate("/");
+          }
+        } else {
+          navigate("/");
+        }
       } else {
-        message.error(result.message);
+        const errorMessage = result?.message || "Email hoặc mật khẩu không đúng!";
+        toast.error(errorMessage); // Dùng toast
+        console.error("Login failed:", result);
       }
     } catch (error) {
       console.error("Login error:", error);
-      message.error("Có lỗi xảy ra khi đăng nhập");
+      const errorMessage = formatErrorMessage(error);
+      toast.error(errorMessage); // Dùng toast
     } finally {
       setLoading(false);
     }
@@ -69,7 +98,7 @@ const Login = () => {
           <div className="login-banner">
             <MedicineBoxOutlined className="medical-banner-icon" />
             <h2>
-              Phần mềm quản lý và theo dõi
+              Phần mềm quản lý và theo dõi
               <br />
               điều trị hiếm muộn
             </h2>
@@ -97,7 +126,10 @@ const Login = () => {
           >
             <Form.Item
               name="email"
-              rules={[{ required: true, message: "Vui lòng nhập email!" }]}
+              rules={[
+                { required: true, message: "Vui lòng nhập email!" },
+                { type: "email", message: "Email không hợp lệ!" },
+              ]}
             >
               <Input
                 prefix={<UserOutlined className="login-icon" />}
@@ -110,7 +142,10 @@ const Login = () => {
 
             <Form.Item
               name="password"
-              rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+              rules={[
+                { required: true, message: "Vui lòng nhập mật khẩu!" },
+                { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" },
+              ]}
             >
               <Input.Password
                 prefix={<LockOutlined className="login-icon" />}
@@ -136,7 +171,7 @@ const Login = () => {
                 block
                 className="medical-login-button"
               >
-                Đăng nhập
+                {loading ? "Đang đăng nhập..." : "Đăng nhập"}
               </Button>
             </Form.Item>
 
@@ -153,9 +188,7 @@ const Login = () => {
           </Form>
 
           <div className="login-footer">
-            <p>
-              © 2025 Phần mềm quản lý và theo dõi điều trị hiếm muộn
-            </p>
+            <p>© 2025 Phần mềm quản lý và theo dõi điều trị hiếm muộn</p>
           </div>
         </div>
       </div>

@@ -1,7 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Select, DatePicker, Input, Button, message, Row, Col } from 'antd';
-import { CalendarOutlined, CheckCircleFilled, InfoCircleOutlined } from '@ant-design/icons';
+import { CalendarOutlined, CheckCircleFilled, InfoCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { 
+  treatmentService, 
+  doctorService, 
+  appointmentService, 
+  authService, 
+  formatErrorMessage 
+} from '../../services';
 import '../../styles/IvfAppointmentForm.css';
 
 const { Option } = Select;
@@ -11,37 +18,39 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [isSuccess, setIsSuccess] = useState(false);  const [services, setServices] = useState([
-    { id: 'ivf', name: 'Thụ tinh trong ống nghiệm (IVF)' },
-    { id: 'icsi', name: 'Tiêm tinh trùng vào bào tương noãn (ICSI)' },
-    { id: 'iui', name: 'Bơm tinh trùng vào buồng tử cung (IUI)' },
-  ]);
-  
-  const [doctors, setDoctors] = useState([
-    { 
-      id: 1, 
-      name: 'Dr. Nguyễn', 
-      specialty: 'Chuyên khoa Sản Phụ khoa',
-      photo: 'https://randomuser.me/api/portraits/men/1.jpg'
-    },
-    { 
-      id: 2, 
-      name: 'Dr. Lê Văn Cường', 
-      specialty: 'Chuyên khoa IVF',
-      photo: 'https://randomuser.me/api/portraits/men/2.jpg'
-    },
-    { 
-      id: 3, 
-      name: 'Dr. Phạm Thu Dung', 
-      specialty: 'Chuyên khoa hỗ trợ sinh sản',
-      photo: 'https://randomuser.me/api/portraits/women/3.jpg'
-    }
-  ]);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [services, setServices] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [loadingTimeSlots, setLoadingTimeSlots] = useState(false);
+
+  // Load services and doctors from API
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        const [servicesData, doctorsData] = await Promise.all([
+          treatmentService.getAllTreatmentServices(),
+          doctorService.getAvailableDoctors()
+        ]);
+
+        setServices(servicesData.services || []);
+        setDoctors(doctorsData.doctors || []);
+      } catch (error) {
+        console.error('Error loading initial data:', error);
+        message.error(formatErrorMessage(error));
+      }
+    };
+
+    loadInitialData();
+  }, []);
+
   // Khởi tạo form với dịch vụ được chọn (nếu có)
   useEffect(() => {
     if (service?.id) {
       form.setFieldsValue({
-        serviceId: service.id
+        serviceId: service.id,
+        treatmentServiceId: service.id
       });
     }
   }, [service, form]);
@@ -69,6 +78,13 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
   
   // Xử lý gửi form
   const handleSubmit = async (values) => {
+    const user = authService.getCurrentUser();
+    
+    if (!user) {
+      message.error('Vui lòng đăng nhập để đặt lịch hẹn');
+      return;
+    }
+
     if (onSubmitting) {
       onSubmitting();
     }
@@ -76,28 +92,45 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
     setLoading(true);
     
     try {
-      // Giả lập gọi API đăng ký
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
       // Format dữ liệu để gửi đi
-      const formattedData = {
-        ...values,
-        appointmentDate: values.appointmentDate?.format('YYYY-MM-DD')
+      const appointmentData = {
+        doctorId: values.doctorId,
+        treatmentPlanId: null, // Will be set later if needed
+        appointmentDate: values.appointmentDate.format('YYYY-MM-DDTHH:mm:ss'),
+        timeSlot: values.timeSlot,
+        type: 'Consultation', // Default type
+        notes: values.notes || ''
       };
       
-      console.log('Form data submitted:', formattedData);
+      console.log('Booking appointment with data:', appointmentData);
       
+      // Gọi API đặt lịch hẹn
+      const result = await appointmentService.bookAppointment(appointmentData);
+      
+      if (result.success) {
       // Xử lý thành công
       setIsSuccess(true);
-      message.success('Đăng ký dịch vụ thành công!');
+        message.success('Đặt lịch hẹn thành công!');
       
       // Thông báo cho component cha
       if (onRegistrationSuccess) {
-        onRegistrationSuccess(formattedData);
+          onRegistrationSuccess(result.data);
+        }
+      } else {
+        message.error(result.message);
+        // Hiển thị validation errors nếu có
+        if (result.errors) {
+          Object.keys(result.errors).forEach(field => {
+            const errorMessages = result.errors[field];
+            errorMessages.forEach(msg => {
+              message.error(`${field}: ${msg}`);
+            });
+          });
+        }
       }
     } catch (error) {
-      console.error('Lỗi khi đăng ký:', error);
-      message.error('Đã xảy ra lỗi, vui lòng thử lại');
+      console.error('Error booking appointment:', error);
+      message.error(formatErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -109,22 +142,27 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
       <div className="ivf-appointment-form">
         <div className="ivf-form-header">
           <CheckCircleFilled className="ivf-form-header-icon" />
-          <div className="ivf-form-title">Đăng ký thành công</div>
+          <div className="ivf-form-title">Đặt lịch thành công</div>
         </div>
         <div className="ivf-success-message">
           <CheckCircleFilled className="ivf-success-icon" />
-          <h3 className="ivf-success-title">Đăng ký dịch vụ thành công!</h3>
+          <h3 className="ivf-success-title">Đặt lịch hẹn thành công!</h3>
           <p className="ivf-success-text">
-            Thông tin của bạn đã được ghi nhận. Chúng tôi sẽ liên hệ để xác nhận lịch hẹn trong thời gian sớm nhất.
+            Lịch hẹn của bạn đã được ghi nhận. Chúng tôi sẽ liên hệ để xác nhận lịch hẹn trong thời gian sớm nhất.
+          </p>
+          <p className="ivf-success-note">
+            Bạn có thể xem lịch hẹn của mình trong mục "Lịch hẹn" ở trang cá nhân.
           </p>
         </div>
       </div>
     );
-  }    return (
+  }
+
+  return (
     <div className="ivf-appointment-form">
       <div className="ivf-form-header">
         <InfoCircleOutlined className="ivf-form-header-icon" />
-        <div className="ivf-form-title">Thông tin dịch vụ</div>
+        <div className="ivf-form-title">Thông tin đặt lịch hẹn</div>
       </div>
       
       <div className="ivf-form-content">
@@ -140,22 +178,26 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
               <div className="ivf-form-section">
                 <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">1</div>
-                  <h3 className="ivf-form-step-title">Dịch vụ đăng ký</h3>
+                  <h3 className="ivf-form-step-title">Dịch vụ điều trị</h3>
                 </div>
                 
                 <div className="ivf-form-control">
                   <Form.Item
-                    name="serviceId"
+                    name="treatmentServiceId"
                     rules={[{ required: true, message: 'Vui lòng chọn dịch vụ' }]}
                   >
                     <Select 
-                      placeholder="Chọn dịch vụ" 
+                      placeholder="Chọn dịch vụ điều trị" 
                       className="ivf-service-select"
                       disabled={service?.id ? true : false}
+                      showSearch
+                      filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
                     >
-                      {services.map(service => (
-                        <Option key={service.id} value={service.id}>
-                          {service.name}
+                      {services.map(s => (
+                        <Option key={s.id} value={s.id}>
+                          {s.serviceName} - {s.basePrice?.toLocaleString('vi-VN')} VNĐ
                         </Option>
                       ))}
                     </Select>
@@ -190,7 +232,13 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
                           {selectedDoctor === doctor.id && <div className="ivf-doctor-selected-indicator">✓</div>}
                         </div>
                         <h4 className="ivf-doctor-name">{doctor.name}</h4>
-                        <p className="ivf-doctor-specialty">{doctor.specialty}</p>
+                        <p className="ivf-doctor-specialty">{doctor.specialization}</p>
+                        <div className="ivf-doctor-rating">
+                          ⭐ {doctor.averageRating?.toFixed(1) || 'N/A'}
+                        </div>
+                        <div className="ivf-doctor-experience">
+                          {doctor.experienceYears} năm kinh nghiệm
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -213,7 +261,7 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
               <div className="ivf-form-section">
                 <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">3</div>
-                  <h3 className="ivf-form-step-title">Chọn ngày hẹn</h3>
+                  <h3 className="ivf-form-step-title">Chọn ngày</h3>
                 </div>
                 
                 <div className="ivf-form-control">
@@ -226,6 +274,7 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
                       format="DD/MM/YYYY"
                       placeholder="Chọn ngày hẹn"
                       disabledDate={disabledDate}
+                      // onChange={handleDateChange}
                       suffixIcon={<CalendarOutlined style={{ color: '#6064e3' }} />}
                     />
                   </Form.Item>
@@ -234,14 +283,50 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
             </Col>
             
             <Col xs={24} md={12}>
+              {/* Step 4: Chọn giờ */}
               <div className="ivf-form-section">
                 <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">4</div>
-                  <h3 className="ivf-form-step-title">Thông tin khác</h3>
+                  <h3 className="ivf-form-step-title">Chọn giờ</h3>
                 </div>
                 
                 <div className="ivf-form-control">
-                  <Form.Item name="notes" label="Ghi chú (nếu có)">
+                  <Form.Item
+                    name="timeSlot"
+                    rules={[{ required: true, message: 'Vui lòng chọn khung giờ' }]}
+                  >
+                    <Select
+                      placeholder="Chọn khung giờ"
+                      className="ivf-time-select"
+                      loading={loadingTimeSlots}
+                      disabled={!selectedDoctor || !selectedDate}
+                      suffixIcon={<ClockCircleOutlined style={{ color: '#6064e3' }} />}
+                    >
+                      {availableTimeSlots.map(timeSlot => (
+                        <Option key={timeSlot} value={timeSlot}>
+                          {timeSlot}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  {(!selectedDoctor || !selectedDate) && (
+                    <p style={{ color: '#999', fontSize: '12px' }}>
+                      Vui lòng chọn bác sĩ và ngày trước khi chọn giờ
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Col>
+
+            <Col xs={24}>
+              <div className="ivf-form-section">
+                <div className="ivf-form-step-header">
+                  <div className="ivf-form-step-number">5</div>
+                  <h3 className="ivf-form-step-title">Ghi chú</h3>
+                </div>
+                
+                <div className="ivf-form-control">
+                  <Form.Item name="notes" label="Ghi chú (tùy chọn)">
                     <TextArea
                       className="ivf-notes-textarea"
                       placeholder="Nhập ghi chú hoặc yêu cầu đặc biệt (nếu có)"
@@ -259,12 +344,13 @@ const IvfAppointmentForm = ({ service, onRegistrationSuccess, onSubmitting }) =>
             htmlType="submit" 
             className="ivf-form-submit-btn" 
             loading={loading}
+            disabled={!selectedDoctor || !selectedDate || availableTimeSlots.length === 0}
           >
-            ĐẶT LỊCH NGAY
+            ĐẶT LỊCH HẸN NGAY
           </Button>
           
           <div className="ivf-disclaimer">
-            Bằng cách nhấn nút đăng ký, bạn đồng ý với <a href="#">điều khoản</a> và <a href="#">chính sách bảo mật</a> của chúng tôi
+            Bằng cách nhấn nút đặt lịch, bạn đồng ý với điều khoản và chính sách bảo mật của chúng tôi
           </div>
         </Form>
       </div>

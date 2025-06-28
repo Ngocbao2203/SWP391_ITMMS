@@ -3,17 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import Header from "../components/public/Header";
 import Footer from "../components/public/Footer"; 
-import authService from '../services/authService';
+import { authService } from '../services';
 
 const MainLayout = ({ children }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   
-  // Khởi tạo người dùng mặc định và kiểm tra người dùng đã đăng nhập
+  // Kiểm tra người dùng đã đăng nhập
   useEffect(() => {
-    // Khởi tạo người dùng mặc định
-    authService.initializeDefaultUser();
-    
     // Kiểm tra xem có người dùng đã đăng nhập không
     const currentUser = authService.getCurrentUser();
     if (currentUser) {
