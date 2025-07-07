@@ -16,7 +16,7 @@ export const API_ENDPOINTS = {
 
   // Appointments APIs
   APPOINTMENTS: {
-    BASE: '/appointments',
+    BASE: '/api',
     CREATE: '/appointments',
     GET_ALL: '/appointments',
     GET_BY_ID: (id) => `/appointments/${id}`,
@@ -24,7 +24,11 @@ export const API_ENDPOINTS = {
     GET_BY_DOCTOR: (doctorId) => `/appointments/doctor/${doctorId}`,
     UPDATE: (id) => `/appointments/${id}`,
     DELETE: (id) => `/appointments/${id}`,
-    TEST: '/appointments/test'
+    TEST: '/appointments/test',
+    GET_AVAILABLE_SLOTS: (doctorId, date) => `/appointments/available-slots?doctorId=${doctorId}&date=${date}`,
+    RESCHEDULE: (id) => `/appointments/${id}/reschedule`,
+    CANCEL: (id) => `/appointments/${id}/cancel`,
+    CONFIRM: (id) => `/appointments/${id}/confirm`,
   },
 
   // Doctors APIs

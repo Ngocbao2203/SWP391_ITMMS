@@ -12,13 +12,16 @@ class AppointmentService {
       return {
         success: true,
         message: 'Đặt lịch hẹn thành công',
-        data: response
+        data: response.data || response,
       };
     } catch (error) {
+      const responseData = error?.response?.data;
+      console.error("🔥 Lỗi chi tiết từ backend:", responseData); // 👈 Rất quan trọng!
       return {
         success: false,
-        message: error.message || 'Đặt lịch hẹn thất bại',
-        errors: error.getValidationErrors()
+        message: responseData?.message || error.message || 'Đặt lịch hẹn thất bại',
+        errors: responseData?.errors || [],
+        raw: responseData, // để debug kỹ hơn
       };
     }
   }
@@ -30,12 +33,10 @@ class AppointmentService {
   async getAllAppointments(filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.APPOINTMENTS.GET_ALL}?${queryParams}` : 
-        API_ENDPOINTS.APPOINTMENTS.GET_ALL;
-      
-      const response = await apiService.get(endpoint);
-      return response;
+      const endpoint = queryParams
+        ? `${API_ENDPOINTS.APPOINTMENTS.GET_ALL}?${queryParams}`
+        : API_ENDPOINTS.APPOINTMENTS.GET_ALL;
+      return await apiService.get(endpoint);
     } catch (error) {
       throw error;
     }
@@ -47,8 +48,7 @@ class AppointmentService {
    */
   async getAppointmentDetails(appointmentId) {
     try {
-      const response = await apiService.get(API_ENDPOINTS.APPOINTMENTS.GET_BY_ID(appointmentId));
-      return response;
+      return await apiService.get(API_ENDPOINTS.APPOINTMENTS.GET_BY_ID(appointmentId));
     } catch (error) {
       throw error;
     }
@@ -57,17 +57,15 @@ class AppointmentService {
   /**
    * Lấy lịch hẹn của customer
    * @param {number} customerId 
-   * @param {Object} filters - Bộ lọc (status, date, etc.)
+   * @param {Object} filters - Bộ lọc
    */
   async getCustomerAppointments(customerId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId)}?${queryParams}` : 
-        API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId);
-      
-      const response = await apiService.get(endpoint);
-      return response;
+      const endpoint = queryParams
+        ? `${API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId)}?${queryParams}`
+        : API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId);
+      return await apiService.get(endpoint);
     } catch (error) {
       throw error;
     }
@@ -81,12 +79,23 @@ class AppointmentService {
   async getDoctorAppointments(doctorId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.APPOINTMENTS.GET_BY_DOCTOR(doctorId)}?${queryParams}` : 
-        API_ENDPOINTS.APPOINTMENTS.GET_BY_DOCTOR(doctorId);
-      
-      const response = await apiService.get(endpoint);
-      return response;
+      const endpoint = queryParams
+        ? `${API_ENDPOINTS.APPOINTMENTS.GET_BY_DOCTOR(doctorId)}?${queryParams}`
+        : API_ENDPOINTS.APPOINTMENTS.GET_BY_DOCTOR(doctorId);
+      return await apiService.get(endpoint);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Lấy các slot thời gian trống
+   * @param {number} doctorId 
+   * @param {string} date - Ngày cần kiểm tra (YYYY-MM-DD)
+   */
+  async getAvailableSlots(doctorId, date) {
+    try {
+      return await apiService.get(API_ENDPOINTS.APPOINTMENTS.GET_AVAILABLE_SLOTS(doctorId, date));
     } catch (error) {
       throw error;
     }
@@ -109,7 +118,29 @@ class AppointmentService {
       return {
         success: false,
         message: error.message || 'Cập nhật lịch hẹn thất bại',
-        errors: error.getValidationErrors()
+        errors: error.getValidationErrors?.() || []
+      };
+    }
+  }
+
+  /**
+   * Đổi lịch hẹn
+   * @param {number} appointmentId 
+   * @param {Object} rescheduleData - Dữ liệu đổi lịch (date, timeSlot)
+   */
+  async rescheduleAppointment(appointmentId, rescheduleData) {
+    try {
+      const response = await apiService.put(API_ENDPOINTS.APPOINTMENTS.RESCHEDULE(appointmentId), rescheduleData);
+      return {
+        success: true,
+        message: 'Đổi lịch hẹn thành công',
+        data: response
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || 'Đổi lịch hẹn thất bại',
+        errors: error.getValidationErrors?.() || []
       };
     }
   }
@@ -120,7 +151,7 @@ class AppointmentService {
    */
   async cancelAppointment(appointmentId) {
     try {
-      const response = await apiService.delete(API_ENDPOINTS.APPOINTMENTS.DELETE(appointmentId));
+      const response = await apiService.post(API_ENDPOINTS.APPOINTMENTS.CANCEL(appointmentId));
       return {
         success: true,
         message: 'Hủy lịch hẹn thành công',
@@ -129,7 +160,8 @@ class AppointmentService {
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Hủy lịch hẹn thất bại'
+        message: error.message || 'Hủy lịch hẹn thất bại',
+        errors: error.getValidationErrors?.() || []
       };
     }
   }
@@ -140,10 +172,18 @@ class AppointmentService {
    */
   async confirmAppointment(appointmentId) {
     try {
-      const response = await this.updateAppointment(appointmentId, { status: 'Confirmed' });
-      return response;
+      const response = await apiService.post(API_ENDPOINTS.APPOINTMENTS.CONFIRM(appointmentId));
+      return {
+        success: true,
+        message: 'Xác nhận lịch hẹn thành công',
+        data: response
+      };
     } catch (error) {
-      throw error;
+      return {
+        success: false,
+        message: error.message || 'Xác nhận lịch hẹn thất bại',
+        errors: error.getValidationErrors?.() || []
+      };
     }
   }
 
@@ -153,8 +193,7 @@ class AppointmentService {
    */
   async completeAppointment(appointmentId) {
     try {
-      const response = await this.updateAppointment(appointmentId, { status: 'Completed' });
-      return response;
+      return await this.updateAppointment(appointmentId, { status: 'Completed' });
     } catch (error) {
       throw error;
     }
@@ -166,8 +205,7 @@ class AppointmentService {
    */
   async markNoShow(appointmentId) {
     try {
-      const response = await this.updateAppointment(appointmentId, { status: 'No Show' });
-      return response;
+      return await this.updateAppointment(appointmentId, { status: 'No Show' });
     } catch (error) {
       throw error;
     }
@@ -203,11 +241,10 @@ class AppointmentService {
   async getAppointmentHistory(customerId) {
     try {
       const filters = {
-        status: 'Completed,Cancelled',
+        status: 'Completed,Cancelled,No Show',
         sort: 'appointmentDate',
         order: 'desc'
       };
-
       return await this.getCustomerAppointments(customerId, filters);
     } catch (error) {
       throw error;
@@ -222,16 +259,11 @@ class AppointmentService {
    */
   async checkTimeSlotAvailability(doctorId, appointmentDate, timeSlot) {
     try {
-      const filters = {
-        appointmentDate: appointmentDate.split('T')[0],
-        timeSlot: timeSlot,
-        status: 'Scheduled,Confirmed'
-      };
-
-      const appointments = await this.getDoctorAppointments(doctorId, filters);
+      const slots = await this.getAvailableSlots(doctorId, appointmentDate.split('T')[0]);
+      const isAvailable = slots.availableSlots?.includes(timeSlot) || false;
       return {
-        available: !appointments.appointments || appointments.appointments.length === 0,
-        conflictingAppointments: appointments.appointments || []
+        available: isAvailable,
+        conflictingAppointments: isAvailable ? [] : slots.appointments || []
       };
     } catch (error) {
       throw error;
@@ -243,8 +275,7 @@ class AppointmentService {
    */
   async testConnection() {
     try {
-      const response = await apiService.get(API_ENDPOINTS.APPOINTMENTS.TEST);
-      return response;
+      return await apiService.get(API_ENDPOINTS.APPOINTMENTS.TEST);
     } catch (error) {
       throw error;
     }
@@ -253,4 +284,4 @@ class AppointmentService {
 
 // Export singleton instance
 const appointmentService = new AppointmentService();
-export default appointmentService; 
+export default appointmentService;
