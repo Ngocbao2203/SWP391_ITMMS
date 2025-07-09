@@ -15,13 +15,13 @@ class AppointmentService {
         data: response.data || response,
       };
     } catch (error) {
-      const responseData = error?.response?.data;
-      console.error("🔥 Lỗi chi tiết từ backend:", responseData); // 👈 Rất quan trọng!
+      const responseData = error?.data;
+      console.error("🔥 Lỗi chi tiết từ backend:", responseData);
       return {
         success: false,
         message: responseData?.message || error.message || 'Đặt lịch hẹn thất bại',
         errors: responseData?.errors || [],
-        raw: responseData, // để debug kỹ hơn
+        raw: responseData,
       };
     }
   }
@@ -95,7 +95,8 @@ class AppointmentService {
    */
   async getAvailableSlots(doctorId, date) {
     try {
-      return await apiService.get(API_ENDPOINTS.APPOINTMENTS.GET_AVAILABLE_SLOTS(doctorId, date));
+      const endpoint = `${API_ENDPOINTS.APPOINTMENTS.GET_AVAILABLE_SLOTS}?doctorId=${doctorId}&date=${date}`;
+      return await apiService.get(endpoint);
     } catch (error) {
       throw error;
     }
@@ -189,11 +190,17 @@ class AppointmentService {
 
   /**
    * Hoàn thành lịch hẹn
-   * @param {number} appointmentId 
-   */
-  async completeAppointment(appointmentId) {
+ * @param {number} appointmentId 
+ * @param {boolean} hasVisited - Đã từng khám hay chưa
+ * @param {number|null} treatmentPlanId - ID của kế hoạch điều trị (nếu đã từng khám)
+ */
+  async completeAppointment(appointmentId, hasVisited = false, treatmentPlanId = null) {
     try {
-      return await this.updateAppointment(appointmentId, { status: 'Completed' });
+      const updateData = {
+        status: 'Completed',
+        treatmentPlanId: hasVisited ? treatmentPlanId : null // null nếu chưa khám, hoặc ID nếu đã khám
+      };
+      return await this.updateAppointment(appointmentId, updateData);
     } catch (error) {
       throw error;
     }
