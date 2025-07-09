@@ -7,6 +7,7 @@ export { default as patientService } from './patientService';
 export { default as treatmentService } from './treatmentService';
 export { default as guestService } from './guestService';
 export { default as adminService } from './adminService';
+export { default as treatmentPlans } from './treatmentPlans'; // Thêm export cho treatmentPlans
 
 // Export constants
 export * from './apiConstants';
@@ -26,6 +27,7 @@ class ApiServiceFacade {
     this.treatments = require('./treatmentService').default;
     this.guest = require('./guestService').default;
     this.admin = require('./adminService').default;
+    this.plans = require('./treatmentPlans').default; // Thêm vào facade
   }
 
   /**
@@ -112,6 +114,22 @@ class ApiServiceFacade {
   hasRole(roles) {
     return this.auth.hasRole(roles);
   }
+
+  /**
+   * Create treatment plan quickly
+   * @param {Object} planData 
+   */
+  async createTreatmentPlan(planData) {
+    return await this.plans.createTreatmentPlan(planData);
+  }
+
+  /**
+   * Get active treatment plan for customer
+   * @param {number} customerId 
+   */
+  async getActiveTreatmentPlan(customerId) {
+    return await this.plans.getActiveByCustomer(customerId);
+  }
 }
 
 // Export singleton facade
@@ -145,14 +163,12 @@ export const handleApiCall = async (apiCall, options = {}) => {
     const response = await apiCall;
     
     if (showSuccess && response.success !== false) {
-      // You can integrate with notification library here
       console.log('Success:', response.message || defaultMessage);
     }
     
     return response;
   } catch (error) {
     if (showError) {
-      // You can integrate with notification library here
       console.error('Error:', formatErrorMessage(error));
     }
     
@@ -241,7 +257,6 @@ export const debounce = (func, delay) => {
 };
 
 // ========== ERROR HANDLER HOOKS ==========
-// These can be used with React hooks or other frameworks
 
 /**
  * Global error handler
@@ -250,12 +265,6 @@ export const debounce = (func, delay) => {
  */
 export const globalErrorHandler = (error, context = {}) => {
   console.error('Global API Error:', error, context);
-  
-  // You can integrate with error tracking service here
-  // Example: Sentry.captureException(error, { extra: context });
-  
-  // You can show global error notifications here
-  // Example: notification.error({ message: formatErrorMessage(error) });
 };
 
 /**
@@ -270,6 +279,6 @@ export const setGlobalErrorHandler = (handler) => {
   });
 };
 
-// ========== DEFAULT EXPORT ==========
+// ========== DEFAULT EXPORT =========
 // Export the facade as default for convenience
-export default apiServiceFacade; 
+export default apiServiceFacade;
