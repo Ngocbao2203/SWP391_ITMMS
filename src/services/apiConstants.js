@@ -44,7 +44,6 @@ export const API_ENDPOINTS = {
     SEARCH: "/doctors/search",
     GET_FEEDBACK: (id) => `/doctors/${id}/feedback`,
     GET_APPOINTMENTS: (id) => `/doctors/${id}/appointments`,
-    MY_SCHEDULE: "/appointments/my-schedule",
     GET_SCHEDULE: (id) => `/doctors/${id}/schedule`,
     GET_AVAILABLE: "/doctors/available",
     TEST: "/doctors/test",

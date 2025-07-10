@@ -1,5 +1,5 @@
-import apiService from './api';
-import { API_ENDPOINTS } from './apiConstants';
+import apiService from "./api";
+import { API_ENDPOINTS } from "./apiConstants";
 
 class AppointmentService {
   /**
@@ -8,10 +8,13 @@ class AppointmentService {
    */
   async bookAppointment(appointmentData) {
     try {
-      const response = await apiService.post(API_ENDPOINTS.APPOINTMENTS.CREATE, appointmentData);
+      const response = await apiService.post(
+        API_ENDPOINTS.APPOINTMENTS.CREATE,
+        appointmentData
+      );
       return {
         success: true,
-        message: 'Đặt lịch hẹn thành công',
+        message: "Đặt lịch hẹn thành công",
         data: response.data || response,
       };
     } catch (error) {
@@ -19,7 +22,8 @@ class AppointmentService {
       console.error("🔥 Lỗi chi tiết từ backend:", responseData);
       return {
         success: false,
-        message: responseData?.message || error.message || 'Đặt lịch hẹn thất bại',
+        message:
+          responseData?.message || error.message || "Đặt lịch hẹn thất bại",
         errors: responseData?.errors || [],
         raw: responseData,
       };
@@ -44,11 +48,13 @@ class AppointmentService {
 
   /**
    * Lấy chi tiết lịch hẹn
-   * @param {number} appointmentId 
+   * @param {number} appointmentId
    */
   async getAppointmentDetails(appointmentId) {
     try {
-      return await apiService.get(API_ENDPOINTS.APPOINTMENTS.GET_BY_ID(appointmentId));
+      return await apiService.get(
+        API_ENDPOINTS.APPOINTMENTS.GET_BY_ID(appointmentId)
+      );
     } catch (error) {
       throw error;
     }
@@ -56,14 +62,16 @@ class AppointmentService {
 
   /**
    * Lấy lịch hẹn của customer
-   * @param {number} customerId 
+   * @param {number} customerId
    * @param {Object} filters - Bộ lọc
    */
   async getCustomerAppointments(customerId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
       const endpoint = queryParams
-        ? `${API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId)}?${queryParams}`
+        ? `${API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(
+            customerId
+          )}?${queryParams}`
         : API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId);
       return await apiService.get(endpoint);
     } catch (error) {
@@ -73,7 +81,7 @@ class AppointmentService {
 
   /**
    * Lấy lịch hẹn của doctor
-   * @param {number} doctorId 
+   * @param {number} doctorId
    * @param {Object} filters - Bộ lọc
    */
   async getDoctorAppointments(doctorId, filters = {}) {
@@ -90,7 +98,7 @@ class AppointmentService {
 
   /**
    * Lấy các slot thời gian trống
-   * @param {number} doctorId 
+   * @param {number} doctorId
    * @param {string} date - Ngày cần kiểm tra (YYYY-MM-DD)
    */
   async getAvailableSlots(doctorId, date) {
@@ -104,101 +112,115 @@ class AppointmentService {
 
   /**
    * Cập nhật lịch hẹn
-   * @param {number} appointmentId 
-   * @param {Object} updateData 
+   * @param {number} appointmentId
+   * @param {Object} updateData
    */
   async updateAppointment(appointmentId, updateData) {
     try {
-      const response = await apiService.put(API_ENDPOINTS.APPOINTMENTS.UPDATE(appointmentId), updateData);
+      const response = await apiService.put(
+        API_ENDPOINTS.APPOINTMENTS.UPDATE(appointmentId),
+        updateData
+      );
       return {
         success: true,
-        message: 'Cập nhật lịch hẹn thành công',
-        data: response
+        message: "Cập nhật lịch hẹn thành công",
+        data: response,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Cập nhật lịch hẹn thất bại',
-        errors: error.getValidationErrors?.() || []
+        message: error.message || "Cập nhật lịch hẹn thất bại",
+        errors: error.getValidationErrors?.() || [],
       };
     }
   }
 
   /**
    * Đổi lịch hẹn
-   * @param {number} appointmentId 
+   * @param {number} appointmentId
    * @param {Object} rescheduleData - Dữ liệu đổi lịch (date, timeSlot)
    */
   async rescheduleAppointment(appointmentId, rescheduleData) {
     try {
-      const response = await apiService.put(API_ENDPOINTS.APPOINTMENTS.RESCHEDULE(appointmentId), rescheduleData);
+      const response = await apiService.put(
+        API_ENDPOINTS.APPOINTMENTS.RESCHEDULE(appointmentId),
+        rescheduleData
+      );
       return {
         success: true,
-        message: 'Đổi lịch hẹn thành công',
-        data: response
+        message: "Đổi lịch hẹn thành công",
+        data: response,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Đổi lịch hẹn thất bại',
-        errors: error.getValidationErrors?.() || []
+        message: error.message || "Đổi lịch hẹn thất bại",
+        errors: error.getValidationErrors?.() || [],
       };
     }
   }
 
   /**
    * Hủy lịch hẹn
-   * @param {number} appointmentId 
+   * @param {number} appointmentId
    */
   async cancelAppointment(appointmentId) {
     try {
-      const response = await apiService.post(API_ENDPOINTS.APPOINTMENTS.CANCEL(appointmentId));
+      const response = await apiService.post(
+        API_ENDPOINTS.APPOINTMENTS.CANCEL(appointmentId)
+      );
       return {
         success: true,
-        message: 'Hủy lịch hẹn thành công',
-        data: response
+        message: "Hủy lịch hẹn thành công",
+        data: response,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Hủy lịch hẹn thất bại',
-        errors: error.getValidationErrors?.() || []
+        message: error.message || "Hủy lịch hẹn thất bại",
+        errors: error.getValidationErrors?.() || [],
       };
     }
   }
 
   /**
    * Xác nhận lịch hẹn
-   * @param {number} appointmentId 
+   * @param {number} appointmentId
    */
   async confirmAppointment(appointmentId) {
     try {
-      const response = await apiService.post(API_ENDPOINTS.APPOINTMENTS.CONFIRM(appointmentId));
+      const response = await apiService.post(
+        API_ENDPOINTS.APPOINTMENTS.CONFIRM(appointmentId)
+      );
       return {
         success: true,
-        message: 'Xác nhận lịch hẹn thành công',
-        data: response
+        message: "Xác nhận lịch hẹn thành công",
+        data: response,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Xác nhận lịch hẹn thất bại',
-        errors: error.getValidationErrors?.() || []
+        message: error.message || "Xác nhận lịch hẹn thất bại",
+        errors: error.getValidationErrors?.() || [],
       };
     }
   }
 
   /**
    * Hoàn thành lịch hẹn
- * @param {number} appointmentId 
- * @param {boolean} hasVisited - Đã từng khám hay chưa
- * @param {number|null} treatmentPlanId - ID của kế hoạch điều trị (nếu đã từng khám)
- */
-  async completeAppointment(appointmentId, hasVisited = false, treatmentPlanId = null) {
+   * @param {number} appointmentId
+   * @param {boolean} hasVisited - Đã từng khám hay chưa
+   * @param {number|null} treatmentPlanId - ID của kế hoạch điều trị (nếu đã từng khám)
+   */
+  async completeAppointment(
+    appointmentId,
+    hasVisited = false,
+    treatmentPlanId = null
+  ) {
     try {
       const updateData = {
-        status: 'Completed',
-        treatmentPlanId: hasVisited ? treatmentPlanId : null // null nếu chưa khám, hoặc ID nếu đã khám
+        status: "Completed",
+        treatmentPlanId: hasVisited ? treatmentPlanId : null, // null nếu chưa khám, hoặc ID nếu đã khám
       };
       return await this.updateAppointment(appointmentId, updateData);
     } catch (error) {
@@ -208,11 +230,11 @@ class AppointmentService {
 
   /**
    * Đánh dấu no-show
-   * @param {number} appointmentId 
+   * @param {number} appointmentId
    */
   async markNoShow(appointmentId) {
     try {
-      return await this.updateAppointment(appointmentId, { status: 'No Show' });
+      return await this.updateAppointment(appointmentId, { status: "No Show" });
     } catch (error) {
       throw error;
     }
@@ -220,7 +242,7 @@ class AppointmentService {
 
   /**
    * Lấy lịch hẹn sắp tới của customer
-   * @param {number} customerId 
+   * @param {number} customerId
    * @param {number} days - Số ngày tới
    */
   async getUpcomingAppointments(customerId, days = 7) {
@@ -230,9 +252,9 @@ class AppointmentService {
       toDate.setDate(toDate.getDate() + days);
 
       const filters = {
-        dateFrom: fromDate.toISOString().split('T')[0],
-        dateTo: toDate.toISOString().split('T')[0],
-        status: 'Scheduled,Confirmed'
+        dateFrom: fromDate.toISOString().split("T")[0],
+        dateTo: toDate.toISOString().split("T")[0],
+        status: "Scheduled,Confirmed",
       };
 
       return await this.getCustomerAppointments(customerId, filters);
@@ -243,14 +265,14 @@ class AppointmentService {
 
   /**
    * Lấy lịch sử lịch hẹn của customer
-   * @param {number} customerId 
+   * @param {number} customerId
    */
   async getAppointmentHistory(customerId) {
     try {
       const filters = {
-        status: 'Completed,Cancelled,No Show',
-        sort: 'appointmentDate',
-        order: 'desc'
+        status: "Completed,Cancelled,No Show",
+        sort: "appointmentDate",
+        order: "desc",
       };
       return await this.getCustomerAppointments(customerId, filters);
     } catch (error) {
@@ -260,17 +282,20 @@ class AppointmentService {
 
   /**
    * Kiểm tra slot thời gian có available không
-   * @param {number} doctorId 
-   * @param {string} appointmentDate 
-   * @param {string} timeSlot 
+   * @param {number} doctorId
+   * @param {string} appointmentDate
+   * @param {string} timeSlot
    */
   async checkTimeSlotAvailability(doctorId, appointmentDate, timeSlot) {
     try {
-      const slots = await this.getAvailableSlots(doctorId, appointmentDate.split('T')[0]);
+      const slots = await this.getAvailableSlots(
+        doctorId,
+        appointmentDate.split("T")[0]
+      );
       const isAvailable = slots.availableSlots?.includes(timeSlot) || false;
       return {
         available: isAvailable,
-        conflictingAppointments: isAvailable ? [] : slots.appointments || []
+        conflictingAppointments: isAvailable ? [] : slots.appointments || [],
       };
     } catch (error) {
       throw error;
@@ -284,6 +309,50 @@ class AppointmentService {
     try {
       return await apiService.get(API_ENDPOINTS.APPOINTMENTS.TEST);
     } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Cập nhật trạng thái lịch hẹn
+   * @param {number} appointmentId - ID của lịch hẹn
+   * @param {string} status - Trạng thái mới (SCHEDULED, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED)
+   */
+  async updateAppointmentStatus(appointmentId, status) {
+    try {
+      const response = await apiService.put(
+        API_ENDPOINTS.APPOINTMENTS.UPDATE_STATUS(appointmentId),
+        { status: status } // Gửi status đúng định dạng như đã nhận từ form
+      );
+      return {
+        success: true,
+        message: "Cập nhật trạng thái lịch hẹn thành công",
+        data: response,
+      };
+    } catch (error) {
+      console.error("Lỗi khi cập nhật trạng thái:", error);
+      return {
+        success: false,
+        message: error.message || "Cập nhật trạng thái lịch hẹn thất bại",
+        errors: error.getValidationErrors?.() || [],
+      };
+    }
+  }
+
+  /**
+   * Lấy lịch làm việc của bác sĩ đang đăng nhập
+   * @param {Object} filters - Bộ lọc (date, status, etc.)
+   */
+  async getMySchedule(filters = {}) {
+    try {
+      const queryParams = new URLSearchParams(filters).toString();
+      const endpoint = queryParams
+        ? `${API_ENDPOINTS.APPOINTMENTS.GET_MY_SCHEDULE}?${queryParams}`
+        : API_ENDPOINTS.APPOINTMENTS.GET_MY_SCHEDULE;
+
+      return await apiService.get(endpoint);
+    } catch (error) {
+      console.error(`Error fetching my schedule: ${error.message}`);
       throw error;
     }
   }

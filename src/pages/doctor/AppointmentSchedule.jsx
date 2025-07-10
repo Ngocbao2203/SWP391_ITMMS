@@ -25,8 +25,17 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { doctorService, authService } from "../../services";
+import { authService } from "../../services";
 import "../../styles/AppointmentSchedule.css";
+
+// Hằng số trạng thái lịch hẹn
+const APPOINTMENT_STATUS = {
+  SCHEDULED: "Scheduled",
+  CONFIRMED: "Confirmed",
+  IN_PROGRESS: "In Progress",
+  COMPLETED: "Completed",
+  CANCELLED: "Cancelled",
+};
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -51,67 +60,46 @@ const AppointmentSchedule = () => {
   const [currentAppointment, setCurrentAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [statusForm] = Form.useForm();
-  // Mock data - replace with actual API calls
-  const [doctorId, setDoctorId] = useState(null);
   const [error, setError] = useState(null);
-
-  // Lấy ID bác sĩ đăng nhập
-  useEffect(() => {
-    try {
-      const currentUser = authService.getCurrentUser();
-      if (currentUser) {
-        if (currentUser.doctorId) {
-          setDoctorId(currentUser.doctorId);
-        } else if (currentUser.id && currentUser.role === "Doctor") {
-          setDoctorId(currentUser.id);
-        } else {
-          console.error("Cannot find doctor ID in user profile");
-          setError("Không tìm thấy thông tin bác sĩ");
-        }
-      } else {
-        setError("Vui lòng đăng nhập để xem lịch khám");
-        message.error("Vui lòng đăng nhập để xem lịch khám");
-      }
-    } catch (err) {
-      console.error("Lỗi khi lấy thông tin bác sĩ:", err);
-      setError("Không thể lấy thông tin bác sĩ. Vui lòng đăng nhập lại.");
-    }
-  }, []);
 
   // Lấy lịch khám của bác sĩ
   useEffect(() => {
     const fetchAppointments = async () => {
-      if (!doctorId) return;
-
       setLoading(true);
-      console.log(`Fetching schedule for doctor ID: ${doctorId}`);
 
       try {
-        // Gọi API lịch hẹn sử dụng getMySchedule
-        const response = await doctorService.getMySchedule({
+        // Import appointmentService từ services
+        const appointmentService =
+          require("../../services/appointmentService").default;
+
+        // Gọi API lịch hẹn sử dụng getMySchedule từ appointmentService
+        const response = await appointmentService.getMySchedule({
           date: selectedDate.format("YYYY-MM-DD"),
         });
         console.log("API response:", response);
 
+        // Kiểm tra cấu trúc phản hồi và truy cập đúng dữ liệu
+        const appointmentsData = response.data?.appointments || [];
+        console.log("Dữ liệu cuộc hẹn:", appointmentsData);
+
         // Chuyển đổi dữ liệu từ API sang định dạng mà giao diện hiểu được
-        const formattedAppointments = response.appointments.map(
-          (appointment) => ({
-            id: appointment.id,
-            patientId: appointment.patientId || appointment.id.toString(),
-            patientName: appointment.customerName,
-            patientPhone: appointment.customerPhone,
-            patientEmail: appointment.customerEmail || "",
-            date: dayjs(response.date || appointment.date).format("YYYY-MM-DD"),
-            time: appointment.timeSlot,
-            service: appointment.type,
-            status: appointment.status.toLowerCase(),
-            notes: appointment.notes || "",
-            medicalHistory: appointment.medicalHistory || "Chưa có thông tin",
-            createdAt: appointment.createdAt
-              ? dayjs(appointment.createdAt).format("YYYY-MM-DD")
-              : dayjs().format("YYYY-MM-DD"),
-          })
-        );
+        const formattedAppointments = appointmentsData.map((appointment) => ({
+          id: appointment.id,
+          patientId: appointment.customerId || appointment.id.toString(),
+          patientName: appointment.customerName || "Chưa có tên",
+          patientPhone: appointment.customerPhone || "Chưa có SĐT",
+          date: appointment.appointmentDate
+            ? dayjs(appointment.appointmentDate).format("YYYY-MM-DD")
+            : dayjs().format("YYYY-MM-DD"),
+          time: appointment.timeSlot || "Chưa xác định",
+          service: appointment.type || "Khám tổng quát",
+          status: (appointment.status || "pending").toLowerCase(),
+          notes: appointment.notes || "",
+          medicalHistory: appointment.medicalHistory || "Chưa có thông tin",
+          createdAt: appointment.createdAt
+            ? dayjs(appointment.createdAt).format("YYYY-MM-DD")
+            : dayjs().format("YYYY-MM-DD"),
+        }));
 
         setAppointments(formattedAppointments);
         setError(null);
@@ -128,33 +116,39 @@ const AppointmentSchedule = () => {
 
     // Đảm bảo fetchAppointments luôn được gọi
     fetchAppointments();
-  }, [doctorId, selectedDate]); // Phụ thuộc vào doctorId và selectedDate để khi chọn ngày khác sẽ tải lại dữ liệu
+  }, [selectedDate]); // Chỉ phụ thuộc vào selectedDate để khi chọn ngày khác sẽ tải lại dữ liệu
 
   const getStatusTag = (status) => {
     switch (status.toLowerCase()) {
-      case "confirmed":
       case "scheduled":
         return (
-          <Tag color="blue" className="status-tag">
-            Confirmed
+          <Tag color="cyan" className="status-tag">
+            {APPOINTMENT_STATUS.SCHEDULED}
           </Tag>
         );
-      case "pending":
+      case "confirmed":
+        return (
+          <Tag color="blue" className="status-tag">
+            {APPOINTMENT_STATUS.CONFIRMED}
+          </Tag>
+        );
+
+      case "in progress":
         return (
           <Tag color="orange" className="status-tag">
-            Pending
+            {APPOINTMENT_STATUS.IN_PROGRESS}
           </Tag>
         );
       case "completed":
         return (
           <Tag color="green" className="status-tag">
-            Completed
+            {APPOINTMENT_STATUS.COMPLETED}
           </Tag>
         );
       case "cancelled":
         return (
           <Tag color="red" className="status-tag">
-            Cancelled
+            {APPOINTMENT_STATUS.CANCELLED}
           </Tag>
         );
       default:
@@ -167,40 +161,43 @@ const AppointmentSchedule = () => {
   };
   // Hàm để tải lại lịch khám
   const reloadSchedule = async () => {
-    if (!doctorId) {
-      message.warning("Không tìm thấy thông tin bác sĩ");
-      return;
-    }
-
     message.loading("Đang tải lịch khám...");
     setLoading(true);
 
     try {
+      // Import appointmentService từ services
+      const appointmentService =
+        require("../../services/appointmentService").default;
+
       // Gọi API lịch hẹn sử dụng getMySchedule
-      const response = await doctorService.getMySchedule({
+      const response = await appointmentService.getMySchedule({
         date: selectedDate.format("YYYY-MM-DD"),
       });
       console.log("API response:", response);
 
+      // Kiểm tra cấu trúc phản hồi và truy cập đúng dữ liệu
+      const appointmentsData = response.data?.appointments || [];
+      console.log("Dữ liệu cuộc hẹn:", appointmentsData);
+
       // Chuyển đổi dữ liệu từ API sang định dạng mà giao diện hiểu được
-      const formattedAppointments = response.appointments.map(
-        (appointment) => ({
-          id: appointment.id,
-          patientId: appointment.patientId || appointment.id.toString(),
-          patientName: appointment.customerName,
-          patientPhone: appointment.customerPhone,
-          patientEmail: appointment.customerEmail || "",
-          date: dayjs(response.date || appointment.date).format("YYYY-MM-DD"),
-          time: appointment.timeSlot,
-          service: appointment.type,
-          status: appointment.status.toLowerCase(),
-          notes: appointment.notes || "",
-          medicalHistory: appointment.medicalHistory || "Chưa có thông tin",
-          createdAt: appointment.createdAt
-            ? dayjs(appointment.createdAt).format("YYYY-MM-DD")
-            : dayjs().format("YYYY-MM-DD"),
-        })
-      );
+      const formattedAppointments = appointmentsData.map((appointment) => ({
+        id: appointment.id,
+        patientId: appointment.customerId || appointment.id.toString(),
+        patientName: appointment.customerName || "Chưa có tên",
+        patientPhone: appointment.customerPhone || "Chưa có SĐT",
+
+        date: appointment.appointmentDate
+          ? dayjs(appointment.appointmentDate).format("YYYY-MM-DD")
+          : dayjs().format("YYYY-MM-DD"),
+        time: appointment.timeSlot || "Chưa xác định",
+        service: appointment.type || "Khám tổng quát",
+        status: (appointment.status || "pending").toLowerCase(),
+        notes: appointment.notes || "",
+        medicalHistory: appointment.medicalHistory || "Chưa có thông tin",
+        createdAt: appointment.createdAt
+          ? dayjs(appointment.createdAt).format("YYYY-MM-DD")
+          : dayjs().format("YYYY-MM-DD"),
+      }));
 
       setAppointments(formattedAppointments);
       setError(null);
@@ -222,8 +219,33 @@ const AppointmentSchedule = () => {
   };
   const showUpdateStatusModal = (appointment) => {
     setCurrentAppointment(appointment);
+
+    // Chuyển đổi status từ lowercase sang Title Case (chỉ viết hoa chữ cái đầu)
+    let statusValue = "";
+
+    switch (appointment.status.toLowerCase()) {
+      case "scheduled":
+        statusValue = "Scheduled";
+        break;
+      case "confirmed":
+        statusValue = "Confirmed";
+        break;
+
+      case "in progress":
+        statusValue = "In Progress";
+        break;
+      case "completed":
+        statusValue = "Completed";
+        break;
+      case "cancelled":
+        statusValue = "Cancelled";
+        break;
+      default:
+        statusValue = appointment.status;
+    }
+
     statusForm.setFieldsValue({
-      status: appointment.status,
+      status: statusValue,
     });
     setIsUpdateStatusVisible(true);
   };
@@ -240,17 +262,24 @@ const AppointmentSchedule = () => {
           // Gọi API để cập nhật trạng thái lịch hẹn
           const appointmentService =
             require("../../services/appointmentService").default;
-          await appointmentService.updateAppointmentStatus(
+
+          const result = await appointmentService.updateAppointmentStatus(
             currentAppointment.id,
             values.status
           );
 
-          message.success("Cập nhật trạng thái lịch hẹn thành công");
-          statusForm.resetFields();
-          setIsUpdateStatusVisible(false);
+          if (result.success) {
+            message.success("Cập nhật trạng thái lịch hẹn thành công");
+            statusForm.resetFields();
+            setIsUpdateStatusVisible(false);
 
-          // Tải lại dữ liệu sau khi cập nhật
-          reloadSchedule();
+            // Tải lại dữ liệu sau khi cập nhật
+            reloadSchedule();
+          } else {
+            message.error(
+              result.message || "Không thể cập nhật trạng thái lịch hẹn"
+            );
+          }
         } catch (error) {
           console.error("Lỗi khi cập nhật trạng thái:", error);
           message.error("Không thể cập nhật trạng thái lịch hẹn");
@@ -301,10 +330,11 @@ const AppointmentSchedule = () => {
       width: "15%",
       render: (status) => getStatusTag(status),
       filters: [
-        { text: "Confirmed", value: "scheduled" },
-        { text: "Pending", value: "pending" },
-        { text: "Completed", value: "completed" },
-        { text: "Cancelled", value: "cancelled" },
+        { text: APPOINTMENT_STATUS.SCHEDULED, value: "scheduled" },
+        { text: APPOINTMENT_STATUS.CONFIRMED, value: "confirmed" },
+        { text: APPOINTMENT_STATUS.IN_PROGRESS, value: "in_progress" },
+        { text: APPOINTMENT_STATUS.COMPLETED, value: "completed" },
+        { text: APPOINTMENT_STATUS.CANCELLED, value: "cancelled" },
       ],
       onFilter: (value, record) => record.status.toLowerCase() === value,
     },
@@ -371,22 +401,10 @@ const AppointmentSchedule = () => {
                   {selectedDate.format("MMMM D, YYYY")}
                 </span>
                 <div>
-                  <DatePicker
-                    value={selectedDate}
-                    onChange={(date) => {
-                      setSelectedDate(date);
-                      // Reload appointments for the new date
-                      const newDate = date || dayjs();
-                      setSelectedDate(newDate);
-                      // We don't need to manually reload as the dependency on selectedDate will trigger the useEffect
-                    }}
-                    allowClear={false}
-                  />
                   <Button
                     type="primary"
                     icon={<ReloadOutlined />}
                     onClick={reloadSchedule}
-                    style={{ marginLeft: "10px" }}
                   >
                     Refresh
                   </Button>
@@ -560,10 +578,21 @@ const AppointmentSchedule = () => {
               rules={[{ required: true, message: "Please select status" }]}
             >
               <Select placeholder="Select status">
-                <Option value="pending">Pending</Option>
-                <Option value="confirmed">Confirmed</Option>
-                <Option value="completed">Completed</Option>
-                <Option value="cancelled">Cancelled</Option>
+                <Option value="Scheduled">
+                  {APPOINTMENT_STATUS.SCHEDULED}
+                </Option>
+                <Option value="Confirmed">
+                  {APPOINTMENT_STATUS.CONFIRMED}
+                </Option>
+                <Option value="In Progress">
+                  {APPOINTMENT_STATUS.IN_PROGRESS}
+                </Option>
+                <Option value="Completed">
+                  {APPOINTMENT_STATUS.COMPLETED}
+                </Option>
+                <Option value="Cancelled">
+                  {APPOINTMENT_STATUS.CANCELLED}
+                </Option>
               </Select>
             </Form.Item>
           </Form>
