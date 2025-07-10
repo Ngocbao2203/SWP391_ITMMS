@@ -13,10 +13,14 @@ class AuthService {
       const userData = localStorage.getItem('user');
       if (userData) {
         this.currentUser = JSON.parse(userData);
+        console.log('Loaded user from storage:', this.currentUser);
+      } else {
+        console.log('No user data found in storage');
       }
     } catch (error) {
       console.error('Error loading user from storage:', error);
       localStorage.removeItem('user');
+      this.currentUser = null;
     }
   }
 
@@ -25,6 +29,7 @@ class AuthService {
     try {
       localStorage.setItem('user', JSON.stringify(user));
       this.currentUser = user;
+      console.log('User saved to storage:', this.currentUser);
     } catch (error) {
       console.error('Error saving user to storage:', error);
     }
@@ -34,6 +39,7 @@ class AuthService {
   removeUserFromStorage() {
     localStorage.removeItem('user');
     this.currentUser = null;
+    console.log('User removed from storage');
   }
 
   /**
@@ -42,37 +48,35 @@ class AuthService {
    */
   async register(userData) {
     try {
-      // Thêm các fields required cho backend
       const registrationData = {
         ...userData,
         role: userData.role || 'Customer',
-        confirmPassword: userData.password // Backend require confirmPassword giống password
+        confirmPassword: userData.password,
       };
       
       console.log('📤 Sending registration data:', registrationData);
       const response = await apiService.post(API_ENDPOINTS.AUTH.REGISTER, registrationData);
       console.log('📥 Registration response:', response);
       
-      // Backend trả về format: { message: "...", user: {...} }
       if (response && (response.message || response.user)) {
         return {
           success: true,
           message: response.message || 'Đăng ký thành công',
           userId: response.user?.id || response.userId,
-          user: response.user
+          user: response.user,
         };
       }
       
       return {
         success: false,
-        message: 'Đăng ký thất bại'
+        message: 'Đăng ký thất bại',
       };
     } catch (error) {
       console.error('❌ Registration error:', error);
       return {
         success: false,
         message: error.message || 'Đăng ký thất bại',
-        errors: error.getValidationErrors ? error.getValidationErrors() : null
+        errors: error.getValidationErrors ? error.getValidationErrors() : null,
       };
     }
   }
@@ -87,34 +91,42 @@ class AuthService {
       const response = await apiService.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
       console.log('📥 Login response:', response);
       
-      // Backend trả về format: { message: "...", user: {...} }
-      // Kiểm tra nếu có user object trong response
       if (response && response.user) {
         const user = response.user;
         
-        // Nếu có token, lưu vào user object
+        // Đảm bảo token được gán từ response
         if (response.token) {
-          user.token = response.token;
+          user.token = response.token; // Gán token vào user object
+        } else if (response.accessToken) {
+          user.token = response.accessToken; // Xử lý trường hợp token có tên khác
         }
-        
+
+        if (!user.token) {
+          console.warn('No token found in login response:', response);
+          return {
+            success: false,
+            message: 'Đăng nhập thất bại: Không tìm thấy token',
+          };
+        }
+
         this.saveUserToStorage(user);
         return {
           success: true,
           message: response.message || 'Đăng nhập thành công',
-          user: user
+          user: user,
         };
       }
       
       return {
         success: false,
-        message: response.message || 'Email hoặc mật khẩu không đúng'
+        message: response.message || 'Email hoặc mật khẩu không đúng',
       };
     } catch (error) {
       console.error('❌ Login error:', error);
       return {
         success: false,
         message: error.message || 'Đăng nhập thất bại',
-        errors: error.getValidationErrors ? error.getValidationErrors() : null
+        errors: error.getValidationErrors ? error.getValidationErrors() : null,
       };
     }
   }
@@ -126,7 +138,7 @@ class AuthService {
     this.removeUserFromStorage();
     return {
       success: true,
-      message: 'Đăng xuất thành công'
+      message: 'Đăng xuất thành công',
     };
   }
 
@@ -206,7 +218,6 @@ class AuthService {
     try {
       const response = await apiService.put(`/auth/profile?id=${userId}`, profileData);
       
-      // Cập nhật current user nếu đang cập nhật chính mình
       if (this.currentUser && this.currentUser.id === userId) {
         const updatedUser = { ...this.currentUser, ...profileData };
         this.saveUserToStorage(updatedUser);
@@ -215,13 +226,13 @@ class AuthService {
       return {
         success: true,
         message: 'Cập nhật profile thành công',
-        data: response
+        data: response,
       };
     } catch (error) {
       return {
         success: false,
         message: error.message || 'Cập nhật profile thất bại',
-        errors: error.getValidationErrors()
+        errors: error.getValidationErrors(),
       };
     }
   }
@@ -235,13 +246,13 @@ class AuthService {
       const response = await apiService.post(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, passwordData);
       return {
         success: true,
-        message: response.message || 'Đổi mật khẩu thành công'
+        message: response.message || 'Đổi mật khẩu thành công',
       };
     } catch (error) {
       return {
         success: false,
         message: error.message || 'Đổi mật khẩu thất bại',
-        errors: error.getValidationErrors()
+        errors: error.getValidationErrors(),
       };
     }
   }
@@ -269,13 +280,13 @@ class AuthService {
       return {
         success: true,
         message: 'Gửi feedback thành công',
-        data: response
+        data: response,
       };
     } catch (error) {
       return {
         success: false,
         message: error.message || 'Gửi feedback thất bại',
-        errors: error.getValidationErrors()
+        errors: error.getValidationErrors(),
       };
     }
   }

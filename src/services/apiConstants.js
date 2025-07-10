@@ -16,6 +16,7 @@ export const API_ENDPOINTS = {
 
   // Appointments APIs
   APPOINTMENTS: {
+<<<<<<< HEAD
     BASE: "/appointments",
     CREATE: "/appointments",
     GET_ALL: "/appointments",
@@ -25,6 +26,24 @@ export const API_ENDPOINTS = {
     UPDATE: (id) => `/appointments/${id}`,
     DELETE: (id) => `/appointments/${id}`,
     TEST: "/appointments/test",
+=======
+    BASE: '/appointments',
+    CREATE: '/appointments', // Sửa thành chữ thường để nhất quán
+    GET_BY_ID: id => `/appointments/${id}`,
+    DELETE: (id) => `/appointments/${id}`, // Sửa thành chữ thường
+    GET_MY_APPOINTMENTS: '/appointments/my-appointments', // Sửa thành chữ thường
+    GET_BY_CUSTOMER: (customerId) => `/appointments/customer/${customerId}`, // Sửa thành chữ thường
+    GET_BY_DOCTOR: (doctorId) => `/appointments/doctor/${doctorId}`, // Sửa thành chữ thường
+    GET_MY_SCHEDULE: '/appointments/my-schedule', // Sửa thành chữ thường
+    GET_AVAILABLE_SLOTS: '/appointments/available-slots', // Đã đúng, giữ nguyên
+    UPDATE_STATUS: (id) => `/appointments/${id}/status`, // Sửa thành chữ thường
+    RESCHEDULE: (id) => `/appointments/${id}/reschedule`, // Thêm lại
+    CANCEL: (id) => `/appointments/${id}/cancel`, // Thêm lại
+    CONFIRM: (id) => `/appointments/${id}/confirm`, // Thêm lại
+    UPDATE: (id) => `/appointments/${id}`, // Thêm lại
+    GET_ALL: '/appointments', // Thêm lại
+    TEST: '/appointments/test' // Thêm lại
+>>>>>>> 4cb9a7b0ed320d715d833404b22794076a7c824c
   },
 
   // Doctors APIs
@@ -58,6 +77,7 @@ export const API_ENDPOINTS = {
 
   // Treatment Plans APIs
   TREATMENT_PLANS: {
+<<<<<<< HEAD
     BASE: "/treatmentplans",
     CREATE: "/treatmentplans",
     GET_BY_CUSTOMER: (customerId) => `/treatmentplans/customer/${customerId}`,
@@ -68,6 +88,18 @@ export const API_ENDPOINTS = {
     GET_PROGRESS: (id) => `/treatmentplans/${id}/progress`,
     COMPLETE: (id) => `/treatmentplans/${id}/complete`,
     TEST: "/treatmentplans/test",
+=======
+    BASE: '/treatmentPlans',
+    CREATE: '/treatmentPlans',
+    GET_BY_CUSTOMER: (customerId) => `/treatmentPlans/customer/${customerId}`,
+    GET_BY_DOCTOR: (doctorId) => `/treatmentPlans/doctor/${doctorId}`,
+    GET_BY_ID: (id) => `/treatmentPlans/${id}`,
+    UPDATE: (id) => `/treatmentPlans/${id}`,
+    UPDATE_PROGRESS: (id) => `/treatmentPlans/${id}/progress`,
+    GET_PROGRESS: (id) => `/treatmentPlans/${id}/progress`,
+    COMPLETE: (id) => `/treatmentPlans/${id}/complete`,
+    TEST: '/treatmentPlans/test'
+>>>>>>> 4cb9a7b0ed320d715d833404b22794076a7c824c
   },
 
   // Medical Records APIs

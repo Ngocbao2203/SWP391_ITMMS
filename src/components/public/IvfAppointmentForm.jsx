@@ -1,5 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Form, Select, DatePicker, Input, Button, Row, Col, Spin } from "antd";
+
+import {
+  Form,
+  Select,
+  DatePicker,
+  Input,
+  Button,
+  Row,
+  Col,
+  Spin,
+  Radio,
+} from "antd";
+
 import {
   CalendarOutlined,
   CheckCircleFilled,
@@ -15,6 +27,7 @@ import {
   appointmentService,
   authService,
   formatErrorMessage,
+  treatmentPlans,
 } from "../../services";
 import "../../styles/IvfAppointmentForm.css";
 
@@ -54,6 +67,9 @@ const IvfAppointmentForm = ({
   const [isLoadingServices, setIsLoadingServices] = useState(false);
   const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
 
+  const [hasTreatmentPlan, setHasTreatmentPlan] = useState(null);
+  const [treatmentPlansList, setTreatmentPlansList] = useState([]); // Thêm state cho danh sách kế hoạch
+
   // Tải dữ liệu ban đầu
   useEffect(() => {
     const loadInitialData = async () => {
@@ -89,6 +105,37 @@ const IvfAppointmentForm = ({
     loadInitialData();
   }, []);
 
+  // Tải danh sách kế hoạch điều trị khi hasTreatmentPlan thay đổi
+  useEffect(() => {
+    const loadTreatmentPlans = async () => {
+      if (hasTreatmentPlan === true) {
+        try {
+          const user = authService.getCurrentUser();
+          console.log("USER FROM AUTH:", user);
+          const planResult = await treatmentPlans.getByCustomer(user.id);
+          console.log("GET BY CUSTOMER RESULT:", planResult);
+          if (planResult.success && Array.isArray(planResult.data)) {
+            // Lọc các kế hoạch đang hoạt động (nếu cần)
+            const activePlans = planResult.data.filter(
+              (plan) => (plan.status || "").toLowerCase() === "active"
+            );
+            setTreatmentPlansList(activePlans);
+          } else {
+            setTreatmentPlansList([]);
+            toast.warn("Không tìm thấy kế hoạch điều trị.");
+          }
+        } catch (error) {
+          console.error("Lỗi tải kế hoạch:", error);
+          setTreatmentPlansList([]);
+          toast.error("Không thể tải kế hoạch điều trị.");
+        }
+      } else {
+        setTreatmentPlansList([]);
+      }
+    };
+    loadTreatmentPlans();
+  }, [hasTreatmentPlan]);
+
   // Khởi tạo form với dịch vụ
   useEffect(() => {
     if (service?.id) {
@@ -104,9 +151,12 @@ const IvfAppointmentForm = ({
     if (selectedDoctor === doctorId) {
       setSelectedDoctor(null);
       form.setFieldsValue({ doctorId: undefined });
+
+      setAvailableTimeSlots([]);
     } else {
       setSelectedDoctor(doctorId);
       form.setFieldsValue({ doctorId });
+      if (selectedDate) handleDateChange(selectedDate);
     }
   };
 
@@ -119,24 +169,24 @@ const IvfAppointmentForm = ({
   const handleDateChange = useCallback(
     async (date) => {
       setSelectedDate(date);
+      form.setFieldsValue({ timeSlot: undefined });
+      setAvailableTimeSlots([]);
+
       if (date && selectedDoctor) {
         setLoadingTimeSlots(true);
         try {
           const appointmentDate = date.format("YYYY-MM-DD");
-          // Lọc danh sách khung giờ khả dụng từ TIME_SLOTS
-          const availableSlots = await Promise.all(
-            TIME_SLOTS.map(async (timeSlot) => {
-              const { available } =
-                await appointmentService.checkTimeSlotAvailability(
-                  selectedDoctor,
-                  appointmentDate,
-                  timeSlot
-                );
-              return available ? timeSlot : null;
-            })
+          const response = await appointmentService.getAvailableSlots(
+            selectedDoctor,
+            appointmentDate
           );
-          // Lọc bỏ các slot null (không khả dụng)
-          setAvailableTimeSlots(availableSlots.filter((slot) => slot !== null));
+
+          if (response?.availableSlots?.length > 0) {
+            setAvailableTimeSlots(response.availableSlots);
+          } else {
+            setAvailableTimeSlots([]);
+            toast.warn("Không có khung giờ trống cho ngày này.");
+          }
         } catch (error) {
           console.error("Lỗi tải khung giờ:", error);
           toast.error("Không thể tải khung giờ.");
@@ -144,52 +194,71 @@ const IvfAppointmentForm = ({
         } finally {
           setLoadingTimeSlots(false);
         }
-      } else {
-        setAvailableTimeSlots([]);
       }
     },
-    [selectedDoctor]
+    [selectedDoctor, form]
   );
+
+  // Validate và format dữ liệu trước khi gửi
+  // Sửa hàm validateAndFormatData như sau:
+  const validateAndFormatData = (values) => {
+    const user = authService.getCurrentUser();
+    if (!user) throw new Error("Vui lòng đăng nhập để đặt lịch hẹn");
+
+    if (!values.treatmentServiceId)
+      throw new Error("Vui lòng chọn dịch vụ điều trị");
+    if (!values.appointmentDate) throw new Error("Vui lòng chọn ngày hẹn");
+    if (!values.timeSlot) throw new Error("Vui lòng chọn khung giờ");
+    if (hasTreatmentPlan === null)
+      throw new Error("Vui lòng chọn tình trạng khám trước đây");
+
+    const date = values.appointmentDate;
+    const timeSlot = values.timeSlot;
+
+    const [startTime] = timeSlot.split("-");
+    const [hours, minutes] = startTime.split(":");
+
+    const appointmentDateTime = dayjs(date)
+      .set("hour", parseInt(hours))
+      .set("minute", parseInt(minutes))
+      .set("second", 0)
+      .set("millisecond", 0);
+
+    const appointmentData = {
+      doctorId: selectedDoctor ? parseInt(selectedDoctor) : null,
+      treatmentPlanId:
+        hasTreatmentPlan === true && values.treatmentPlanId
+          ? parseInt(values.treatmentPlanId)
+          : null,
+      appointmentDate: appointmentDateTime.toISOString(), // ✅ đúng key, đúng format
+      timeSlot: values.timeSlot,
+      type: "Điều trị", // ✅ gán mặc định hoặc từ dịch vụ
+      notes: values.notes || "string",
+    };
+
+    return appointmentData;
+  };
 
   // Gửi form
   const handleSubmit = async (values) => {
-    const user = authService.getCurrentUser();
-    if (!user) {
-      toast.error("Vui lòng đăng nhập để đặt lịch hẹn");
-      return;
-    }
-
     if (onSubmitting) onSubmitting();
     setLoading(true);
 
     try {
-      const appointmentData = {
-        doctorId: values.doctorId || 0,
-        treatmentPlanId: 0,
-        appointmentDate: values.appointmentDate.format(
-          "YYYY-MM-DDTHH:mm:ss.SSSZ"
-        ),
-        timeSlot: values.timeSlot || "",
-        type: "Consultation",
-        notes: values.notes || "",
-      };
-
+      const appointmentData = validateAndFormatData(values);
+      console.log("Dữ liệu gửi đi:", appointmentData); // Thêm log này
       const result = await appointmentService.bookAppointment(appointmentData);
+
       if (result.success) {
         setIsSuccess(true);
         toast.success("Đặt lịch hẹn thành công!");
         if (onRegistrationSuccess) onRegistrationSuccess(result.data);
       } else {
-        toast.error(result.message);
-        if (result.errors) {
-          Object.entries(result.errors).forEach(([field, messages]) => {
-            messages.forEach((msg) => toast.error(`${field}: ${msg}`));
-          });
-        }
+        toast.error(result.message || "Lỗi từ server");
       }
     } catch (error) {
-      console.error("Lỗi đặt lịch:", error);
-      toast.error(formatErrorMessage(error));
+      toast.error(error.message || "Có lỗi xảy ra khi đặt lịch");
+      console.error("Appointment error:", error);
     } finally {
       setLoading(false);
     }
@@ -359,6 +428,90 @@ const IvfAppointmentForm = ({
             </Col>
 
             <Col xs={24}>
+              {/* Bước 1.5: Đã từng khám hay chưa */}
+              <div className="ivf-form-section">
+                <div className="ivf-form-step-header">
+                  <div className="ivf-form-step-number">1.5</div>
+                  <h3 className="ivf-form-step-title">
+                    Tình trạng khám trước đây
+                  </h3>
+                </div>
+                <div className="ivf-form-control">
+                  <Form.Item
+                    name="hasTreatmentPlan"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn tình trạng khám",
+                      },
+                    ]}
+                  >
+                    <Radio.Group
+                      onChange={(e) => setHasTreatmentPlan(e.target.value)}
+                      value={hasTreatmentPlan}
+                    >
+                      <Radio value={true}>Đã từng khám</Radio>
+                      <Radio value={false}>Chưa từng khám</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                  {hasTreatmentPlan === true && (
+                    <Form.Item
+                      name="treatmentPlanId"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng chọn kế hoạch điều trị",
+                        },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Chọn kế hoạch điều trị"
+                        className="ivf-service-select"
+                        loading={
+                          !treatmentPlansList.length &&
+                          hasTreatmentPlan === true
+                        }
+                        showSearch
+                        optionLabelProp="label"
+                        filterOption={(input, option) =>
+                          option.label
+                            ?.toLowerCase()
+                            .includes(input.toLowerCase()) ||
+                          option.children
+                            ?.toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                      >
+                        {treatmentPlansList.map((plan) => (
+                          <Option
+                            key={plan.id}
+                            value={plan.id}
+                            label={`Kế hoạch ${plan.id} - ${plan.treatmentType}`}
+                          >
+                            <div>
+                              <strong>{plan.treatmentType}</strong> | Bắt đầu:{" "}
+                              {dayjs(plan.startDate).format("DD/MM/YYYY")} | BS:{" "}
+                              {plan.doctor?.name || "Không rõ"}
+                            </div>
+                          </Option>
+                        ))}
+                        {!treatmentPlansList.length && (
+                          <Option value="" disabled>
+                            Không có kế hoạch nào
+                          </Option>
+                        )}
+                      </Select>
+                    </Form.Item>
+                  )}
+                  <p style={{ color: "#999", fontSize: "12px" }}>
+                    Chọn "Đã từng khám" nếu bạn đã có kế hoạch điều trị trước
+                    đó.
+                  </p>
+                </div>
+              </div>
+            </Col>
+
+            <Col xs={24}>
               {/* Bước 2: Chọn bác sĩ */}
               <div className="ivf-form-section">
                 <div className="ivf-form-step-header">
@@ -405,6 +558,7 @@ const IvfAppointmentForm = ({
                                   e.target.src = DEFAULT_AVATAR;
                                 }}
                               />
+
                               {selectedDoctor ===
                                 (doctor.id || doctor.doctorId) && (
                                 <div className="ivf-doctor-selected-indicator">
@@ -521,7 +675,7 @@ const IvfAppointmentForm = ({
                       placeholder="Chọn khung giờ"
                       className="ivf-time-select"
                       loading={loadingTimeSlots}
-                      disabled={!selectedDoctor || !selectedDate}
+                      disabled={!selectedDate}
                       suffixIcon={
                         <ClockCircleOutlined style={{ color: "#6064e3" }} />
                       }
@@ -539,9 +693,10 @@ const IvfAppointmentForm = ({
                       )}
                     </Select>
                   </Form.Item>
-                  {(!selectedDoctor || !selectedDate) && (
+
+                  {!selectedDate && (
                     <p style={{ color: "#999", fontSize: "12px" }}>
-                      Vui lòng chọn bác sĩ và ngày trước khi chọn giờ
+                      Vui lòng chọn ngày trước khi chọn giờ
                     </p>
                   )}
                 </div>
@@ -561,6 +716,8 @@ const IvfAppointmentForm = ({
                       className="ivf-notes-textarea"
                       placeholder="Nhập ghi chú hoặc yêu cầu đặc biệt (nếu có)"
                       rows={3}
+                      maxLength={500}
+                      showCount
                     />
                   </Form.Item>
                 </div>
@@ -574,7 +731,15 @@ const IvfAppointmentForm = ({
             htmlType="submit"
             className="ivf-form-submit-btn"
             loading={loading}
-            disabled={!form.getFieldValue("treatmentServiceId") || loading}
+            disabled={
+              !form.getFieldValue("treatmentServiceId") ||
+              hasTreatmentPlan === null ||
+              !form.getFieldValue("appointmentDate") ||
+              !form.getFieldValue("timeSlot") ||
+              (hasTreatmentPlan === true &&
+                !form.getFieldValue("treatmentPlanId")) ||
+              loading
+            }
           >
             ĐẶT LỊCH HẸN NGAY
           </Button>

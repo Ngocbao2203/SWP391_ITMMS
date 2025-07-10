@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Table, Card, Button, Modal, Form, Input, Select, Upload, Space, Statistic, Row, Col, message } from 'antd';
 import { PlusOutlined, SearchOutlined, UploadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getAllBlogs, createBlog, updateBlog, deleteBlog } from '../../services/blogService';
-import '../../styles/BlogManagement.css';
 
 const { Option } = Select;
 const { TextArea } = Input;

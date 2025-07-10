@@ -1,22 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Typography,
-  Divider,
-  Row,
-  Col,
-} from "antd";
-import {
-  UserOutlined,
-  LockOutlined,
-  MedicineBoxOutlined,
-  HomeOutlined,
-} from "@ant-design/icons";
+import { Form, Input, Button, Typography, Divider, Row, Col } from "antd";
+import { UserOutlined, LockOutlined, MedicineBoxOutlined, HomeOutlined } from "@ant-design/icons";
 import "../../styles/Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify"; // Nhập toast
+import { toast } from "react-toastify";
 import { authService } from "../../services";
 import { formatErrorMessage } from "../../services/authService";
 
@@ -29,7 +16,7 @@ const Login = () => {
 
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
-    if (currentUser) {
+    if (currentUser && currentUser.token) {
       navigate("/");
     }
 
@@ -44,48 +31,37 @@ const Login = () => {
   }, [navigate, form]);
 
   const onFinish = async (values) => {
-    console.log("Login attempt with values:", values);
     setLoading(true);
 
     try {
-      console.log("Calling authService.login...");
       const result = await authService.login(values);
-      console.log("Login result:", result);
 
-      if (result && result.success) {
-        toast.success(result.message || "Đăng nhập thành công!"); // Dùng toast
+      if (result.success && result.user?.token) {
+        toast.success(result.message || "Đăng nhập thành công!");
+        const user = result.user;
 
-        const user = authService.getCurrentUser();
-        if (user) {
-          console.log("User logged in:", user);
-          switch (user.role) {
-            case "Admin":
-              navigate("/admin/dashboard");
-              break;
-            case "Manager":
-              navigate("/manager/doctors");
-              break;
-            case "Doctor":
-              navigate("/doctor/dashboard");
-              break;
-            case "Customer":
-              navigate("/profile");
-              break;
-            default:
-              navigate("/");
-          }
-        } else {
-          navigate("/");
+        switch (user.role) {
+          case "Admin":
+            navigate("/admin/dashboard");
+            break;
+          case "Manager":
+            navigate("/manager/doctors");
+            break;
+          case "Doctor":
+            navigate("/doctor/dashboard");
+            break;
+          case "Customer":
+            navigate("/profile");
+            break;
+          default:
+            navigate("/");
         }
       } else {
-        const errorMessage = result?.message || "Email hoặc mật khẩu không đúng!";
-        toast.error(errorMessage); // Dùng toast
-        console.error("Login failed:", result);
+        toast.error(result.message || "Email hoặc mật khẩu không đúng!");
       }
     } catch (error) {
-      console.error("Login error:", error);
       const errorMessage = formatErrorMessage(error);
-      toast.error(errorMessage); // Dùng toast
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -157,7 +133,7 @@ const Login = () => {
 
             <Row justify="space-between" align="middle" className="login-options">
               <Col>
-                <Link to={"/ReqPass"} className="forgot-password">
+                <Link to="/ReqPass" className="forgot-password">
                   Quên mật khẩu?
                 </Link>
               </Col>
