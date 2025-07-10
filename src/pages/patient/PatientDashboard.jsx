@@ -26,52 +26,8 @@ const PatientDashboard = () => {
             Thông Tin Cá Nhân
           </Title>
         </div>
-
-        {/* Tabs Section */}
-        <Card className="section-card profile-tabs-card">
-          <Tabs defaultActiveKey="1" size="large" animated centered className="custom-tabs">
-            <TabPane
-              tab={
-                <span>
-                  <UserOutlined /> Hồ Sơ
-                </span>
-              }
-              key="1"
-            >
-              <PatientProfile />
-            </TabPane>
-            <TabPane
-              tab={
-                <span>
-                  <CalendarOutlined /> Lịch Hẹn
-                </span>
-              }
-              key="2"
-            >
-              <AppointmentHistory />
-            </TabPane>
-            <TabPane
-              tab={
-                <span>
-                  <FileTextOutlined /> Điều Trị
-                </span>
-              }
-              key="3"
-            >
-              <TreatmentHistory />
-            </TabPane>
-            <TabPane
-              tab={
-                <span>
-                  <MedicineBoxOutlined /> Hồ Sơ Y Tế
-                </span>
-              }
-              key="4"
-            >
-              <MedicalRecords />
-            </TabPane>
-          </Tabs>
-        </Card>
+        {/* Chỉ render trực tiếp PatientProfile, không còn Tabs lớn */}
+        <PatientProfile />
       </div>
     </MainLayout>
   );
