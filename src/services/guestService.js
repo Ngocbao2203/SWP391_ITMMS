@@ -21,10 +21,10 @@ class GuestService {
   async getPublicServices(filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.GUEST.SERVICES}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.GUEST.SERVICES}?${queryParams}` :
         API_ENDPOINTS.GUEST.SERVICES;
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -52,17 +52,30 @@ class GuestService {
   async getPublicDoctors(filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.GUEST.DOCTORS}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.GUEST.DOCTORS}?${queryParams}` :
         API_ENDPOINTS.GUEST.DOCTORS;
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
       throw error;
     }
   }
-
+  /**
+   * Lấy danh sách lịch hẹn của tôi
+   */
+  async getMyAppointments() {
+    try {
+      console.log('Calling getMyAppointments with endpoint:', API_ENDPOINTS.APPOINTMENTS.GET_MY_APPOINTMENTS);
+      const response = await apiService.get(API_ENDPOINTS.APPOINTMENTS.GET_MY_APPOINTMENTS);
+      console.log('Response:', response);
+      return response;
+    } catch (error) {
+      console.error('Error in getMyAppointments:', error);
+      throw error;
+    }
+  }
   /**
    * Lấy chi tiết bác sĩ công khai
    * @param {number} doctorId 
@@ -84,10 +97,10 @@ class GuestService {
   async getDoctorReviews(doctorId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.GUEST.DOCTOR_REVIEWS(doctorId)}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.GUEST.DOCTOR_REVIEWS(doctorId)}?${queryParams}` :
         API_ENDPOINTS.GUEST.DOCTOR_REVIEWS(doctorId);
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -102,10 +115,10 @@ class GuestService {
   async getBlogPosts(filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.GUEST.BLOG}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.GUEST.BLOG}?${queryParams}` :
         API_ENDPOINTS.GUEST.BLOG;
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -146,7 +159,7 @@ class GuestService {
     try {
       const queryParams = new URLSearchParams(searchParams).toString();
       const endpoint = `${API_ENDPOINTS.GUEST.SEARCH}?${queryParams}`;
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -248,7 +261,7 @@ class GuestService {
         order: 'desc',
         limit: limit
       };
-      
+
       return await this.getPublicDoctors(filters);
     } catch (error) {
       throw error;
@@ -266,7 +279,7 @@ class GuestService {
         order: 'desc',
         limit: limit
       };
-      
+
       return await this.getPublicServices(filters);
     } catch (error) {
       throw error;
@@ -285,7 +298,7 @@ class GuestService {
         sort: 'createdAt',
         order: 'desc'
       };
-      
+
       return await this.getBlogPosts(filters);
     } catch (error) {
       throw error;
@@ -301,7 +314,7 @@ class GuestService {
       const filters = {
         category: category
       };
-      
+
       return await this.getPublicServices(filters);
     } catch (error) {
       throw error;
@@ -317,7 +330,7 @@ class GuestService {
       const filters = {
         specialization: specialization
       };
-      
+
       return await this.getPublicDoctors(filters);
     } catch (error) {
       throw error;
@@ -333,7 +346,7 @@ class GuestService {
       const filters = {
         category: category
       };
-      
+
       return await this.getBlogPosts(filters);
     } catch (error) {
       throw error;
@@ -346,7 +359,7 @@ class GuestService {
   async getServicesPricing() {
     try {
       const services = await this.getPublicServices();
-      
+
       return services.services?.map(service => ({
         id: service.id,
         serviceName: service.serviceName,
@@ -365,7 +378,7 @@ class GuestService {
   async getContactInfo() {
     try {
       const clinicInfo = await this.getClinicInfo();
-      
+
       return {
         name: clinicInfo.name,
         phone: clinicInfo.phone,
@@ -385,7 +398,7 @@ class GuestService {
   async getSuccessStatistics() {
     try {
       const stats = await this.getClinicStats();
-      
+
       return {
         totalPatients: stats.totalPatients || 0,
         successRate: stats.successRate || 0,

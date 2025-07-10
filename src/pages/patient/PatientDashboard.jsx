@@ -1,20 +1,11 @@
 import React from 'react';
-import { Card, Typography, Tabs } from 'antd';
+import { Typography } from 'antd';
 import MainLayout from '../../layouts/MainLayout';
-import {
-  UserOutlined,
-  CalendarOutlined,
-  FileTextOutlined,
-  MedicineBoxOutlined,
-} from '@ant-design/icons';
+
 import PatientProfile from './PatientProfile';
-import AppointmentHistory from './AppointmentHistory';
-import MedicalRecords from './MedicalRecords';
-import TreatmentHistory from './TreatmentHistory';
 import '../../styles/PatientDashboard.css';
 
 const { Title } = Typography;
-const { TabPane } = Tabs;
 
 const PatientDashboard = () => {
   return (

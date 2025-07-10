@@ -20,7 +20,7 @@ export const API_ENDPOINTS = {
     CREATE: "/appointments", // Sửa thành chữ thường để nhất quán
     GET_BY_ID: (id) => `/appointments/${id}`,
     DELETE: (id) => `/appointments/${id}`, // Sửa thành chữ thường
-    GET_MY_APPOINTMENTS: "/appointments/my-appointments", // Sửa thành chữ thường
+    GET_MY_APPOINTMENTS: '/appointments/my-appointments', // Sửa thành chữ thường
     GET_BY_CUSTOMER: (customerId) => `/appointments/customer/${customerId}`, // Sửa thành chữ thường
     GET_BY_DOCTOR: (doctorId) => `/appointments/doctor/${doctorId}`, // Sửa thành chữ thường
     GET_MY_SCHEDULE: "/appointments/my-schedule", // Sửa thành chữ thường
