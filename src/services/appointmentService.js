@@ -100,8 +100,8 @@ class AppointmentService {
       const queryParams = new URLSearchParams(filters).toString();
       const endpoint = queryParams
         ? `${API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(
-            customerId
-          )}?${queryParams}`
+          customerId
+        )}?${queryParams}`
         : API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId);
       return await apiService.get(endpoint);
     } catch (error) {
@@ -133,19 +133,9 @@ class AppointmentService {
    */
   async getAvailableSlots(doctorId, date) {
     try {
-      const response = await apiService.get(
-        API_ENDPOINTS.APPOINTMENTS.GET_AVAILABLE_SLOTS,
-        {
-          params: { doctorId, date } // Truyền params đúng cách
-        }
-      );
-      return response.data;
+      const endpoint = `${API_ENDPOINTS.APPOINTMENTS.GET_AVAILABLE_SLOTS}?doctorId=${doctorId}&date=${date}`;
+      return await apiService.get(endpoint);
     } catch (error) {
-      console.error('Lỗi lấy khung giờ:', {
-        url: error.config?.url,
-        params: error.config?.params,
-        error: error.response?.data
-      });
       throw error;
     }
   }

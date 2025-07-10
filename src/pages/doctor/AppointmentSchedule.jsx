@@ -14,7 +14,6 @@ import {
   Col,
   Typography,
   Spin,
-  DatePicker,
 } from "antd";
 import {
   CalendarOutlined,
@@ -25,7 +24,6 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { authService } from "../../services";
 import "../../styles/AppointmentSchedule.css";
 
 // Hằng số trạng thái lịch hẹn
@@ -44,11 +42,6 @@ const { Title, Text } = Typography;
 const tableStyle = {
   width: "100%",
   tableLayout: "fixed",
-};
-
-const columnStyle = {
-  textAlign: "left",
-  fontWeight: "bold",
 };
 
 const AppointmentSchedule = () => {
