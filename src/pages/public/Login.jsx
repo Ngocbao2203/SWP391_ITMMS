@@ -16,8 +16,23 @@ const Login = () => {
 
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
-    if (currentUser && currentUser.token) {
-      navigate("/");
+    if (authService.isAuthenticated() && currentUser?.token) {
+      switch (currentUser.role) {
+        case "Admin":
+          navigate("/admin/dashboard");
+          break;
+        case "Manager":
+          navigate("/manager/doctors");
+          break;
+        case "Doctor":
+          navigate("/doctor/dashboard");
+          break;
+        case "Customer":
+          navigate("/profile");
+          break;
+        default:
+          navigate("/");
+      }
     }
 
     form.resetFields();
@@ -28,7 +43,8 @@ const Login = () => {
         input.setAttribute("autocomplete", "new-password");
       });
     }, 100);
-  }, [navigate, form]);
+  }, []);
+
 
   const onFinish = async (values) => {
     setLoading(true);
