@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Calendar,
-  Badge,
   Modal,
   Button,
   Form,
   Select,
   message,
-  Tabs,
   Table,
   Tag,
   Space,
@@ -17,21 +14,30 @@ import {
   Col,
   Typography,
   Spin,
+  DatePicker,
 } from "antd";
 import {
   CalendarOutlined,
   UserOutlined,
   EditOutlined,
   InfoCircleOutlined,
-  TeamOutlined,
   BarsOutlined,
+  ReloadOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-// import axios from "axios";
+import { authService } from "../../services";
 import "../../styles/AppointmentSchedule.css";
 
+// Hằng số trạng thái lịch hẹn
+const APPOINTMENT_STATUS = {
+  SCHEDULED: "Scheduled",
+  CONFIRMED: "Confirmed",
+  IN_PROGRESS: "In Progress",
+  COMPLETED: "Completed",
+  CANCELLED: "Cancelled",
+};
+
 const { Option } = Select;
-const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 
 // CSS inline để đảm bảo bảng hiển thị đúng
@@ -53,189 +59,96 @@ const AppointmentSchedule = () => {
   const [isUpdateStatusVisible, setIsUpdateStatusVisible] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("1");
   const [statusForm] = Form.useForm();
-  // Mock data - replace with actual API calls
+  const [error, setError] = useState(null);
+
+  // Lấy lịch khám của bác sĩ
   useEffect(() => {
     const fetchAppointments = async () => {
-      try {
-        // Replace with your API endpoint
-        // const response = await axios.get('/api/appointments');
-        // setAppointments(response.data);
-        // Mock data
-        setAppointments([
-          {
-            id: 1,
-            patientId: "PT001",
-            patientName: "Nguyen Van A",
-            patientPhone: "0901234567",
-            patientEmail: "nguyenvana@email.com",
-            date: "2025-06-02",
-            duration: 30,
-            service: "Regular Checkup",
-            status: "confirmed",
-            notes: "First-time checkup",
-            medicalHistory: "No significant medical history",
-            createdAt: "2025-05-20",
-          },
-          {
-            id: 2,
-            patientId: "PT002",
-            patientName: "Tran Thi B",
-            patientPhone: "0912345678",
-            patientEmail: "tranthib@email.com",
-            date: "2025-06-02",
-            duration: 45,
-            service: "Dental Cleaning",
-            status: "confirmed",
-            notes: "Regular cleaning appointment",
-            medicalHistory: "Allergic to penicillin",
-            createdAt: "2025-05-22",
-          },
-          {
-            id: 3,
-            patientId: "PT003",
-            patientName: "Le Van C",
-            patientPhone: "0923456789",
-            patientEmail: "levanc@email.com",
-            date: "2025-06-02",
-            duration: 60,
-            service: "Root Canal Treatment",
-            status: "pending",
-            notes: "Patient reported severe tooth pain",
-            medicalHistory: "Hypertension",
-            createdAt: "2025-05-25",
-          },
-          {
-            id: 4,
-            patientId: "PT004",
-            patientName: "Pham Thi D",
-            patientPhone: "0934567890",
-            patientEmail: "phamthid@email.com",
-            date: "2025-06-03",
-            duration: 30,
-            service: "Consultation",
-            status: "confirmed",
-            notes: "Considering orthodontic treatment",
-            medicalHistory: "No significant medical history",
-            createdAt: "2025-05-26",
-          },
-          {
-            id: 5,
-            patientId: "PT005",
-            patientName: "Hoang Van E",
-            patientPhone: "0945678901",
-            patientEmail: "hoangvane@email.com",
-            date: "2025-06-04",
-            duration: 45,
-            service: "Dental Implant Consultation",
-            status: "cancelled",
-            notes: "Patient requested cancellation",
-            medicalHistory: "Diabetes",
-            createdAt: "2025-05-27",
-          },
-          {
-            id: 6,
-            patientId: "PT006",
-            patientName: "Vu Thi F",
-            patientPhone: "0956789012",
-            patientEmail: "vuthif@email.com",
-            date: "2025-06-05",
-            duration: 60,
-            service: "Wisdom Tooth Extraction",
-            status: "confirmed",
-            notes: "Pre-surgery consultation",
-            medicalHistory: "No significant medical history",
-            createdAt: "2025-05-28",
-          },
-          {
-            id: 7,
-            patientId: "PT007",
-            patientName: "Nguyen Van G",
-            patientPhone: "0967890123",
-            patientEmail: "nguyenvang@email.com",
-            date: "2025-06-05",
-            duration: 30,
-            service: "Follow-up",
-            status: "completed",
-            notes: "Post-treatment checkup",
-            medicalHistory: "Asthma",
-            createdAt: "2025-05-29",
-          },
-        ]);
+      setLoading(true);
 
-        setLoading(false);
+      try {
+        // Import appointmentService từ services
+        const appointmentService =
+          require("../../services/appointmentService").default;
+
+        // Gọi API lịch hẹn sử dụng getMySchedule từ appointmentService
+        const response = await appointmentService.getMySchedule({
+          date: selectedDate.format("YYYY-MM-DD"),
+        });
+        console.log("API response:", response);
+
+        // Kiểm tra cấu trúc phản hồi và truy cập đúng dữ liệu
+        const appointmentsData = response.data?.appointments || [];
+        console.log("Dữ liệu cuộc hẹn:", appointmentsData);
+
+        // Chuyển đổi dữ liệu từ API sang định dạng mà giao diện hiểu được
+        const formattedAppointments = appointmentsData.map((appointment) => ({
+          id: appointment.id,
+          patientId: appointment.customerId || appointment.id.toString(),
+          patientName: appointment.customerName || "Chưa có tên",
+          patientPhone: appointment.customerPhone || "Chưa có SĐT",
+          date: appointment.appointmentDate
+            ? dayjs(appointment.appointmentDate).format("YYYY-MM-DD")
+            : dayjs().format("YYYY-MM-DD"),
+          time: appointment.timeSlot || "Chưa xác định",
+          service: appointment.type || "Khám tổng quát",
+          status: (appointment.status || "pending").toLowerCase(),
+          notes: appointment.notes || "",
+          medicalHistory: appointment.medicalHistory || "Chưa có thông tin",
+          createdAt: appointment.createdAt
+            ? dayjs(appointment.createdAt).format("YYYY-MM-DD")
+            : dayjs().format("YYYY-MM-DD"),
+        }));
+
+        setAppointments(formattedAppointments);
+        setError(null);
+        console.log("Đã tải xong dữ liệu lịch hẹn", formattedAppointments);
       } catch (error) {
-        console.error("Error fetching appointments:", error);
-        message.error("Failed to load appointment data");
+        console.error("Error fetching doctor schedule:", error);
+        message.error("Không thể tải lịch khám bệnh");
+        setError("Không thể tải lịch khám bệnh");
+      } finally {
+        // Đảm bảo loading luôn được thiết lập thành false trong mọi trường hợp
         setLoading(false);
       }
     };
 
+    // Đảm bảo fetchAppointments luôn được gọi
     fetchAppointments();
-  }, []);
-  const dateCellRender = useCallback(
-    (value) => {
-      const formattedDate = value.format("YYYY-MM-DD");
-      const listData = appointments.filter(
-        (appointment) => appointment.date === formattedDate
-      );
+  }, [selectedDate]); // Chỉ phụ thuộc vào selectedDate để khi chọn ngày khác sẽ tải lại dữ liệu
 
-      return (
-        <ul className="events">
-          {listData.map((item) => (
-            <li key={item.id}>
-              <Badge
-                status={getStatusBadge(item.status)}
-                text={`${item.patientName}`}
-                className="appointment-badge"
-              />
-            </li>
-          ))}
-        </ul>
-      );
-    },
-    [appointments]
-  );
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "confirmed":
-        return "processing";
-      case "pending":
-        return "warning";
-      case "completed":
-        return "success";
-      case "cancelled":
-        return "error";
-      default:
-        return "default";
-    }
-  };
   const getStatusTag = (status) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
+      case "scheduled":
+        return (
+          <Tag color="cyan" className="status-tag">
+            {APPOINTMENT_STATUS.SCHEDULED}
+          </Tag>
+        );
       case "confirmed":
         return (
           <Tag color="blue" className="status-tag">
-            Confirmed
+            {APPOINTMENT_STATUS.CONFIRMED}
           </Tag>
         );
-      case "pending":
+
+      case "in progress":
         return (
           <Tag color="orange" className="status-tag">
-            Pending
+            {APPOINTMENT_STATUS.IN_PROGRESS}
           </Tag>
         );
       case "completed":
         return (
           <Tag color="green" className="status-tag">
-            Completed
+            {APPOINTMENT_STATUS.COMPLETED}
           </Tag>
         );
       case "cancelled":
         return (
           <Tag color="red" className="status-tag">
-            Cancelled
+            {APPOINTMENT_STATUS.CANCELLED}
           </Tag>
         );
       default:
@@ -246,8 +159,58 @@ const AppointmentSchedule = () => {
         );
     }
   };
-  const handleDateSelect = (value) => {
-    setSelectedDate(value);
+  // Hàm để tải lại lịch khám
+  const reloadSchedule = async () => {
+    message.loading("Đang tải lịch khám...");
+    setLoading(true);
+
+    try {
+      // Import appointmentService từ services
+      const appointmentService =
+        require("../../services/appointmentService").default;
+
+      // Gọi API lịch hẹn sử dụng getMySchedule
+      const response = await appointmentService.getMySchedule({
+        date: selectedDate.format("YYYY-MM-DD"),
+      });
+      console.log("API response:", response);
+
+      // Kiểm tra cấu trúc phản hồi và truy cập đúng dữ liệu
+      const appointmentsData = response.data?.appointments || [];
+      console.log("Dữ liệu cuộc hẹn:", appointmentsData);
+
+      // Chuyển đổi dữ liệu từ API sang định dạng mà giao diện hiểu được
+      const formattedAppointments = appointmentsData.map((appointment) => ({
+        id: appointment.id,
+        patientId: appointment.customerId || appointment.id.toString(),
+        patientName: appointment.customerName || "Chưa có tên",
+        patientPhone: appointment.customerPhone || "Chưa có SĐT",
+
+        date: appointment.appointmentDate
+          ? dayjs(appointment.appointmentDate).format("YYYY-MM-DD")
+          : dayjs().format("YYYY-MM-DD"),
+        time: appointment.timeSlot || "Chưa xác định",
+        service: appointment.type || "Khám tổng quát",
+        status: (appointment.status || "pending").toLowerCase(),
+        notes: appointment.notes || "",
+        medicalHistory: appointment.medicalHistory || "Chưa có thông tin",
+        createdAt: appointment.createdAt
+          ? dayjs(appointment.createdAt).format("YYYY-MM-DD")
+          : dayjs().format("YYYY-MM-DD"),
+      }));
+
+      setAppointments(formattedAppointments);
+      setError(null);
+      message.success("Đã tải lịch khám thành công");
+      console.log("Đã tải lại lịch khám thành công");
+    } catch (error) {
+      console.error("Error refreshing appointments:", error);
+      setError("Không thể tải lịch khám bệnh");
+      message.error("Không thể tải lịch khám bệnh");
+    } finally {
+      // Đảm bảo loading luôn được thiết lập thành false trong mọi trường hợp
+      setLoading(false);
+    }
   };
 
   const showAppointmentDetails = (appointment) => {
@@ -256,8 +219,33 @@ const AppointmentSchedule = () => {
   };
   const showUpdateStatusModal = (appointment) => {
     setCurrentAppointment(appointment);
+
+    // Chuyển đổi status từ lowercase sang Title Case (chỉ viết hoa chữ cái đầu)
+    let statusValue = "";
+
+    switch (appointment.status.toLowerCase()) {
+      case "scheduled":
+        statusValue = "Scheduled";
+        break;
+      case "confirmed":
+        statusValue = "Confirmed";
+        break;
+
+      case "in progress":
+        statusValue = "In Progress";
+        break;
+      case "completed":
+        statusValue = "Completed";
+        break;
+      case "cancelled":
+        statusValue = "Cancelled";
+        break;
+      default:
+        statusValue = appointment.status;
+    }
+
     statusForm.setFieldsValue({
-      status: appointment.status,
+      status: statusValue,
     });
     setIsUpdateStatusVisible(true);
   };
@@ -269,73 +257,86 @@ const AppointmentSchedule = () => {
   const handleUpdateStatus = () => {
     statusForm
       .validateFields()
-      .then((values) => {
-        // Replace with API call to update appointment status
-        // axios.put(`/api/appointments/${currentAppointment.id}/status`, values)
+      .then(async (values) => {
+        try {
+          // Gọi API để cập nhật trạng thái lịch hẹn
+          const appointmentService =
+            require("../../services/appointmentService").default;
 
-        message.success("Appointment status updated successfully");
-        statusForm.resetFields();
-        setIsUpdateStatusVisible(false); // Update local state (mock implementation)
-        const updatedAppointments = appointments.map((appointment) => {
-          if (appointment.id === currentAppointment.id) {
-            return {
-              ...appointment,
-              status: values.status,
-              // Không cập nhật notes
-            };
+          const result = await appointmentService.updateAppointmentStatus(
+            currentAppointment.id,
+            values.status
+          );
+
+          if (result.success) {
+            message.success("Cập nhật trạng thái lịch hẹn thành công");
+            statusForm.resetFields();
+            setIsUpdateStatusVisible(false);
+
+            // Tải lại dữ liệu sau khi cập nhật
+            reloadSchedule();
+          } else {
+            message.error(
+              result.message || "Không thể cập nhật trạng thái lịch hẹn"
+            );
           }
-          return appointment;
-        });
-
-        setAppointments(updatedAppointments);
+        } catch (error) {
+          console.error("Lỗi khi cập nhật trạng thái:", error);
+          message.error("Không thể cập nhật trạng thái lịch hẹn");
+        }
       })
       .catch((info) => {
         console.log("Validation Failed:", info);
       });
   };
   const getDailyAppointments = useCallback(() => {
-    const formattedDate = selectedDate.format("YYYY-MM-DD");
-    return appointments.filter(
-      (appointment) => appointment.date === formattedDate
-    );
-  }, [appointments, selectedDate]);
-
-  const getUpcomingAppointments = useCallback(() => {
-    const today = dayjs().format("YYYY-MM-DD");
-    return appointments.filter(
-      (appointment) =>
-        appointment.date >= today &&
-        appointment.status !== "completed" &&
-        appointment.status !== "cancelled"
-    );
+    // Sắp xếp theo thời gian
+    return appointments.sort((a, b) => {
+      const timeA = a.time.split("-")[0];
+      const timeB = b.time.split("-")[0];
+      return timeA.localeCompare(timeB);
+    });
   }, [appointments]);
+
   const columns = [
     {
       title: "PATIENT",
       dataIndex: "patientName",
       key: "patientName",
-      width: "30%",
+      width: "25%",
       sorter: (a, b) => a.patientName.localeCompare(b.patientName),
     },
     {
+      title: "TIME SLOT",
+      dataIndex: "time",
+      key: "time",
+      width: "20%",
+      sorter: (a, b) => {
+        const timeA = a.time.split("-")[0];
+        const timeB = b.time.split("-")[0];
+        return timeA.localeCompare(timeB);
+      },
+    },
+    {
       title: "SERVICE",
       dataIndex: "service",
       key: "service",
-      width: "30%",
+      width: "25%",
     },
     {
       title: "STATUS",
       dataIndex: "status",
       key: "status",
-      width: "20%",
+      width: "15%",
       render: (status) => getStatusTag(status),
       filters: [
-        { text: "Confirmed", value: "confirmed" },
-        { text: "Pending", value: "pending" },
-        { text: "Completed", value: "completed" },
-        { text: "Cancelled", value: "cancelled" },
+        { text: APPOINTMENT_STATUS.SCHEDULED, value: "scheduled" },
+        { text: APPOINTMENT_STATUS.CONFIRMED, value: "confirmed" },
+        { text: APPOINTMENT_STATUS.IN_PROGRESS, value: "in_progress" },
+        { text: APPOINTMENT_STATUS.COMPLETED, value: "completed" },
+        { text: APPOINTMENT_STATUS.CANCELLED, value: "cancelled" },
       ],
-      onFilter: (value, record) => record.status === value,
+      onFilter: (value, record) => record.status.toLowerCase() === value,
     },
     {
       title: "ACTIONS",
@@ -363,144 +364,68 @@ const AppointmentSchedule = () => {
       ),
     },
   ];
-  const upcomingColumns = [
-    {
-      title: "DATE",
-      dataIndex: "date",
-      key: "date",
-      width: "15%",
-      sorter: (a, b) => dayjs(a.date).unix() - dayjs(b.date).unix(),
-    },
-    {
-      title: "PATIENT",
-      dataIndex: "patientName",
-      key: "patientName",
-      width: "25%",
-    },
-    {
-      title: "SERVICE",
-      dataIndex: "service",
-      key: "service",
-      width: "25%",
-    },
-    {
-      title: "STATUS",
-      dataIndex: "status",
-      key: "status",
-      width: "15%",
-      render: (status) => getStatusTag(status),
-    },
-    {
-      title: "ACTIONS",
-      key: "actions",
-      width: "20%",
-      render: (_, record) => (
-        <Space size="small">
-          <Tooltip title="View Details">
-            <Button
-              type="primary"
-              icon={<InfoCircleOutlined />}
-              size="small"
-              onClick={() => showAppointmentDetails(record)}
-            />
-          </Tooltip>
-          <Tooltip title="Update Status">
-            <Button
-              type="default"
-              icon={<EditOutlined />}
-              size="small"
-              onClick={() => showUpdateStatusModal(record)}
-              disabled={record.status === "cancelled"}
-            />
-          </Tooltip>
-        </Space>
-      ),
-    },
-  ];
+
   return (
     <div className="appointment-schedule-container">
       <div className="appointment-schedule-header">
         <Title level={2}>Appointment Schedule</Title>
       </div>
-      <Tabs
-        activeKey={activeTab}
-        onChange={(key) => setActiveTab(key)}
-        className="appointment-tabs"
-      >
-        <TabPane
-          tab={
-            <span>
-              <CalendarOutlined /> Calendar View
-            </span>
-          }
-          key="1"
-        >
-          <div className="calendar-container">
-            {" "}
-            {loading ? (
-              <div className="loading-container">
-                <Spin size="large" />
-              </div>
-            ) : (
-              <Calendar
-                dateCellRender={dateCellRender}
-                onSelect={handleDateSelect}
-                value={selectedDate}
-                key="appointment-calendar"
-              />
-            )}
-            <div className="daily-appointments">
-              <Card
-                title={
-                  <span>
-                    <BarsOutlined /> Appointments for{" "}
-                    {selectedDate.format("MMMM D, YYYY")}
-                  </span>
-                }
-              >
-                {/* Tránh gọi useMemo trong điều kiện */}{" "}
-                <Table
-                  dataSource={getDailyAppointments()}
-                  columns={columns}
-                  rowKey="id"
-                  size="small"
-                  pagination={false}
-                  locale={{ emptyText: "No appointments for this date" }}
-                  style={tableStyle}
-                  bordered
-                  className="appointment-table"
-                />
-              </Card>
-            </div>
+      <div className="appointments-container">
+        {loading ? (
+          <div className="loading-container">
+            <Spin size="large" />
           </div>
-        </TabPane>
-        <TabPane
-          tab={
-            <span>
-              <TeamOutlined /> Upcoming Appointments
-            </span>
-          }
-          key="2"
-        >
-          {" "}
-          {loading ? (
-            <div className="loading-container">
-              <Spin size="large" />
-            </div>
-          ) : (
+        ) : error ? (
+          <div className="error-container">
+            <p className="error-message">{error}</p>
+            <Button
+              type="primary"
+              icon={<ReloadOutlined />}
+              onClick={reloadSchedule}
+            >
+              Thử lại
+            </Button>
+          </div>
+        ) : (
+          <Card
+            title={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <span>
+                  <BarsOutlined /> Appointments for{" "}
+                  {selectedDate.format("MMMM D, YYYY")}
+                </span>
+                <div>
+                  <Button
+                    type="primary"
+                    icon={<ReloadOutlined />}
+                    onClick={reloadSchedule}
+                  >
+                    Refresh
+                  </Button>
+                </div>
+              </div>
+            }
+          >
             <Table
-              dataSource={getUpcomingAppointments()}
-              columns={upcomingColumns}
+              dataSource={getDailyAppointments()}
+              columns={columns}
               rowKey="id"
-              pagination={{ pageSize: 10 }}
-              locale={{ emptyText: "No upcoming appointments" }}
+              size="small"
+              pagination={false}
+              locale={{ emptyText: "No appointments for this date" }}
               style={tableStyle}
               bordered
               className="appointment-table"
             />
-          )}
-        </TabPane>{" "}
-      </Tabs>
+          </Card>
+        )}
+      </div>
       {/* Appointment Details Modal */}
       <Modal
         title="Appointment Details"
@@ -653,10 +578,21 @@ const AppointmentSchedule = () => {
               rules={[{ required: true, message: "Please select status" }]}
             >
               <Select placeholder="Select status">
-                <Option value="pending">Pending</Option>
-                <Option value="confirmed">Confirmed</Option>
-                <Option value="completed">Completed</Option>
-                <Option value="cancelled">Cancelled</Option>
+                <Option value="Scheduled">
+                  {APPOINTMENT_STATUS.SCHEDULED}
+                </Option>
+                <Option value="Confirmed">
+                  {APPOINTMENT_STATUS.CONFIRMED}
+                </Option>
+                <Option value="In Progress">
+                  {APPOINTMENT_STATUS.IN_PROGRESS}
+                </Option>
+                <Option value="Completed">
+                  {APPOINTMENT_STATUS.COMPLETED}
+                </Option>
+                <Option value="Cancelled">
+                  {APPOINTMENT_STATUS.CANCELLED}
+                </Option>
               </Select>
             </Form.Item>
           </Form>

@@ -1,5 +1,5 @@
-import apiService from './api';
-import { API_ENDPOINTS } from './apiConstants';
+import apiService from "./api";
+import { API_ENDPOINTS } from "./apiConstants";
 
 class DoctorService {
   /**
@@ -22,11 +22,13 @@ class DoctorService {
 
   /**
    * Lấy chi tiết doctor
-   * @param {number} doctorId 
+   * @param {number} doctorId
    */
   async getDoctorDetails(doctorId) {
     try {
-      const response = await apiService.get(API_ENDPOINTS.DOCTORS.GET_BY_ID(doctorId));
+      const response = await apiService.get(
+        API_ENDPOINTS.DOCTORS.GET_BY_ID(doctorId)
+      );
       return response;
     } catch (error) {
       throw error;
@@ -35,29 +37,32 @@ class DoctorService {
 
   /**
    * Tạo profile doctor mới (Admin/Manager)
-   * @param {Object} doctorData 
+   * @param {Object} doctorData
    */
   async createDoctor(doctorData) {
     try {
-      const response = await apiService.post(API_ENDPOINTS.DOCTORS.CREATE, doctorData);
+      const response = await apiService.post(
+        API_ENDPOINTS.DOCTORS.CREATE,
+        doctorData
+      );
       return {
         success: true,
-        message: 'Tạo profile bác sĩ thành công',
-        data: response
+        message: "Tạo profile bác sĩ thành công",
+        data: response,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Tạo profile bác sĩ thất bại',
-        errors: error.getValidationErrors()
+        message: error.message || "Tạo profile bác sĩ thất bại",
+        errors: error.getValidationErrors(),
       };
     }
   }
 
   /**
    * Cập nhật profile doctor
-   * @param {number} doctorId 
-   * @param {Object} updateData 
+   * @param {number} doctorId
+   * @param {Object} updateData
    */
   async updateDoctor(doctorId, updateData) {
     try {
@@ -103,7 +108,7 @@ class DoctorService {
 
   /**
    * Tìm kiếm doctors
-   * @param {Object} searchParams 
+   * @param {Object} searchParams
    */
   async searchDoctors(searchParams = {}) {
     try {
@@ -118,7 +123,7 @@ class DoctorService {
 
   /**
    * Lấy doctors available
-   * @param {Object} filters 
+   * @param {Object} filters
    */
   async getAvailableDoctors(filters = {}) {
     try {
@@ -136,8 +141,8 @@ class DoctorService {
 
   /**
    * Lấy feedback của doctor
-   * @param {number} doctorId 
-   * @param {Object} filters 
+   * @param {number} doctorId
+   * @param {Object} filters
    */
   async getDoctorFeedback(doctorId, filters = {}) {
     try {
@@ -155,8 +160,8 @@ class DoctorService {
 
   /**
    * Lấy appointments của doctor
-   * @param {number} doctorId 
-   * @param {Object} filters 
+   * @param {number} doctorId
+   * @param {Object} filters
    */
   async getDoctorAppointments(doctorId, filters = {}) {
     try {
@@ -174,7 +179,7 @@ class DoctorService {
 
   /**
    * Lấy doctors theo specialization
-   * @param {string} specialization 
+   * @param {string} specialization
    */
   async getDoctorsBySpecialization(specialization) {
     try {
@@ -186,15 +191,16 @@ class DoctorService {
 
   /**
    * Lấy top rated doctors
-   * @param {number} limit 
+   * @param {number} limit
    */
   async getTopRatedDoctors(limit = 10) {
     try {
       const filters = {
-        sort: 'averageRating',
-        order: 'desc',
-        limit: limit
+        sort: "averageRating",
+        order: "desc",
+        limit: limit,
       };
+
 
       return await this.getAllDoctors(filters);
     } catch (error) {
@@ -204,22 +210,23 @@ class DoctorService {
 
   /**
    * Kiểm tra doctor có available trong thời gian không
-   * @param {number} doctorId 
-   * @param {string} date 
-   * @param {string} timeSlot 
+   * @param {number} doctorId
+   * @param {string} date
+   * @param {string} timeSlot
    */
   async checkDoctorAvailability(doctorId, date, timeSlot) {
     try {
       const filters = {
         appointmentDate: date,
         timeSlot: timeSlot,
-        status: 'Scheduled,Confirmed'
+        status: "Scheduled,Confirmed",
       };
 
       const appointments = await this.getDoctorAppointments(doctorId, filters);
       return {
-        available: !appointments.appointments || appointments.appointments.length === 0,
-        conflictingAppointments: appointments.appointments || []
+        available:
+          !appointments.appointments || appointments.appointments.length === 0,
+        conflictingAppointments: appointments.appointments || [],
       };
     } catch (error) {
       throw error;
@@ -228,46 +235,76 @@ class DoctorService {
 
   /**
    * Lấy lịch làm việc của doctor
-   * @param {number} doctorId 
-   * @param {string} dateFrom 
-   * @param {string} dateTo 
+   * @param {number} doctorId
+   * @param {string} date - Optional date parameter (YYYY-MM-DD)
    */
-  async getDoctorSchedule(doctorId, dateFrom, dateTo) {
+  async getDoctorSchedule(doctorId, date = null) {
     try {
-      const filters = {
-        dateFrom,
-        dateTo,
-        sort: 'appointmentDate',
-        order: 'asc'
-      };
+      // Sử dụng endpoint mới được hiển thị trong Swagger
+      let endpoint = API_ENDPOINTS.DOCTORS.GET_SCHEDULE(doctorId);
 
-      return await this.getDoctorAppointments(doctorId, filters);
+      // Thêm tham số ngày nếu có
+      if (date) {
+        endpoint += `?date=${date}`;
+      }
+
+      console.log(`Calling doctor schedule API: ${endpoint}`);
+      const response = await apiService.get(endpoint);
+      return response;
     } catch (error) {
+      console.error(`Error fetching doctor schedule: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Lấy lịch làm việc của doctor hiện tại (đang đăng nhập)
+   * @param {Object} filters - Optional filters (date, status, etc.)
+   */
+  async getMySchedule(filters = {}) {
+    try {
+      const queryParams = new URLSearchParams(filters).toString();
+      const endpoint = queryParams
+        ? `${API_ENDPOINTS.DOCTORS.MY_SCHEDULE}?${queryParams}`
+        : API_ENDPOINTS.DOCTORS.MY_SCHEDULE;
+
+      const response = await apiService.get(endpoint);
+      return response;
+    } catch (error) {
+      console.error(`Error fetching my schedule: ${error.message}`);
       throw error;
     }
   }
 
   /**
    * Lấy statistics của doctor
-   * @param {number} doctorId 
-   * @param {Object} filters 
+   * @param {number} doctorId
+   * @param {Object} filters
    */
   async getDoctorStatistics(doctorId, filters = {}) {
     try {
       // Lấy tất cả appointments
       const appointments = await this.getDoctorAppointments(doctorId, filters);
 
+
       // Lấy feedback
       const feedback = await this.getDoctorFeedback(doctorId);
+
 
       // Tính toán statistics
       const stats = {
         totalAppointments: appointments.appointments?.length || 0,
-        completedAppointments: appointments.appointments?.filter(apt => apt.status === 'Completed').length || 0,
-        cancelledAppointments: appointments.appointments?.filter(apt => apt.status === 'Cancelled').length || 0,
+        completedAppointments:
+          appointments.appointments?.filter((apt) => apt.status === "Completed")
+            .length || 0,
+        cancelledAppointments:
+          appointments.appointments?.filter((apt) => apt.status === "Cancelled")
+            .length || 0,
         averageRating: feedback.averageRating || 0,
         totalReviews: feedback.reviews?.length || 0,
-        patientCount: new Set(appointments.appointments?.map(apt => apt.customerId)).size || 0
+        patientCount:
+          new Set(appointments.appointments?.map((apt) => apt.customerId))
+            .size || 0,
       };
 
       return stats;
@@ -278,17 +315,22 @@ class DoctorService {
 
   /**
    * Tạo time slots available cho doctor
-   * @param {number} doctorId 
-   * @param {string} date 
+   * @param {number} doctorId
+   * @param {string} date
    * @param {Array} workingHours - ['09:00', '17:00']
    * @param {number} slotDuration - minutes
    */
-  async getAvailableTimeSlots(doctorId, date, workingHours = ['09:00', '17:00'], slotDuration = 60) {
+  async getAvailableTimeSlots(
+    doctorId,
+    date,
+    workingHours = ["09:00", "17:00"],
+    slotDuration = 60
+  ) {
     try {
       // Lấy appointments trong ngày
       const appointments = await this.getDoctorAppointments(doctorId, {
         appointmentDate: date,
-        status: 'Scheduled,Confirmed'
+        status: "Scheduled,Confirmed",
       });
 
       const bookedSlots = appointments.appointments?.map(apt => apt.timeSlot) || [];
@@ -300,7 +342,9 @@ class DoctorService {
       const startTime = startHour * 60 + startMinute;
       const endTime = endHour * 60 + endMinute;
 
+
       const availableSlots = [];
+
 
       for (let time = startTime; time < endTime; time += slotDuration) {
         const hours = Math.floor(time / 60);
@@ -311,6 +355,7 @@ class DoctorService {
           availableSlots.push(timeSlot);
         }
       }
+
 
       return availableSlots;
     } catch (error) {
