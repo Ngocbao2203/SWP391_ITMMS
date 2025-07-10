@@ -41,6 +41,11 @@ const IvfAppointmentForm = ({
   onSubmitting,
 }) => {
   const [form] = Form.useForm();
+  const watchedService = Form.useWatch("treatmentServiceId", form);
+  const watchedDate = Form.useWatch("appointmentDate", form);
+  const watchedTime = Form.useWatch("timeSlot", form);
+  const watchedPlan = Form.useWatch("treatmentPlanId", form);
+
   const [loading, setLoading] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -52,7 +57,7 @@ const IvfAppointmentForm = ({
   const [isLoadingServices, setIsLoadingServices] = useState(false);
   const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
   const [hasTreatmentPlan, setHasTreatmentPlan] = useState(null);
-  const [treatmentPlansList, setTreatmentPlansList] = useState([]); // Thêm state cho danh sách kế hoạch
+  const [treatmentPlansList, setTreatmentPlansList] = useState([]);
 
   // Tải dữ liệu ban đầu
   useEffect(() => {
@@ -95,10 +100,10 @@ const IvfAppointmentForm = ({
         try {
           const user = authService.getCurrentUser();
           console.log("USER FROM AUTH:", user);
-          const planResult = await treatmentPlans.getByCustomer(user.id);
+          console.log("CUSTOMER ID:", user?.customer.id);
+          const planResult = await treatmentPlans.getByCustomer(user.customer.id);
           console.log("GET BY CUSTOMER RESULT:", planResult);
           if (planResult.success && Array.isArray(planResult.data)) {
-            // Lọc các kế hoạch đang hoạt động (nếu cần)
             const activePlans = planResult.data.filter(plan =>
               (plan.status || '').toLowerCase() === 'active'
             );
@@ -182,7 +187,6 @@ const IvfAppointmentForm = ({
   );
 
   // Validate và format dữ liệu trước khi gửi
-  // Sửa hàm validateAndFormatData như sau:
   const validateAndFormatData = (values) => {
     const user = authService.getCurrentUser();
     if (!user) throw new Error("Vui lòng đăng nhập để đặt lịch hẹn");
@@ -210,15 +214,14 @@ const IvfAppointmentForm = ({
         hasTreatmentPlan === true && values.treatmentPlanId
           ? parseInt(values.treatmentPlanId)
           : null,
-      appointmentDate: appointmentDateTime.toISOString(), // ✅ đúng key, đúng format
+      appointmentDate: appointmentDateTime.toISOString(),
       timeSlot: values.timeSlot,
-      type: "Điều trị", // ✅ gán mặc định hoặc từ dịch vụ
+      type: "Điều trị",
       notes: values.notes || "string",
     };
 
     return appointmentData;
   };
-
 
   // Gửi form
   const handleSubmit = async (values) => {
@@ -227,7 +230,7 @@ const IvfAppointmentForm = ({
 
     try {
       const appointmentData = validateAndFormatData(values);
-      console.log("Dữ liệu gửi đi:", appointmentData); // Thêm log này
+      console.log("Dữ liệu gửi đi:", appointmentData);
       const result = await appointmentService.bookAppointment(appointmentData);
 
       if (result.success) {
@@ -656,11 +659,11 @@ const IvfAppointmentForm = ({
             className="ivf-form-submit-btn"
             loading={loading}
             disabled={
-              !form.getFieldValue("treatmentServiceId") ||
+              !watchedService ||
               hasTreatmentPlan === null ||
-              !form.getFieldValue("appointmentDate") ||
-              !form.getFieldValue("timeSlot") ||
-              (hasTreatmentPlan === true && !form.getFieldValue("treatmentPlanId")) ||
+              !watchedDate ||
+              !watchedTime ||
+              (hasTreatmentPlan === true && !watchedPlan) ||
               loading
             }
           >
