@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   Space,
@@ -13,110 +13,107 @@ import {
   Tooltip,
 } from 'antd';
 import {
-  PlusOutlined,
   EditOutlined,
-  DeleteOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { debounce } from 'lodash';
-import '../../styles/Doctors.css';
+import doctorService from '../../services/doctorService';
 
 const { Option } = Select;
 
-const initialData = [
-  {
-    key: '1',
-    name: 'Dr. Nguyễn Văn A',
-    specialty: 'Sản phụ khoa',
-    status: 'Active',
-  },
-  {
-    key: '2',
-    name: 'Dr. Trần Thị B',
-    specialty: 'Nam học',
-    status: 'Inactive',
-  },
-  {
-    key: '3',
-    name: 'Dr. Lê Quốc C',
-    specialty: 'Hiếm muộn',
-    status: 'Active',
-  },
-];
-
 const Doctors = () => {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [searchText, setSearchText] = useState('');
   const [editingDoctor, setEditingDoctor] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleAddOrEditDoctor = (values) => {
-    if (editingDoctor) {
-      const updated = data.map((item) =>
-        item.key === editingDoctor.key ? { ...item, ...values } : item
-      );
-      setData(updated);
-      message.success('Đã cập nhật thông tin bác sĩ');
-    } else {
-      const newDoctor = {
-        key: Date.now().toString(),
-        ...values,
-      };
-      setData((prev) => [...prev, newDoctor]);
-      message.success('Thêm bác sĩ thành công');
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
+
+  const fetchDoctors = async (searchParams = {}) => {
+    setLoading(true);
+    try {
+      const response = await doctorService.getAllDoctors(searchParams);
+      let filteredDoctors = response.doctors || [];
+      if (searchParams.name) {
+        filteredDoctors = filteredDoctors.filter(doctor =>
+          doctor.fullName.toLowerCase().includes(searchParams.name.toLowerCase())
+        );
+      }
+      setData(filteredDoctors);
+    } catch (error) {
+      message.error('Lỗi khi lấy danh sách bác sĩ');
+    } finally {
+      setLoading(false);
     }
-    setIsModalVisible(false);
-    form.resetFields();
-    setEditingDoctor(null);
   };
 
-  const handleDelete = (key) => {
-    setData((prev) => prev.filter((item) => item.key !== key));
-    message.success('Đã xóa bác sĩ');
+  const handleEditDoctor = async (values) => {
+    try {
+      const response = await doctorService.updateDoctor(editingDoctor.id, values);
+      if (response.success) {
+        setData((prev) =>
+          prev.map((item) =>
+            item.id === editingDoctor.id ? { ...item, ...values } : item
+          )
+        );
+        message.success(response.message);
+        setIsModalVisible(false);
+        form.resetFields();
+        setEditingDoctor(null);
+      } else {
+        message.error(response.message);
+      }
+    } catch (error) {
+      message.error('Lỗi khi cập nhật bác sĩ');
+    }
   };
 
-  const handleStatusChange = (key, checked) => {
-    const newData = data.map((item) =>
-      item.key === key ? { ...item, status: checked ? 'Active' : 'Inactive' } : item
-    );
-    setData(newData);
+  const handleStatusChange = async (id, checked) => {
+    try {
+      const response = await doctorService.updateDoctorAvailability(id, checked);
+      if (response.success) {
+        message.success('Cập nhật trạng thái thành công');
+        // fetch lại danh sách bác sĩ để đồng bộ `isAvailable`
+        fetchDoctors();
+      } else {
+        message.error(response.message);
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      message.error('Lỗi khi cập nhật trạng thái');
+    }
   };
 
   const handleSearch = debounce((value) => {
     setSearchText(value);
+    fetchDoctors({ name: value });
   }, 300);
-
-  const filteredData = data.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.specialty.toLowerCase().includes(searchText.toLowerCase())
-  );
 
   const columns = [
     {
       title: 'Họ và Tên',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'fullName',
+      key: 'fullName',
       render: (text) => <span className="doctor-name">{text}</span>,
     },
     {
       title: 'Chuyên môn',
-      dataIndex: 'specialty',
-      key: 'specialty',
+      dataIndex: 'specialization',
+      key: 'specialization',
       render: (text) => <span className="doctor-specialty">{text}</span>,
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status, record) => (
+      dataIndex: 'isAvailable',
+      key: 'isAvailable',
+      render: (_, record) => (
         <Switch
-          className="doctors-status-switch"
-          checked={status === 'Active'}
-          onChange={(checked) => handleStatusChange(record.key, checked)}
-          checkedChildren="Hoạt động"
-          unCheckedChildren="Tạm nghỉ"
+          checked={record.isAvailable}
+          onChange={(checked) => handleStatusChange(record.id, checked)}
         />
       ),
     },
@@ -135,16 +132,6 @@ const Doctors = () => {
               }}
             />
           </Tooltip>
-          <Popconfirm
-            title="Bạn có chắc muốn xóa bác sĩ này?"
-            onConfirm={() => handleDelete(record.key)}
-            okText="Xóa"
-            cancelText="Hủy"
-          >
-            <Tooltip title="Xóa">
-              <Button danger icon={<DeleteOutlined />} />
-            </Tooltip>
-          </Popconfirm>
         </Space>
       ),
     },
@@ -158,7 +145,7 @@ const Doctors = () => {
           <h2 className="doctors-title">Danh sách bác sĩ</h2>
         </div>
         <p className="doctors-subtitle">
-          Có <span className="doctors-count">{filteredData.length}</span> bác sĩ được hiển thị.
+          Có <span className="doctors-count">{data.length}</span> bác sĩ được hiển thị.
         </p>
       </div>
 
@@ -170,69 +157,67 @@ const Doctors = () => {
           onSearch={handleSearch}
           onChange={(e) => handleSearch(e.target.value)}
         />
-        <Button
-          className="doctors-add-btn"
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            setEditingDoctor(null);
-            form.resetFields();
-            setIsModalVisible(true);
-          }}
-        >
-          Thêm bác sĩ
-        </Button>
       </div>
 
       <Table
         className="doctors-table"
         columns={columns}
-        dataSource={filteredData}
+        dataSource={data}
         pagination={{ pageSize: 5 }}
+        loading={loading}
       />
 
       <Modal
         className="doctors-modal"
-        title={editingDoctor ? 'Chỉnh sửa bác sĩ' : 'Thêm bác sĩ mới'}
+        title="Chỉnh sửa bác sĩ"
         open={isModalVisible}
         onCancel={() => {
           setIsModalVisible(false);
           setEditingDoctor(null);
+          form.resetFields();
         }}
         onOk={() => {
           form
             .validateFields()
-            .then(handleAddOrEditDoctor)
+            .then(handleEditDoctor)
             .catch((info) => console.log('Validate Failed:', info));
         }}
-        okText={editingDoctor ? 'Cập nhật' : 'Thêm'}
+        okText="Cập nhật"
         cancelText="Hủy"
         closable={false}
       >
         <Form form={form} layout="vertical" className="doctors-form">
           <Form.Item
-            name="name"
+            name="fullName"
             label="Họ và Tên"
             rules={[{ required: true, message: 'Vui lòng nhập họ tên bác sĩ' }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="specialty"
+            name="specialization"
             label="Chuyên môn"
             rules={[{ required: true, message: 'Vui lòng nhập chuyên môn' }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="status"
-            label="Trạng thái"
-            rules={[{ required: true, message: 'Chọn trạng thái hoạt động' }]}
-          >
-            <Select>
-              <Option value="Active">Đang hoạt động</Option>
-              <Option value="Inactive">Tạm nghỉ</Option>
-            </Select>
+          <Form.Item name="email">
+            <Input disabled />
+          </Form.Item>
+          <Form.Item name="phone">
+            <Input disabled />
+          </Form.Item>
+          <Form.Item name="licenseNumber">
+            <Input />
+          </Form.Item>
+          <Form.Item name="education">
+            <Input />
+          </Form.Item>
+          <Form.Item name="experienceYears">
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item name="description">
+            <Input.TextArea />
           </Form.Item>
         </Form>
       </Modal>

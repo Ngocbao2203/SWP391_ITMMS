@@ -45,6 +45,7 @@ export const API_ENDPOINTS = {
     GET_FEEDBACK: (id) => `/doctors/${id}/feedback`,
     GET_APPOINTMENTS: (id) => `/doctors/${id}/appointments`,
     GET_AVAILABLE: '/doctors/available',
+    UPDATE_AVAILABILITY: (id) => `/doctors/${id}/availability`,
     TEST: '/doctors/test'
   },
 
@@ -122,6 +123,15 @@ export const API_ENDPOINTS = {
     SEARCH: '/guest/search'
   },
 
+    // Blog APIs
+  BLOG: {
+    BASE: '/blog',
+    GET_ALL: '/blog',
+    GET_BY_ID: (id) => `/blog/${id}`,
+    CREATE: '/blog/create',
+    UPDATE: (id) => `/blog/update/${id}`,
+    DELETE: (id) => `/blog/delete/${id}`
+  },
   // Dashboard APIs (Admin/Manager)
   DASHBOARD: {
     BASE: '/dashboard',

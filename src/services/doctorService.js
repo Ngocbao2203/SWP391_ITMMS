@@ -9,10 +9,10 @@ class DoctorService {
   async getAllDoctors(filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.DOCTORS.GET_ALL}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.DOCTORS.GET_ALL}?${queryParams}` :
         API_ENDPOINTS.DOCTORS.GET_ALL;
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -75,6 +75,31 @@ class DoctorService {
       };
     }
   }
+  /**
+   * Cập nhật trạng thái isAvailable cho bác sĩ
+   * @param {number} doctorId 
+   * @param {boolean} isAvailable 
+   */
+  async updateDoctorAvailability(doctorId, isAvailable) {
+    try {
+      console.log("Sending PUT data:", JSON.stringify({ isAvailable }));
+      const response = await apiService.put(
+        API_ENDPOINTS.DOCTORS.UPDATE_AVAILABILITY(doctorId),
+        { isAvailable }
+      );
+      return {
+        success: true,
+        message: 'Cập nhật trạng thái thành công',
+        data: response
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || 'Cập nhật trạng thái thất bại',
+        errors: error.getValidationErrors?.()
+      };
+    }
+  }
 
   /**
    * Tìm kiếm doctors
@@ -84,7 +109,6 @@ class DoctorService {
     try {
       const queryParams = new URLSearchParams(searchParams).toString();
       const endpoint = `${API_ENDPOINTS.DOCTORS.SEARCH}?${queryParams}`;
-      
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -99,10 +123,10 @@ class DoctorService {
   async getAvailableDoctors(filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.DOCTORS.GET_AVAILABLE}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.DOCTORS.GET_AVAILABLE}?${queryParams}` :
         API_ENDPOINTS.DOCTORS.GET_AVAILABLE;
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -118,10 +142,10 @@ class DoctorService {
   async getDoctorFeedback(doctorId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.DOCTORS.GET_FEEDBACK(doctorId)}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.DOCTORS.GET_FEEDBACK(doctorId)}?${queryParams}` :
         API_ENDPOINTS.DOCTORS.GET_FEEDBACK(doctorId);
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -137,10 +161,10 @@ class DoctorService {
   async getDoctorAppointments(doctorId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.DOCTORS.GET_APPOINTMENTS(doctorId)}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.DOCTORS.GET_APPOINTMENTS(doctorId)}?${queryParams}` :
         API_ENDPOINTS.DOCTORS.GET_APPOINTMENTS(doctorId);
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -171,7 +195,7 @@ class DoctorService {
         order: 'desc',
         limit: limit
       };
-      
+
       return await this.getAllDoctors(filters);
     } catch (error) {
       throw error;
@@ -232,10 +256,10 @@ class DoctorService {
     try {
       // Lấy tất cả appointments
       const appointments = await this.getDoctorAppointments(doctorId, filters);
-      
+
       // Lấy feedback
       const feedback = await this.getDoctorFeedback(doctorId);
-      
+
       // Tính toán statistics
       const stats = {
         totalAppointments: appointments.appointments?.length || 0,
@@ -268,26 +292,26 @@ class DoctorService {
       });
 
       const bookedSlots = appointments.appointments?.map(apt => apt.timeSlot) || [];
-      
+
       // Tạo tất cả time slots trong working hours
       const [startHour, startMinute] = workingHours[0].split(':').map(Number);
       const [endHour, endMinute] = workingHours[1].split(':').map(Number);
-      
+
       const startTime = startHour * 60 + startMinute;
       const endTime = endHour * 60 + endMinute;
-      
+
       const availableSlots = [];
-      
+
       for (let time = startTime; time < endTime; time += slotDuration) {
         const hours = Math.floor(time / 60);
         const minutes = time % 60;
         const timeSlot = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}-${Math.floor((time + slotDuration) / 60).toString().padStart(2, '0')}:${((time + slotDuration) % 60).toString().padStart(2, '0')}`;
-        
+
         if (!bookedSlots.includes(timeSlot)) {
           availableSlots.push(timeSlot);
         }
       }
-      
+
       return availableSlots;
     } catch (error) {
       throw error;
