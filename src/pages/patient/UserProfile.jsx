@@ -44,7 +44,7 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import MainLayout from '../../layouts/MainLayout';
-import { getPublishedBlogs } from '../../services/blogService';
+// import { getPublishedBlogs } from '../../services/blogService';
 import authService from '../../services/authService';
 import '../../styles/UserProfile.css';
 
@@ -75,8 +75,8 @@ const UserProfile = () => {  const [form] = Form.useForm();
           // TODO: Thay thế bằng API call đến backend
           // VD: const response = await axios.get('/api/blogs/published');
           // const data = response.data;
-          const data = await getPublishedBlogs();
-          setArticles(data);
+          // const data = await getPublishedBlogs();
+          // setArticles(data);
         } catch (error) {
           console.error('Error fetching articles:', error);
           message.error('Không thể tải bài viết. Vui lòng thử lại sau.');

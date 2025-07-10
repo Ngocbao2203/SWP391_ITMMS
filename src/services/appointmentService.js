@@ -1,6 +1,33 @@
-import apiService from "./api";
-import { API_ENDPOINTS } from "./apiConstants";
+import apiService from './api';
+import { API_ENDPOINTS } from './apiConstants';
+import dayjs from 'dayjs'; // Thư viện để xử lý ngày giờ, nếu có
 
+// Hàm format ngày giờ (có thể tách ra file riêng nếu dùng nhiều nơi)
+const formatDateTimeForAPI = (dateString) => {
+  try {
+    // Ưu tiên dùng dayjs nếu có
+    if (typeof dayjs !== 'undefined') {
+      return dayjs(dateString).format('YYYY-MM-DDTHH:mm:ss');
+    }
+
+    // Fallback dùng Date object
+    const date = new Date(dateString);
+    const pad = (num) => num.toString().padStart(2, '0');
+
+    return [
+      date.getFullYear(),
+      pad(date.getMonth() + 1),
+      pad(date.getDate())
+    ].join('-') + 'T' + [
+      pad(date.getHours()),
+      pad(date.getMinutes()),
+      pad(date.getSeconds())
+    ].join(':');
+  } catch (error) {
+    console.error('Lỗi định dạng ngày:', error);
+    return dateString; // Trả về nguyên bản nếu không format được
+  }
+};
 class AppointmentService {
   /**
    * Đặt lịch hẹn mới
@@ -8,24 +35,27 @@ class AppointmentService {
    */
   async bookAppointment(appointmentData) {
     try {
+      // 👇 Đảm bảo dùng đúng endpoint CREATE
       const response = await apiService.post(
-        API_ENDPOINTS.APPOINTMENTS.CREATE,
-        appointmentData
+        API_ENDPOINTS.APPOINTMENTS.CREATE, // '/api/Appointments'
+        {
+          ...appointmentData,
+          // 👇 Format lại dữ liệu theo yêu cầu API
+          appointmentDate: dayjs(appointmentData.appointmentDate).format('YYYY-MM-DDTHH:mm:ss'),
+          notes: appointmentData.notes || ""
+        }
       );
-      return {
-        success: true,
-        message: "Đặt lịch hẹn thành công",
-        data: response.data || response,
-      };
+      return { success: true, data: response };
     } catch (error) {
-      const responseData = error?.data;
-      console.error("🔥 Lỗi chi tiết từ backend:", responseData);
+      console.error('🔥 Lỗi đặt lịch:', {
+        url: error.config?.url,
+        status: error.response?.status,
+        data: error.response?.data
+      });
       return {
         success: false,
-        message:
-          responseData?.message || error.message || "Đặt lịch hẹn thất bại",
-        errors: responseData?.errors || [],
-        raw: responseData,
+        message: error.response?.data?.message || 'Đặt lịch thất bại',
+        errors: error.response?.data?.errors || []
       };
     }
   }
@@ -103,9 +133,19 @@ class AppointmentService {
    */
   async getAvailableSlots(doctorId, date) {
     try {
-      const endpoint = `${API_ENDPOINTS.APPOINTMENTS.GET_AVAILABLE_SLOTS}?doctorId=${doctorId}&date=${date}`;
-      return await apiService.get(endpoint);
+      const response = await apiService.get(
+        API_ENDPOINTS.APPOINTMENTS.GET_AVAILABLE_SLOTS,
+        {
+          params: { doctorId, date } // Truyền params đúng cách
+        }
+      );
+      return response.data;
     } catch (error) {
+      console.error('Lỗi lấy khung giờ:', {
+        url: error.config?.url,
+        params: error.config?.params,
+        error: error.response?.data
+      });
       throw error;
     }
   }
@@ -208,21 +248,11 @@ class AppointmentService {
 
   /**
    * Hoàn thành lịch hẹn
-   * @param {number} appointmentId
-   * @param {boolean} hasVisited - Đã từng khám hay chưa
-   * @param {number|null} treatmentPlanId - ID của kế hoạch điều trị (nếu đã từng khám)
+   * @param {number} appointmentId 
    */
-  async completeAppointment(
-    appointmentId,
-    hasVisited = false,
-    treatmentPlanId = null
-  ) {
+  async completeAppointment(appointmentId) {
     try {
-      const updateData = {
-        status: "Completed",
-        treatmentPlanId: hasVisited ? treatmentPlanId : null, // null nếu chưa khám, hoặc ID nếu đã khám
-      };
-      return await this.updateAppointment(appointmentId, updateData);
+      return await this.updateAppointment(appointmentId, { status: 'Completed' });
     } catch (error) {
       throw error;
     }

@@ -53,11 +53,11 @@ class AuthService {
         role: userData.role || 'Customer',
         confirmPassword: userData.password,
       };
-      
+
       console.log('📤 Sending registration data:', registrationData);
       const response = await apiService.post(API_ENDPOINTS.AUTH.REGISTER, registrationData);
       console.log('📥 Registration response:', response);
-      
+
       if (response && (response.message || response.user)) {
         return {
           success: true,
@@ -66,7 +66,7 @@ class AuthService {
           user: response.user,
         };
       }
-      
+
       return {
         success: false,
         message: 'Đăng ký thất bại',
@@ -90,10 +90,10 @@ class AuthService {
       console.log('📤 Sending login request:', credentials);
       const response = await apiService.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
       console.log('📥 Login response:', response);
-      
+
       if (response && response.user) {
         const user = response.user;
-        
+
         // Đảm bảo token được gán từ response
         if (response.token) {
           user.token = response.token; // Gán token vào user object
@@ -116,7 +116,7 @@ class AuthService {
           user: user,
         };
       }
-      
+
       return {
         success: false,
         message: response.message || 'Email hoặc mật khẩu không đúng',
@@ -136,6 +136,8 @@ class AuthService {
    */
   logout() {
     this.removeUserFromStorage();
+    this.currentUser = null; // 🔥 THÊM DÒNG NÀY để xoá RAM
+    console.log("User logged out");
     return {
       success: true,
       message: 'Đăng xuất thành công',
@@ -162,11 +164,11 @@ class AuthService {
    */
   hasRole(roles) {
     if (!this.currentUser) return false;
-    
+
     if (Array.isArray(roles)) {
       return roles.includes(this.currentUser.role);
     }
-    
+
     return this.currentUser.role === roles;
   }
 
@@ -217,12 +219,12 @@ class AuthService {
   async updateProfile(userId, profileData) {
     try {
       const response = await apiService.put(`/auth/profile?id=${userId}`, profileData);
-      
+
       if (this.currentUser && this.currentUser.id === userId) {
         const updatedUser = { ...this.currentUser, ...profileData };
         this.saveUserToStorage(updatedUser);
       }
-      
+
       return {
         success: true,
         message: 'Cập nhật profile thành công',
