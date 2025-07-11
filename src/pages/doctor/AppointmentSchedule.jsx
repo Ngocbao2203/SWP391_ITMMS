@@ -14,6 +14,7 @@ import {
   Col,
   Typography,
   Spin,
+  DatePicker,
 } from "antd";
 import {
   CalendarOutlined,
@@ -70,7 +71,9 @@ const AppointmentSchedule = () => {
     const fetchAppointments = async () => {
       setLoading(true);
 
-      //      // Log current user info when fetching appointments
+      // Log current user info when fetching appointments
+      // Import authService
+      const authService = require("../../services/authService").default;
       const currentUser = authService.getCurrentUser();
       if (currentUser) {
         console.log("Doctor fetching appointments - User info:", {
@@ -201,8 +204,9 @@ const AppointmentSchedule = () => {
     setLoading(true);
 
     try {
-      // Import doctorService từ services
+      // Import doctorService và authService từ services
       const doctorService = require("../../services/doctorService").default;
+      const authService = require("../../services/authService").default;
 
       // Lấy thông tin người dùng hiện tại
       const currentUser = authService.getCurrentUser();
