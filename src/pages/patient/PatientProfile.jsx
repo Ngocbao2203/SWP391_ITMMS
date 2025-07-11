@@ -66,11 +66,24 @@ const PatientProfile = () => {
   }, []);
 
   useEffect(() => {
-    if (userData && userData.id) {
-      console.log("🧪 Fetching medical history for user ID:", userData.id);
-      treatmentService.getCustomerTreatmentPlans(userData.id)
+    const storedUser = authService.getCurrentUser();
+    if (storedUser && storedUser.customer?.id) {
+      setLoading(true);
+      const customerId = storedUser.customer.id;
+      console.log("Loading profile for customer ID:", customerId);
+
+      // Gọi API và set userData
+      setUserData({
+        ...storedUser,
+        ...storedUser.customer, // gộp customer fields như birthDate, gender nếu cần
+      });
+
+      // Lịch sử điều trị
+      treatmentService.getCustomerTreatmentPlans(customerId)
         .then(data => setTreatments(Array.isArray(data) ? data : []))
         .catch(() => setTreatments([]));
+
+      // Lịch hẹn
       guestService.getMyAppointments()
         .then(response => {
           console.log("Appointments loaded:", response.data.appointments);
@@ -80,18 +93,24 @@ const PatientProfile = () => {
           console.error('Failed to fetch appointments:', error);
           setAppointments([]);
         });
-      patientService.getPatientMedicalHistory(userData.id)
+
+      // Lịch sử y tế
+      patientService.getPatientMedicalHistory(customerId)
         .then(response => {
-          const records = response?.data?.medicalRecords || response?.data || []; // fallback hợp lý
+          const records = response?.data?.medicalRecords || response || [];
           console.log("Medical history loaded:", records);
-          setMedicalHistory(Array.isArray(response.data) ? response.data : []);
+          setMedicalHistory(Array.isArray(records) ? records : []);
         })
         .catch(error => {
           console.error('Failed to fetch medical history:', error);
           setMedicalHistory([]);
-        });
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
-  }, [userData]);
+  }, []);
+
 
   const handleTabChange = (key) => {
     setActiveTab(key);
