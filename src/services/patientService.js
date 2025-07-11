@@ -15,6 +15,9 @@ class PatientService {
         API_ENDPOINTS.MEDICAL_RECORDS.GET_PATIENT_HISTORY(customerId);
 
       const response = await apiService.get(endpoint);
+      if (response.headers) {
+        return response.data;
+      }
       return response;
     } catch (error) {
       throw error;
