@@ -51,7 +51,7 @@ const AppRouter = () => {
       <Route path="/blog" element={<BlogList />} />
       <Route path="/blog/:id" element={<BlogDetail />} />
       <Route path="/doctors" element={<DoctorList />} />
-      <Route path="/doctors/:id" element={<DoctorProfile />} />{" "}
+      <Route path="/doctors/:id" element={<DoctorProfile />} />
       <Route path="/services/:serviceId" element={<ServiceDetail />} />
 
       <Route path="/bookappointment" element={<BookAppointment />} />

@@ -1,272 +1,128 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Typography, Button, Breadcrumb, message, Tag } from "antd";
+import { Card, Typography, Button, Breadcrumb, message, Tag, Spin } from "antd";
 import {
-  ArrowLeftOutlined,
   CalendarOutlined,
   MessageOutlined,
   TrophyOutlined,
-  StarOutlined,
-  UserOutlined,
   MedicineBoxOutlined,
-  CheckCircleOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layouts/MainLayout";
-import "../../styles/DoctorProfile.css";
+import guestService from "../../services/guestService";
 
 const { Title, Paragraph, Text } = Typography;
-
-// Dữ liệu chi tiết bác sĩ mở rộng
-const doctorsDetailData = {
-  1: {
-    id: 1,
-    name: "Bác sĩ Nguyễn Văn An",
-    specialty: "Chuyên gia IVF",
-    experience: "15 năm kinh nghiệm",
-    rating: 4.9,
-    reviewCount: 156,
-    successfulCases: 1250,
-    patientsCount: 890,
-    photo:
-      "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-    description:
-      "Bác sĩ Nguyễn Văn An là chuyên gia hàng đầu trong lĩnh vực thụ tinh trong ống nghiệm (IVF) với hơn 15 năm kinh nghiệm. Ông đã giúp hàng ngàn cặp vợ chồng hiếm muộn có con thành công. Với tỷ lệ thành công cao và phong cách tư vấn tận tâm, bác sĩ An được nhiều bệnh nhân tin tưởng và yêu mến.",
-    achievements: [
-      "Tiến sĩ Y khoa - Đại học Y Hà Nội",
-      "Chứng chỉ IVF quốc tế - ESHRE",
-      "Giải thưởng bác sĩ xuất sắc 2023",
-      "Chủ nhiệm khoa IVF - Bệnh viện Phụ sản Trung ương",
-      "Tác giả 25+ nghiên cứu khoa học quốc tế",
-    ],
-    specializations: [
-      "IVF",
-      "ICSI",
-      "Phôi đông lạnh",
-      "PGT",
-      "Tư vấn di truyền",
-    ],
-    education: "Tiến sĩ Y khoa - Đại học Y Hà Nội (2008)",
-    hospital: "Bệnh viện Phụ sản Trung ương",
-    reviews: [
-      {
-        id: 1,
-        patientName: "Chị Hoàng Minh",
-        rating: 5,
-        date: "15/01/2025",
-        content:
-          "Bác sĩ An rất tận tâm và chu đáo. Sau 3 năm hiếm muộn, nhờ bác sĩ mà tôi đã có con. Rất biết ơn bác sĩ!",
-      },
-      {
-        id: 2,
-        patientName: "Anh Tuấn Anh",
-        rating: 5,
-        date: "10/01/2025",
-        content:
-          "Quy trình IVF được giải thích rất kỹ, bác sĩ luôn theo dõi sát sao. Vợ chồng tôi rất hài lòng.",
-      },
-      {
-        id: 3,
-        patientName: "Chị Thanh Hoa",
-        rating: 4,
-        date: "05/01/2025",
-        content:
-          "Bác sĩ giàu kinh nghiệm, tư vấn rất chi tiết. Thái độ thân thiện, dễ gần.",
-      },
-    ],
-  },
-  2: {
-    id: 2,
-    name: "Bác sĩ Trần Thị Bình",
-    specialty: "Chuyên gia IUI",
-    experience: "12 năm kinh nghiệm",
-    rating: 4.8,
-    reviewCount: 134,
-    successfulCases: 780,
-    patientsCount: 650,
-    photo:
-      "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-    description:
-      "Bác sĩ Trần Thị Bình chuyên về thụ tinh nhân tạo (IUI) và tư vấn điều trị hiếm muộn. Bà được biết đến với phong cách tư vấn tận tình và chu đáo, luôn lắng nghe và chia sẻ với các cặp vợ chồng khó khăn.",
-    achievements: [
-      "Thạc sĩ Y khoa - Đại học Y TP.HCM",
-      "Chứng chỉ IUI chuyên sâu",
-      "Giảng viên trường Đại học Y",
-      "10+ năm kinh nghiệm lâm sàng",
-      "Tỷ lệ thành công IUI: 85%",
-    ],
-    specializations: [
-      "IUI",
-      "Tư vấn hiếm muộn",
-      "Điều trị hormone",
-      "Siêu âm âm đạo",
-    ],
-    education: "Thạc sĩ Y khoa - Đại học Y TP.HCM (2012)",
-    hospital: "Phòng khám Chuyên khoa IUI",
-    reviews: [
-      {
-        id: 1,
-        patientName: "Chị Mai Linh",
-        rating: 5,
-        date: "18/01/2025",
-        content:
-          "Bác sĩ Bình rất tận tâm, giải thích rất dễ hiểu. Lần đầu IUI đã thành công luôn.",
-      },
-      {
-        id: 2,
-        patientName: "Chị Phương Anh",
-        rating: 4,
-        date: "12/01/2025",
-        content: "Quy trình chuyên nghiệp, bác sĩ theo dõi sát sao từng bước.",
-      },
-    ],
-  },
-  3: {
-    id: 3,
-    name: "Bác sĩ Phạm Văn Tuấn",
-    specialty: "Chuyên gia ICSI",
-    experience: "16 năm kinh nghiệm",
-    rating: 4.9,
-    reviewCount: 178,
-    successfulCases: 950,
-    patientsCount: 720,
-    photo:
-      "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-    description:
-      "Bác sĩ Phạm Văn Tuấn là chuyên gia hàng đầu về kỹ thuật tiêm tinh trùng vào bào tương noãn (ICSI), đặc biệt hiệu quả trong các trường hợp vô sinh nam nghiêm trọng. Với 16 năm kinh nghiệm, ông đã giúp nhiều gia đình có con với các trường hợp vô sinh phức tạp.",
-    achievements: [
-      "Tiến sĩ Y khoa - Đại học Y Dược TP.HCM",
-      "Chứng chỉ ICSI quốc tế",
-      "Chuyên gia đào tạo ICSI tại châu Á",
-      "Giải thưởng nghiên cứu xuất sắc 2022",
-      "Tỷ lệ thành công ICSI: 78%",
-    ],
-    specializations: [
-      "ICSI",
-      "Điều trị vô sinh nam",
-      "Tư vấn di truyền",
-      "Thụ tinh ống nghiệm nâng cao",
-    ],
-    education: "Tiến sĩ Y khoa - Đại học Y Dược TP.HCM (2010)",
-    hospital: "Trung tâm Hỗ trợ Sinh sản Quốc tế",
-    reviews: [
-      {
-        id: 1,
-        patientName: "Chị Ngọc Ánh",
-        rating: 5,
-        date: "20/01/2025",
-        content:
-          "Sau 5 năm điều trị vô sinh không kết quả, nhờ bác sĩ Tuấn và kỹ thuật ICSI, chúng tôi đã có được con gái xinh đẹp. Vô cùng biết ơn!",
-      },
-      {
-        id: 2,
-        patientName: "Anh Minh Khôi",
-        rating: 5,
-        date: "17/01/2025",
-        content:
-          "Bác sĩ Tuấn rất chuyên nghiệp, tận tâm và thấu hiểu. Gia đình tôi đã có con sau nhiều năm thất vọng.",
-      },
-    ],
-  },
-  4: {
-    id: 4,
-    name: "Bác sĩ Nguyễn Thị Minh",
-    specialty: "Chuyên gia IVF",
-    experience: "14 năm kinh nghiệm",
-    rating: 4.8,
-    reviewCount: 145,
-    successfulCases: 870,
-    patientsCount: 680,
-    photo:
-      "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-    description:
-      "Bác sĩ Nguyễn Thị Minh là chuyên gia IVF với nhiều kinh nghiệm trong điều trị các ca hiếm muộn phức tạp và lâu năm. Bà đã nghiên cứu và áp dụng nhiều phương pháp điều trị tiên tiến và đạt tỷ lệ thành công cao.",
-    achievements: [
-      "Tiến sĩ Nội tiết sinh sản - Đại học Y Hà Nội",
-      "Chứng chỉ IVF nâng cao - Hoa Kỳ",
-      "Giải thưởng nghiên cứu khoa học 2022",
-      "15+ công trình nghiên cứu về hỗ trợ sinh sản",
-      "Tỷ lệ thành công IVF: 73%",
-    ],
-    specializations: ["IVF", "Nội tiết sinh sản", "Tư vấn di truyền", "PGT-A"],
-    education: "Tiến sĩ Nội tiết sinh sản - Đại học Y Hà Nội (2011)",
-    hospital: "Trung tâm Nghiên cứu và Ứng dụng Kỹ thuật Sinh sản",
-    reviews: [
-      {
-        id: 1,
-        patientName: "Chị Trần Huyền",
-        rating: 5,
-        date: "22/01/2025",
-        content:
-          "Bác sĩ Minh đã tận tình hỗ trợ chúng tôi sau ba lần IVF thất bại ở nơi khác. Lần thứ tư với bác sĩ đã thành công. Rất cảm kích!",
-      },
-      {
-        id: 2,
-        patientName: "Chị Hà Linh",
-        rating: 4,
-        date: "15/01/2025",
-        content:
-          "Bác sĩ dành nhiều thời gian tư vấn, giải thích rõ ràng từng bước, giúp chúng tôi rất an tâm.",
-      },
-    ],
-  },
-  5: {
-    id: 5,
-    name: "Bác sĩ Lê Minh Tâm",
-    specialty: "Chuyên gia IUI & ICSI",
-    experience: "13 năm kinh nghiệm",
-    rating: 4.7,
-    reviewCount: 121,
-    successfulCases: 730,
-    patientsCount: 510,
-    photo:
-      "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-    description:
-      "Bác sĩ Lê Minh Tâm chuyên về cả hai kỹ thuật IUI và ICSI, giúp tư vấn linh hoạt phương pháp điều trị phù hợp nhất cho từng cặp vợ chồng dựa trên tình trạng cụ thể. Với 13 năm kinh nghiệm, bác sĩ đã giúp nhiều cặp vợ chồng hiếm muộn thực hiện ước mơ làm cha mẹ.",
-    achievements: [
-      "Thạc sĩ Y khoa - Đại học Y Hà Nội",
-      "Chứng chỉ IUI và ICSI quốc tế",
-      "Nghiên cứu sinh tại Pháp",
-      "Giải thưởng y khoa 2023",
-      "Tỷ lệ thành công: IUI 70%, ICSI 75%",
-    ],
-    specializations: ["IUI", "ICSI", "Tư vấn hiếm muộn", "Điều trị hormone"],
-    education:
-      "Thạc sĩ Y khoa - Đại học Y Hà Nội (2012), Nghiên cứu sinh tại Đại học Paris, Pháp (2014-2016)",
-    hospital: "Trung tâm Hỗ trợ Sinh sản",
-    reviews: [
-      {
-        id: 1,
-        patientName: "Chị Thu Hằng",
-        rating: 5,
-        date: "25/01/2025",
-        content:
-          "Bác sĩ Tâm đã giúp tôi lựa chọn phương pháp điều trị hiếm muộn phù hợp nhất. Sau 2 lần IUI không thành công, bác sĩ đã tư vấn chuyển sang ICSI và đã thành công. Rất biết ơn!",
-      },
-      {
-        id: 2,
-        patientName: "Anh Quốc Bảo",
-        rating: 4,
-        date: "19/01/2025",
-        content:
-          "Bác sĩ Tâm tư vấn rất tận tâm, đưa ra nhiều lựa chọn điều trị phù hợp với tình trạng và chi phí của gia đình.",
-      },
-    ],
-  },
-};
 
 const DoctorProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const doctor = doctorsDetailData[id];
+  const [doctor, setDoctor] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDoctor = async () => {
+      try {
+        setLoading(true);
+        const response = await guestService.getPublicDoctorDetails(id);
+        console.log("API Response:", response);
+        const doctorData = response.data || {};
+        const mappedDoctor = {
+          id: doctorData.id,
+          name: doctorData.doctorName || "Không rõ tên",
+          specialty: doctorData.specialization || "Không rõ chuyên khoa",
+          experience: doctorData.experienceYears
+            ? `${doctorData.experienceYears} năm kinh nghiệm`
+            : "Không rõ kinh nghiệm",
+          rating: doctorData.averageRating || 0,
+          reviewCount: doctorData.totalFeedbacks || 0,
+          patientsCount: doctorData.totalPatients || 0,
+          photo:
+            doctorData.photo ||
+            "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
+          description: doctorData.description || "Không có mô tả",
+          education: doctorData.education || "Không rõ học vấn",
+          licenseNumber: doctorData.licenseNumber || "Không rõ",
+          consultationFee: Number(doctorData.consultationFee) || 0,
+        };
+        setDoctor(mappedDoctor);
+      } catch (error) {
+        console.error("Error fetching doctor:", error);
+        message.error("Không thể tải thông tin bác sĩ");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDoctor();
+  }, [id]);
+
+  const handleBookConsultation = () => {
+    message.success(
+      `Đã gửi yêu cầu đặt lịch tư vấn với ${doctor.name}. Chúng tôi sẽ liên hệ với bạn trong 24h!`
+    );
+  };
+
+  const handleContactDoctor = () => {
+    message.info(
+      "Tính năng nhắn tin trực tiếp với bác sĩ sẽ được phát triển trong phiên bản tiếp theo."
+    );
+  };
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <div style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+          padding: '20px 0'
+        }}>
+          <div style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '0 20px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '400px'
+          }}>
+            <Spin size="large" tip="Đang tải..." />
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   if (!doctor) {
     return (
       <MainLayout>
-        <div className="doctor-profile-page">
-          <div className="doctor-profile-container">
-            <div className="doctor-not-found">
-              <Title level={3}>Không tìm thấy thông tin bác sĩ</Title>
-              <Button type="primary" onClick={() => navigate("/doctors")}>
+        <div style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+          padding: '20px 0'
+        }}>
+          <div style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '0 20px'
+          }}>
+            <div style={{
+              textAlign: 'center',
+              padding: '60px 20px',
+              background: 'white',
+              borderRadius: '20px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)'
+            }}>
+              <Title level={3} style={{ color: '#666', marginBottom: '20px' }}>
+                Không tìm thấy thông tin bác sĩ
+              </Title>
+              <Button 
+                type="primary" 
+                onClick={() => navigate("/doctors")}
+                style={{
+                  borderRadius: '12px',
+                  height: '44px',
+                  padding: '0 24px',
+                  fontWeight: '600'
+                }}
+              >
                 Quay lại danh sách bác sĩ
               </Button>
             </div>
@@ -276,329 +132,433 @@ const DoctorProfile = () => {
     );
   }
 
-  const handleBookConsultation = () => {
-    message.success(
-      `Đã gửi yêu cầu đặt lịch tư vấn với ${doctor.name}. Chúng tôi sẽ liên hệ với bạn trong 24h!`
-    );
-  };
-  const handleContactDoctor = () => {
-    message.info(
-      "Tính năng nhắn tin trực tiếp với bác sĩ sẽ được phát triển trong phiên bản tiếp theo."
-    );
-  };
-
   return (
     <MainLayout>
-      <div className="doctor-profile-page">
-        <div className="doctor-profile-container">
-          {" "}
-          {/* Navigation Bar with Breadcrumb and Back Button */}
-          <div className="navigation-bar">
-            {/* Breadcrumb */}
-            <div className="breadcrumb-section">
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        padding: '20px 0'
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 20px'
+        }}>
+          {/* Navigation Bar */}
+          <div style={{ marginBottom: '30px' }}>
+            <div style={{
+              background: 'white',
+              padding: '12px 20px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
+            }}>
               <Breadcrumb>
                 <Breadcrumb.Item>
-                  {" "}
-                  <a href="/" className="breadcrumb-link">
+                  <a href="/guest" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    color: '#666',
+                    textDecoration: 'none'
+                  }}>
                     <svg
                       viewBox="0 0 24 24"
                       width="14"
                       height="14"
                       stroke="currentColor"
                       fill="none"
-                      className="breadcrumb-icon"
+                      style={{ flexShrink: 0 }}
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
                         d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                      ></path>
+                      />
                     </svg>
                     Trang chủ
                   </a>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
-                  {" "}
-                  <a href="/doctors" className="breadcrumb-link">
+                  <a href="/doctors" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    color: '#666',
+                    textDecoration: 'none'
+                  }}>
                     <svg
                       viewBox="0 0 24 24"
                       width="14"
                       height="14"
                       stroke="currentColor"
                       fill="none"
-                      className="breadcrumb-icon"
+                      style={{ flexShrink: 0 }}
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
                         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                      ></path>
+                      />
                     </svg>
                     Danh sách bác sĩ
                   </a>
-                </Breadcrumb.Item>{" "}
-                <Breadcrumb.Item className="breadcrumb-current">
+                </Breadcrumb.Item>
+                <Breadcrumb.Item style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  color: '#1890ff',
+                  fontWeight: '500'
+                }}>
                   <svg
                     viewBox="0 0 24 24"
                     width="14"
                     height="14"
                     stroke="currentColor"
                     fill="none"
-                    className="breadcrumb-icon"
+                    style={{ flexShrink: 0 }}
                   >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth="2"
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    ></path>
+                    />
                   </svg>
                   {doctor.name}
                 </Breadcrumb.Item>
-              </Breadcrumb>{" "}
+              </Breadcrumb>
             </div>
-          </div>{" "}
-          {/* Doctor Header */}
-          <Card className="doctor-header-card" data-aos="fade-up">
-            {" "}
-            <div className="doctor-header-content">
-              <div className="doctor-avatar-section">
-                <div className="doctor-avatar-image-container">
+          </div>
+
+          {/* Doctor Header Card */}
+          <Card style={{
+            borderRadius: '20px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+            border: 'none',
+            marginBottom: '30px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              display: 'flex',
+              gap: '40px',
+              alignItems: 'flex-start',
+              padding: '20px'
+            }}>
+              {/* Doctor Avatar Section */}
+              <div style={{
+                flexShrink: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '20px'
+              }}>
+                <div style={{
+                  position: 'relative',
+                  width: '200px',
+                  height: '200px',
+                  borderRadius: '20px',
+                  overflow: 'hidden',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)'
+                }}>
                   <img
                     src={doctor.photo}
                     alt={doctor.name}
-                    className="doctor-main-photo"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
                   />
                 </div>
-                <div className="specialty-badge">
-                  <MedicineBoxOutlined style={{ marginRight: "6px" }} />
+                <div style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+                }}>
+                  <MedicineBoxOutlined style={{ marginRight: '6px' }} />
                   {doctor.specialty}
                 </div>
-              </div>{" "}
-              <div className="doctor-info-section">
-                {" "}
-                <div>
-                  <Title level={1} className="doctor-profile-name">
-                    {doctor.name}
-                  </Title>
-                </div>{" "}
-                <div className="doctor-quick-stats">
-                  <div className="stat-item">
-                    <span className="stat-number stat-number-experience">
+              </div>
+
+              {/* Doctor Info Section */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <Title level={1} style={{
+                  color: '#2c3e50',
+                  marginBottom: '20px',
+                  fontSize: '36px',
+                  fontWeight: '700',
+                  lineHeight: '1.2'
+                }}>
+                  {doctor.name}
+                </Title>
+
+                <div style={{
+                  display: 'flex',
+                  gap: '30px',
+                  marginBottom: '25px',
+                  padding: '20px',
+                  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                  borderRadius: '16px',
+                  border: '1px solid #e9ecef'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    flex: 1
+                  }}>
+                    <span style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#1890ff',
+                      marginBottom: '4px'
+                    }}>
                       {doctor.experience.split(" ")[0]}
                     </span>
-                    <span className="stat-label">Năm kinh nghiệm</span>
-                    <div className="stat-background stat-background-experience"></div>
-                  </div>{" "}
-                  <div className="stat-item">
-                    <span className="stat-number stat-number-success">
-                      {doctor.successfulCases}+
+                    <span style={{
+                      fontSize: '14px',
+                      color: '#666',
+                      fontWeight: '500'
+                    }}>
+                      Năm kinh nghiệm
                     </span>
-                    <span className="stat-label">Ca thành công</span>
-                    <div className="stat-background stat-background-success"></div>
-                  </div>{" "}
-                  <div className="stat-item">
-                    <span className="stat-number stat-number-patients">
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    flex: 1
+                  }}>
+                    <span style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#1890ff',
+                      marginBottom: '4px'
+                    }}>
                       {doctor.patientsCount}+
                     </span>
-                    <span className="stat-label">Bệnh nhân</span>
-                    <div className="stat-background stat-background-patients"></div>{" "}
+                    <span style={{
+                      fontSize: '14px',
+                      color: '#666',
+                      fontWeight: '500'
+                    }}>
+                      Bệnh nhân
+                    </span>
                   </div>
-                </div>{" "}
-                <Paragraph className="doctor-overview">
-                  <div className="quote-mark">❝</div>
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    flex: 1
+                  }}>
+                    <span style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#1890ff',
+                      marginBottom: '4px'
+                    }}>
+                      {doctor.consultationFee.toLocaleString()}đ
+                    </span>
+                    <span style={{
+                      fontSize: '14px',
+                      color: '#666',
+                      fontWeight: '500'
+                    }}>
+                      Phí tư vấn
+                    </span>
+                  </div>
+                </div>
+
+                <Paragraph style={{
+                  color: '#555',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  marginBottom: '30px'
+                }}>
                   {doctor.description}
                 </Paragraph>
-                <div className="action-buttons">
-                  {" "}
+
+                <div style={{ display: 'flex', gap: '16px' }}>
                   <Button
                     type="primary"
                     size="large"
                     icon={<CalendarOutlined />}
-                    className="book-consultation-btn"
                     onClick={handleBookConsultation}
+                    style={{
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      border: 'none',
+                      borderRadius: '12px',
+                      height: '48px',
+                      padding: '0 24px',
+                      fontWeight: '600',
+                      fontSize: '16px',
+                      boxShadow: '0 4px 16px rgba(102, 126, 234, 0.3)'
+                    }}
                   >
-                    Đặt lịch tư vấn
-                  </Button>{" "}
+                    Đặt lịch
+                  </Button>
                   <Button
                     size="large"
                     icon={<MessageOutlined />}
-                    className="contact-doctor-btn"
                     onClick={handleContactDoctor}
+                    style={{
+                      border: '2px solid #1890ff',
+                      color: '#1890ff',
+                      borderRadius: '12px',
+                      height: '48px',
+                      padding: '0 24px',
+                      fontWeight: '600',
+                      fontSize: '16px',
+                      background: 'white'
+                    }}
                   >
-                    Liên hệ bác sĩ
+                    Liên hệ
                   </Button>
                 </div>
               </div>
             </div>
-          </Card>{" "}
+          </Card>
+
           {/* Details Section */}
-          <div className="details-section">
-            {/* Achievements & Education */}{" "}
-            <Card
-              className="detail-card education-achievements-card"
-              data-aos="fade-up"
-              data-aos-delay="100"
-            >
-              {" "}
-              <Title level={3} className="detail-card-title">
-                {" "}
-                <div className="detail-card-icon">
-                  <TrophyOutlined style={{ color: "#fff", fontSize: "18px" }} />
-                </div>
-                <span>Học vấn & Thành tựu</span>
-              </Title>{" "}
-              <div className="education-achievements-container">
-                {/* Education and Hospital section with improved layout */}{" "}
-                <div className="education-section">
-                  {" "}
-                  <div className="info-section info-section-education">
-                    {" "}
-                    <div className="info-background-circle-large"></div>
-                    <div className="info-background-circle-small"></div>{" "}
-                    <Text strong className="info-title info-title-education">
-                      <div className="info-icon-container info-icon-container-education">
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="18"
-                          height="18"
-                          stroke="currentColor"
-                          fill="none"
-                          style={{ verticalAlign: "middle" }}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 14l9-5-9-5-9 5 9 5z"
-                          ></path>
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998a12.078 12.078 0 01.665-6.479L12 14z"
-                          ></path>
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998a12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
-                          ></path>
-                        </svg>
-                      </div>
-                      Học vấn
-                    </Text>{" "}
-                    <div className="info-content">
-                      <Text className="info-text">{doctor.education}</Text>
-                    </div>
-                  </div>{" "}
-                  <div className="info-section info-section-hospital">
-                    {" "}
-                    <div className="info-background-circle-large"></div>
-                    <div className="info-background-circle-small"></div>{" "}
-                    <Text strong className="info-title info-title-hospital">
-                      <div className="info-icon-container info-icon-container-hospital">
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="18"
-                          height="18"
-                          stroke="currentColor"
-                          fill="none"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                          ></path>
-                        </svg>
-                      </div>
-                      Bệnh viện/Phòng khám
-                    </Text>{" "}
-                    <div className="hospital-info-container">
-                      <Text className="hospital-info-text">
-                        {doctor.hospital}
-                      </Text>
-                    </div>
-                  </div>
-                </div>
-                {/* Achievements section */}{" "}
-                <div className="achievements-section">
-                  <div className="achievement-background-circle-large"></div>
-                  <div className="achievement-background-circle-medium"></div>
-                  <div className="achievement-background-circle-small"></div>
-                  <Text strong className="achievement-title">
-                    <div className="achievement-icon-container">
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="22"
-                        height="22"
-                        stroke="currentColor"
-                        fill="none"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                        ></path>
-                      </svg>
-                    </div>
-                    Thành tựu nổi bật
-                    <div className="achievement-title-underline"></div>
+          <Card style={{
+            borderRadius: '20px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+            border: 'none',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white'
+          }}>
+            <div style={{ padding: '10px' }}>
+              <Title level={3} style={{
+                color: 'white',
+                marginBottom: '25px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                fontSize: '24px'
+              }}>
+                <TrophyOutlined style={{ color: '#fff', fontSize: '18px' }} />
+                <span>Thông tin chi tiết</span>
+              </Title>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '20px'
+              }}>
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}>
+                  <Text strong style={{
+                    color: 'white',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    opacity: 0.9,
+                    display: 'block'
+                  }}>
+                    Học vấn:
                   </Text>
-                  <div className="achievement-grid">
-                    {" "}
-                    {doctor.achievements.map((achievement, index) => (
-                      <div key={index} className="achievement-item">
-                        <div className="achievement-icon">
-                          {" "}
-                          <CheckCircleOutlined className="achievement-check-icon" />
-                        </div>
-                        <Text className="achievement-text">{achievement}</Text>
-                      </div>
-                    ))}{" "}
-                  </div>
-                </div>
-                {/* Specializations section */}{" "}
-                <div className="specializations-section">
-                  <div className="specialization-background-circle"></div>
-                  <Text strong className="specializations-title">
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="22"
-                      height="22"
-                      stroke="currentColor"
-                      fill="none"
-                      className="specializations-icon"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-                      ></path>
-                    </svg>
-                    Chuyên môn & Kỹ thuật
+                  <Text style={{
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: '600'
+                  }}>
+                    {doctor.education}
                   </Text>
-                  <div className="specializations-list">
-                    {doctor.specializations.map((spec, index) => (
-                      <Tag
-                        key={index}
-                        color="default"
-                        className="specialization-tag"
-                      >
-                        <span className="specialization-dot"></span>
-                        {spec}
-                      </Tag>
-                    ))}
-                  </div>{" "}
+                </div>
+
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}>
+                  <Text strong style={{
+                    color: 'white',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    opacity: 0.9,
+                    display: 'block'
+                  }}>
+                    Số giấy phép:
+                  </Text>
+                  <Text style={{
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: '600'
+                  }}>
+                    {doctor.licenseNumber}
+                  </Text>
+                </div>
+
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}>
+                  <Text strong style={{
+                    color: 'white',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    opacity: 0.9,
+                    display: 'block'
+                  }}>
+                    Đánh giá:
+                  </Text>
+                  <Text style={{
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: '600'
+                  }}>
+                    {doctor.rating} ★
+                  </Text>
+                </div>
+
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}>
+                  <Text strong style={{
+                    color: 'white',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    opacity: 0.9,
+                    display: 'block'
+                  }}>
+                    Phản hồi:
+                  </Text>
+                  <Text style={{
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: '600'
+                  }}>
+                    {doctor.reviewCount}
+                  </Text>
                 </div>
               </div>
-            </Card>
-          </div>
+            </div>
+          </Card>
         </div>
       </div>
     </MainLayout>

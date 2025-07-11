@@ -10,10 +10,10 @@ class PatientService {
   async getPatientMedicalHistory(customerId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.MEDICAL_RECORDS.GET_PATIENT_HISTORY(customerId)}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.MEDICAL_RECORDS.GET_PATIENT_HISTORY(customerId)}?${queryParams}` :
         API_ENDPOINTS.MEDICAL_RECORDS.GET_PATIENT_HISTORY(customerId);
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -29,10 +29,10 @@ class PatientService {
   async getPatientTestResults(customerId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.TEST_RESULTS.GET_BY_CUSTOMER(customerId)}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.TEST_RESULTS.GET_BY_CUSTOMER(customerId)}?${queryParams}` :
         API_ENDPOINTS.TEST_RESULTS.GET_BY_CUSTOMER(customerId);
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -48,10 +48,10 @@ class PatientService {
   async getPatientTreatmentPlans(customerId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.TREATMENT_PLANS.GET_BY_CUSTOMER(customerId)}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.TREATMENT_PLANS.GET_BY_CUSTOMER(customerId)}?${queryParams}` :
         API_ENDPOINTS.TREATMENT_PLANS.GET_BY_CUSTOMER(customerId);
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -67,10 +67,10 @@ class PatientService {
   async getPatientAppointments(customerId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId)}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId)}?${queryParams}` :
         API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId);
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -86,10 +86,10 @@ class PatientService {
   async getPatientNotifications(userId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ? 
-        `${API_ENDPOINTS.NOTIFICATIONS.GET_BY_USER(userId)}?${queryParams}` : 
+      const endpoint = queryParams ?
+        `${API_ENDPOINTS.NOTIFICATIONS.GET_BY_USER(userId)}?${queryParams}` :
         API_ENDPOINTS.NOTIFICATIONS.GET_BY_USER(userId);
-      
+
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -150,23 +150,23 @@ class PatientService {
       ]);
 
       return {
-        upcomingAppointments: appointments.appointments?.filter(apt => 
-          new Date(apt.appointmentDate) > new Date() && 
+        upcomingAppointments: appointments.appointments?.filter(apt =>
+          new Date(apt.appointmentDate) > new Date() &&
           ['Scheduled', 'Confirmed'].includes(apt.status)
         ).slice(0, 3) || [],
-        
-        activeTreatmentPlans: treatmentPlans.treatmentPlans?.filter(plan => 
+
+        activeTreatmentPlans: treatmentPlans.treatmentPlans?.filter(plan =>
           plan.status === 'Active'
         ) || [],
-        
+
         recentTestResults: testResults.testResults?.slice(0, 3) || [],
-        
+
         unreadNotifications: notifications.unreadCount || 0,
-        
-        completedAppointments: appointments.appointments?.filter(apt => 
+
+        completedAppointments: appointments.appointments?.filter(apt =>
           apt.status === 'Completed'
         ).length || 0,
-        
+
         totalTreatmentPlans: treatmentPlans.treatmentPlans?.length || 0
       };
     } catch (error) {
@@ -295,7 +295,7 @@ class PatientService {
   async getPatientProfile(customerId) {
     try {
       const profile = await apiService.get(API_ENDPOINTS.AUTH.PROFILE(customerId));
-      
+
       // Lấy additional info
       const [appointments, treatmentPlans] = await Promise.all([
         this.getPatientAppointments(customerId),
@@ -334,7 +334,7 @@ class PatientService {
         medicalRecords: medicalHistory.medicalHistory || [],
         testResults: testResults.testResults || [],
         treatmentPlans: treatmentPlans.treatmentPlans || [],
-        
+
         // Summary statistics
         totalMedicalRecords: medicalHistory.medicalHistory?.length || 0,
         totalTestResults: testResults.testResults?.length || 0,
@@ -354,10 +354,10 @@ class PatientService {
   async searchMedicalRecords(customerId, searchTerm) {
     try {
       const medicalHistory = await this.getPatientMedicalHistory(customerId);
-      
+
       if (!searchTerm) return medicalHistory;
-      
-      const filteredRecords = medicalHistory.medicalHistory?.filter(record => 
+
+      const filteredRecords = medicalHistory.medicalHistory?.filter(record =>
         record.symptoms?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.diagnosis?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.treatment?.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -8,6 +8,7 @@ export { default as treatmentService } from './treatmentService';
 export { default as guestService } from './guestService';
 export { default as adminService } from './adminService';
 export { default as treatmentPlans } from './treatmentPlans'; // Thêm export cho treatmentPlans
+export { default as blogService } from './blogService'; // Thêm export cho blogService
 
 // Export constants
 export * from './apiConstants';
@@ -28,6 +29,7 @@ class ApiServiceFacade {
     this.guest = require('./guestService').default;
     this.admin = require('./adminService').default;
     this.plans = require('./treatmentPlans').default; // Thêm vào facade
+    this.blogs = require('./blogService').default; // Thêm vào facade
   }
 
   /**

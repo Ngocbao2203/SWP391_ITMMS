@@ -19,103 +19,10 @@ import {
 } from "@ant-design/icons";
 import MainLayout from "../../layouts/MainLayout";
 import "../../styles/DoctorList.css";
+import guestService from "../../services/guestService";
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
-
-// Dữ liệu mẫu bác sĩ mở rộng - Chỉ giữ lại bác sĩ chuyên về IVF, IUI, ICSI
-const doctorsData = [
-  {
-    id: 1,
-    name: "Bác sĩ Nguyễn Văn An",
-    specialty: "Chuyên gia IVF",
-    experience: "15 năm kinh nghiệm",
-    rating: 4.9,
-    reviewCount: 156,
-    photo:
-      "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-    description:
-      "Bác sĩ Nguyễn Văn An là chuyên gia hàng đầu trong lĩnh vực thụ tinh trong ống nghiệm (IVF) với hơn 15 năm kinh nghiệm. Ông đã giúp hàng ngàn cặp vợ chồng hiếm muộn có con thành công.",
-    achievements: [
-      "Tiến sĩ Y khoa",
-      "Chứng chỉ IVF quốc tế",
-      "Giải thưởng bác sĩ xuất sắc 2023",
-    ],
-    availability: "Thứ 2-6: 8:00-17:00",
-  },
-  {
-    id: 2,
-    name: "Bác sĩ Trần Thị Bình",
-    specialty: "Chuyên gia IUI",
-    experience: "12 năm kinh nghiệm",
-    rating: 4.8,
-    reviewCount: 134,
-    photo:
-      "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-    description:
-      "Bác sĩ Trần Thị Bình chuyên về thụ tinh nhân tạo (IUI) và tư vấn điều trị hiếm muộn. Bà được biết đến với phong cách tư vấn tận tình và chu đáo.",
-    achievements: [
-      "Thạc sĩ Y khoa",
-      "Chứng chỉ IUI chuyên sâu",
-      "Giảng viên trường Đại học Y",
-    ],
-    availability: "Thứ 3-7: 8:30-16:30",
-  },
-  {
-    id: 3,
-    name: "Bác sĩ Phạm Văn Tuấn",
-    specialty: "Chuyên gia ICSI",
-    experience: "16 năm kinh nghiệm",
-    rating: 4.9,
-    reviewCount: 178,
-    photo:
-      "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-    description:
-      "Bác sĩ Phạm Văn Tuấn là chuyên gia hàng đầu về kỹ thuật tiêm tinh trùng vào bào tương noãn (ICSI), đặc biệt hiệu quả trong các trường hợp vô sinh nam nghiêm trọng.",
-    achievements: [
-      "Tiến sĩ Y khoa",
-      "Chứng chỉ ICSI quốc tế",
-      "Chuyên gia đào tạo ICSI tại châu Á",
-    ],
-    availability: "Thứ 2,3,5,6: 8:30-17:00",
-  },
-  {
-    id: 4,
-    name: "Bác sĩ Nguyễn Thị Minh",
-    specialty: "Chuyên gia IVF",
-    experience: "14 năm kinh nghiệm",
-    rating: 4.8,
-    reviewCount: 145,
-    photo:
-      "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-    description:
-      "Bác sĩ Nguyễn Thị Minh là chuyên gia IVF với nhiều kinh nghiệm trong điều trị các ca hiếm muộn phức tạp và lâu năm. Bà đã nghiên cứu và áp dụng nhiều phương pháp điều trị tiên tiến.",
-    achievements: [
-      "Tiến sĩ Nội tiết sinh sản",
-      "Chứng chỉ IVF nâng cao",
-      "Giải thưởng nghiên cứu khoa học 2022",
-    ],
-    availability: "Thứ 2,4,6: 8:00-16:30",
-  },
-  {
-    id: 5,
-    name: "Bác sĩ Lê Minh Tâm",
-    specialty: "Chuyên gia IUI & ICSI",
-    experience: "13 năm kinh nghiệm",
-    rating: 4.7,
-    reviewCount: 121,
-    photo:
-      "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png",
-    description:
-      "Bác sĩ Lê Minh Tâm chuyên về cả hai kỹ thuật IUI và ICSI, giúp tư vấn linh hoạt phương pháp điều trị phù hợp nhất cho từng cặp vợ chồng dựa trên tình trạng cụ thể.",
-    achievements: [
-      "Thạc sĩ Y khoa",
-      "Chứng chỉ IUI và ICSI quốc tế",
-      "Nghiên cứu sinh tại Pháp",
-    ],
-    availability: "Thứ 3-7: 9:00-17:30",
-  },
-];
 
 const specialties = [
   "Tất cả chuyên khoa",
@@ -126,47 +33,77 @@ const specialties = [
 ];
 
 const DoctorList = () => {
-  const [doctors, setDoctors] = useState(doctorsData);
-  const [filteredDoctors, setFilteredDoctors] = useState(doctorsData);
-  const [loading, setLoading] = useState(false);
+  const [doctors, setDoctors] = useState([]);
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSpecialty, setSelectedSpecialty] =
-    useState("Tất cả chuyên khoa");
-  const [sortBy, setSortBy] = useState("name");
+  const [selectedSpecialty, setSelectedSpecialty] = useState("Tất cả chuyên khoa");
+  const [sortBy, setSortBy] = useState("doctorName");
   const navigate = useNavigate();
 
-  // Filter doctors based on search and specialty
+  // Fetch doctors từ API
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setLoading(true);
+        const response = await guestService.getPublicDoctors();
+        const validDoctors = (response.data || []).map((doctor) => ({
+          id: doctor.id,
+          name: doctor.doctorName, // Ánh xạ doctorName sang name
+          specialty: doctor.specialization, // Ánh xạ specialization sang specialty
+          experience: `${doctor.experienceYears} năm kinh nghiệm`, // Định dạng experience
+          rating: doctor.averageRating || 0, // Ánh xạ averageRating sang rating
+          reviewCount: doctor.totalFeedbacks || 0, // Ánh xạ totalFeedbacks sang reviewCount
+          photo: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png", // Giả định ảnh mặc định
+          description: doctor.description || "",
+        }));
+        setDoctors(validDoctors);
+        setFilteredDoctors(validDoctors);
+      } catch (error) {
+        message.error("Không thể tải danh sách bác sĩ");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDoctors();
+  }, []);
+
+  // Filter và sort doctors
   useEffect(() => {
     let filtered = doctors;
 
-    // Filter by search term
+    // Lọc theo từ khóa tìm kiếm
     if (searchTerm) {
       filtered = filtered.filter(
         (doctor) =>
-          doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          doctor.specialty.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          doctor.description.toLowerCase().includes(searchTerm.toLowerCase())
+          (doctor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            doctor.specialty?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            doctor.description?.toLowerCase().includes(searchTerm.toLowerCase())) ??
+          false
       );
     }
 
-    // Filter by specialty
+    // Lọc theo chuyên khoa
     if (selectedSpecialty !== "Tất cả chuyên khoa") {
       filtered = filtered.filter(
         (doctor) => doctor.specialty === selectedSpecialty
       );
     }
 
-    // Sort doctors
+    // Sắp xếp doctors
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "rating":
-          return b.rating - a.rating;
+          return (b.rating || 0) - (a.rating || 0);
         case "experience":
-          return parseInt(b.experience) - parseInt(a.experience);
+          return (
+            parseInt((b.experience || "").replace(" năm kinh nghiệm", ""), 10) -
+            parseInt((a.experience || "").replace(" năm kinh nghiệm", ""), 10)
+          );
         case "reviews":
-          return b.reviewCount - a.reviewCount;
+          return (b.reviewCount || 0) - (a.reviewCount || 0);
         default:
-          return a.name.localeCompare(b.name);
+          return (a.name || "").localeCompare(b.name || "");
       }
     });
 
@@ -199,7 +136,6 @@ const DoctorList = () => {
     <MainLayout>
       <div className="doctor-list-page">
         <div className="doctor-list-container">
-          {/* Header */}
           <div className="doctor-list-header" data-aos="fade-up">
             <Title level={1} className="doctor-list-title">
               <TeamOutlined style={{ marginRight: "12px" }} />
@@ -212,7 +148,6 @@ const DoctorList = () => {
             </Paragraph>
           </div>
 
-          {/* Search and Filter */}
           <div
             className="search-filter-section"
             data-aos="fade-up"
@@ -251,7 +186,7 @@ const DoctorList = () => {
                   size="large"
                   style={{ width: "100%" }}
                 >
-                  <Option value="name">Tên A-Z</Option>
+                  <Option value="doctorName">Tên A-Z</Option>
                   <Option value="rating">Đánh giá cao nhất</Option>
                   <Option value="experience">Kinh nghiệm nhiều nhất</Option>
                   <Option value="reviews">Nhiều đánh giá nhất</Option>
@@ -265,7 +200,6 @@ const DoctorList = () => {
             </Row>
           </div>
 
-          {/* Doctor Grid */}
           <Spin spinning={loading}>
             {filteredDoctors.length > 0 ? (
               <Row gutter={[24, 24]} className="doctor-grid">
@@ -356,7 +290,6 @@ const DoctorList = () => {
             )}
           </Spin>
 
-          {/* Load More Section */}
           {filteredDoctors.length > 0 && filteredDoctors.length >= 6 && (
             <div className="load-more-section" data-aos="fade-up">
               <Button

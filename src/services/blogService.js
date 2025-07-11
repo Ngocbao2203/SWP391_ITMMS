@@ -294,3 +294,67 @@ const blogService = {
 };
 
 export default blogService;
+
+
+// import apiService from './api';
+// import { API_ENDPOINTS } from './apiConstants';
+
+// class BlogService {
+//   // Lấy tất cả bài viết blog
+//   async getAllBlogs() {
+//     try {
+//       const response = await apiService.get(API_ENDPOINTS.BLOG.GET_ALL);
+//       return response.data;
+//     } catch (error) {
+//       console.error('Error fetching all blogs:', error);
+//       throw error;
+//     }
+//   }
+
+//   // Lấy chi tiết blog theo ID
+//   async getBlogById(id) {
+//     try {
+//       const response = await apiService.get(API_ENDPOINTS.BLOG.GET_BY_ID(id));
+//       return response.data;
+//     } catch (error) {
+//       console.error(`Error fetching blog with ID ${id}:`, error);
+//       throw error;
+//     }
+//   }
+
+//   // Tạo blog mới
+//   async createBlog(blogData) {
+//     try {
+//       const response = await apiService.post(API_ENDPOINTS.BLOG.CREATE, blogData);
+//       return response.data;
+//     } catch (error) {
+//       console.error('Error creating blog:', error);
+//       throw error;
+//     }
+//   }
+
+//   // Cập nhật blog theo ID
+//   async updateBlog(id, blogData) {
+//     try {
+//       const response = await apiService.put(API_ENDPOINTS.BLOG.UPDATE(id), blogData);
+//       return response.data;
+//     } catch (error) {
+//       console.error(`Error updating blog with ID ${id}:`, error);
+//       throw error;
+//     }
+//   }
+
+//   // Xoá blog theo ID
+//   async deleteBlog(id) {
+//     try {
+//       const response = await apiService.delete(API_ENDPOINTS.BLOG.DELETE(id));
+//       return response.data;
+//     } catch (error) {
+//       console.error(`Error deleting blog with ID ${id}:`, error);
+//       throw error;
+//     }
+//   }
+// }
+
+// const blogService = new BlogService();
+// export default blogService;

@@ -6,6 +6,7 @@ import {
   LogoutOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
+import authService from "../../services/authService";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../styles/ManagerSidebar.css";
 
@@ -16,9 +17,11 @@ const ManagerSidebar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    authService.logout();
+    navigate("/login", { replace: true });
+    window.location.reload(); // 🔁 đảm bảo reset context (RAM)
   };
+
 
   return (
     <Sider
