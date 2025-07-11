@@ -51,6 +51,11 @@ const columnStyle = {
   fontWeight: "bold",
 };
 
+const datePickerStyle = {
+  width: "200px",
+  marginLeft: 16,
+};
+
 const AppointmentSchedule = () => {
   const [appointments, setAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -67,19 +72,52 @@ const AppointmentSchedule = () => {
     const fetchAppointments = async () => {
       setLoading(true);
 
-      try {
-        // Import appointmentService từ services
-        const appointmentService =
-          require("../../services/appointmentService").default;
-
-        // Gọi API lịch hẹn sử dụng getMySchedule từ appointmentService
-        const response = await appointmentService.getMySchedule({
-          date: selectedDate.format("YYYY-MM-DD"),
+      //      // Log current user info when fetching appointments
+      const currentUser = authService.getCurrentUser();
+      if (currentUser) {
+        console.log("Doctor fetching appointments - User info:", {
+          id: currentUser.id,
+          role: currentUser.role,
+          doctorId: currentUser.doctor?.id || "Not available",
         });
+
+        // Check if doctor info exists
+        if (!currentUser.doctor || !currentUser.doctor.id) {
+          console.error("Missing doctor information in user object");
+          setError("Không thể tải lịch khám bệnh: Thiếu thông tin bác sĩ");
+          setLoading(false);
+          return;
+        }
+      } else {
+        console.error("No user is currently logged in");
+        setError("Vui lòng đăng nhập để xem lịch khám bệnh");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Import doctorService từ services
+        const doctorService = require("../../services/doctorService").default;
+
+        // Lấy doctorId từ thông tin người dùng
+        const doctorId = currentUser.doctor.id;
+        console.log("Fetching schedule for doctorId:", doctorId);
+
+        // Chuẩn bị tham số ngày (format: YYYY-MM-DD)
+        const dateParam = selectedDate
+          ? selectedDate.format("YYYY-MM-DD")
+          : null;
+        console.log("Fetching appointments for date:", dateParam);
+
+        // Gọi API lịch hẹn sử dụng getDoctorSchedule từ doctorService với tham số ngày
+        const response = await doctorService.getDoctorSchedule(
+          doctorId,
+          dateParam
+        );
         console.log("API response:", response);
 
         // Kiểm tra cấu trúc phản hồi và truy cập đúng dữ liệu
-        const appointmentsData = response.data?.appointments || [];
+        const appointmentsData = response.appointments || [];
         console.log("Dữ liệu cuộc hẹn:", appointmentsData);
 
         // Chuyển đổi dữ liệu từ API sang định dạng mà giao diện hiểu được
@@ -165,18 +203,33 @@ const AppointmentSchedule = () => {
     setLoading(true);
 
     try {
-      // Import appointmentService từ services
-      const appointmentService =
-        require("../../services/appointmentService").default;
+      // Import doctorService từ services
+      const doctorService = require("../../services/doctorService").default;
 
-      // Gọi API lịch hẹn sử dụng getMySchedule
-      const response = await appointmentService.getMySchedule({
-        date: selectedDate.format("YYYY-MM-DD"),
-      });
+      // Lấy thông tin người dùng hiện tại
+      const currentUser = authService.getCurrentUser();
+      if (!currentUser || !currentUser.doctor || !currentUser.doctor.id) {
+        console.error("Missing doctor information");
+        throw new Error("Missing doctor information");
+      }
+
+      // Lấy doctorId từ thông tin người dùng
+      const doctorId = currentUser.doctor.id;
+      console.log("Reloading schedule for doctorId:", doctorId);
+
+      // Chuẩn bị tham số ngày (format: YYYY-MM-DD)
+      const dateParam = selectedDate ? selectedDate.format("YYYY-MM-DD") : null;
+      console.log("Reloading appointments for date:", dateParam);
+
+      // Gọi API lịch hẹn sử dụng getDoctorSchedule từ doctorService với tham số ngày
+      const response = await doctorService.getDoctorSchedule(
+        doctorId,
+        dateParam
+      );
       console.log("API response:", response);
 
       // Kiểm tra cấu trúc phản hồi và truy cập đúng dữ liệu
-      const appointmentsData = response.data?.appointments || [];
+      const appointmentsData = response.appointments || [];
       console.log("Dữ liệu cuộc hẹn:", appointmentsData);
 
       // Chuyển đổi dữ liệu từ API sang định dạng mà giao diện hiểu được
@@ -368,7 +421,21 @@ const AppointmentSchedule = () => {
   return (
     <div className="appointment-schedule-container">
       <div className="appointment-schedule-header">
-        <Title level={2}>Appointment Schedule</Title>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <Title level={2}>Appointment Schedule</Title>
+          </Col>
+          <Col>
+            <DatePicker
+              value={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              format="DD/MM/YYYY"
+              style={datePickerStyle}
+              placeholder="Chọn ngày"
+              allowClear={false}
+            />
+          </Col>
+        </Row>
       </div>
       <div className="appointments-container">
         {loading ? (
@@ -405,6 +472,7 @@ const AppointmentSchedule = () => {
                     type="primary"
                     icon={<ReloadOutlined />}
                     onClick={reloadSchedule}
+                    style={{ marginLeft: 8 }}
                   >
                     Refresh
                   </Button>

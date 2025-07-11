@@ -16,6 +16,7 @@ import ServiceDetail from "../pages/public/ServiceDetail";
 // Doctor
 import DoctorLayout from "../layouts/DoctorLayout";
 import TreatmentProgressPage from "../pages/doctor/TreatmentProgressPage";
+import TreatmentPlanDetailPage from "../pages/doctor/TreatmentPlanDetailPage";
 import MedicalRecords from "../pages/doctor/MedicalRecords";
 import AppointmentSchedule from "../pages/doctor/AppointmentSchedule";
 
@@ -70,6 +71,14 @@ const AppRouter = () => {
         element={
           <DoctorLayout>
             <TreatmentProgressPage />
+          </DoctorLayout>
+        }
+      />
+      <Route
+        path="/doctor/treatmentsprogress/detail/:patientId"
+        element={
+          <DoctorLayout>
+            <TreatmentPlanDetailPage />
           </DoctorLayout>
         }
       />
