@@ -1,3 +1,5 @@
+// Quản lý dịch vụ điều trị cho admin/manager
+// Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from 'react';
 import {
   Table,
@@ -32,21 +34,26 @@ import treatmentService from '../../services/treatmentService';
 
 const { Title, Text } = Typography;
 
+// Component chính quản lý dịch vụ
 const Services = () => {
-  const [services, setServices] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingService, setEditingService] = useState(null);
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+  // State lưu trữ danh sách dịch vụ, modal, form, loading, v.v.
+  const [services, setServices] = useState([]); // Danh sách dịch vụ
+  const [isModalOpen, setIsModalOpen] = useState(false); // Hiển thị modal thêm/sửa
+  const [editingService, setEditingService] = useState(null); // Dịch vụ đang chỉnh sửa
+  const [form] = Form.useForm(); // Form cho modal
+  const [loading, setLoading] = useState(false); // Đang tải dữ liệu
 
+  // Tải danh sách dịch vụ khi component mount
   useEffect(() => {
     fetchServices();
   }, []);
 
+  // Gọi API lấy danh sách dịch vụ điều trị
   const fetchServices = async () => {
     setLoading(true);
     try {
       const response = await treatmentService.getAllTreatmentServices();
+      // Định dạng lại dữ liệu dịch vụ để hiển thị
       const formattedServices = response.data.map((service, index) => {
         return {
           id: service.id || (index + 1).toString().padStart(2, '0'),
@@ -71,9 +78,11 @@ const Services = () => {
     }
   };
 
+  // Mở modal thêm mới hoặc chỉnh sửa dịch vụ
   const handleOpenModal = (service = null) => {
     setEditingService(service);
     if (service) {
+      // Nếu chỉnh sửa, set giá trị form theo dịch vụ đang chọn
       form.setFieldsValue({
         serviceName: service.serviceName,
         serviceCode: service.serviceCode,
@@ -85,11 +94,13 @@ const Services = () => {
         successRate: service.successRate,
       });
     } else {
+      // Nếu thêm mới, reset form
       form.resetFields();
     }
     setIsModalOpen(true);
   };
 
+  // Xử lý submit form thêm/sửa dịch vụ
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
@@ -107,6 +118,7 @@ const Services = () => {
       };
 
       if (editingService) {
+        // Nếu đang chỉnh sửa, gọi API update
         const response = await treatmentService.updateTreatmentService(editingService.id, payload);
         if (response.success) {
           setServices((prev) =>
@@ -119,6 +131,7 @@ const Services = () => {
           message.error(response.message);
         }
       } else {
+        // Nếu thêm mới, gọi API create
         const response = await treatmentService.createTreatmentService(payload);
         if (response.success && response.data) {
           const newService = {
@@ -145,6 +158,7 @@ const Services = () => {
     }
   };
 
+  // Bật/tắt trạng thái hoạt động của dịch vụ
   const handleToggleStatus = async (key) => {
     const service = services.find((s) => s.key === key);
     const updatedStatus = !service.isActive;
@@ -169,6 +183,7 @@ const Services = () => {
     }
   };
 
+  // Xóa dịch vụ
   const handleDeleteService = async (key) => {
     const service = services.find((s) => s.key === key);
     try {
@@ -187,7 +202,7 @@ const Services = () => {
     }
   };
 
-  // Tính toán thống kê
+  // Tính toán thống kê dịch vụ
   const totalServices = services.length;
   const activeServices = services.filter(s => s.isActive).length;
   const avgPrice = services.length > 0 ? 
@@ -195,6 +210,7 @@ const Services = () => {
   const avgSuccessRate = services.length > 0 ? 
     Math.round(services.reduce((sum, s) => sum + s.successRate, 0) / services.length) : 0;
 
+  // Định nghĩa các cột cho bảng dịch vụ
   const columns = [
     {
       title: 'Mã',
@@ -330,12 +346,14 @@ const Services = () => {
     },
   ];
 
+  // Render giao diện quản lý dịch vụ
   return (
     <div style={{ 
       padding: '24px',
       background: '#f5f5f5',
       minHeight: '100vh'
     }}>
+      {/* Card header thống kê và nút thêm dịch vụ */}
       <Card 
         style={{ 
           marginBottom: '24px',
@@ -378,6 +396,7 @@ const Services = () => {
           </Button>
         </div>
 
+        {/* Thống kê tổng quan dịch vụ */}
         <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
           <Col xs={12} sm={6}>
             <Card size="small" style={{ borderRadius: '8px', background: '#e6f7ff' }}>
@@ -424,6 +443,7 @@ const Services = () => {
         </Row>
       </Card>
 
+      {/* Card chứa bảng danh sách dịch vụ */}
       <Card 
         style={{ 
           borderRadius: '12px',
@@ -450,6 +470,7 @@ const Services = () => {
         />
       </Card>
 
+      {/* Modal thêm/sửa dịch vụ */}
       <Modal
         title={
           <div style={{ 
@@ -607,6 +628,7 @@ const Services = () => {
         </Form>
       </Modal>
 
+      {/* Style cho bảng */}
       <style jsx>{`
         .table-row-light {
           background-color: #fafafa;
@@ -624,3 +646,4 @@ const Services = () => {
 };
 
 export default Services;
+// Kết thúc file Services.jsx
