@@ -1,3 +1,5 @@
+// Trang hiển thị danh sách bác sĩ cho khách truy cập
+// Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -24,6 +26,7 @@ import guestService from "../../services/guestService";
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
 
+// Danh sách các chuyên khoa để filter
 const specialties = [
   "Tất cả chuyên khoa",
   "Chuyên gia IVF",
@@ -32,21 +35,24 @@ const specialties = [
   "Chuyên gia IUI & ICSI",
 ];
 
+// Component chính hiển thị danh sách bác sĩ
 const DoctorList = () => {
-  const [doctors, setDoctors] = useState([]);
-  const [filteredDoctors, setFilteredDoctors] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSpecialty, setSelectedSpecialty] = useState("Tất cả chuyên khoa");
-  const [sortBy, setSortBy] = useState("doctorName");
+  // State lưu trữ danh sách bác sĩ, filter, loading, v.v.
+  const [doctors, setDoctors] = useState([]); // Danh sách bác sĩ gốc
+  const [filteredDoctors, setFilteredDoctors] = useState([]); // Danh sách bác sĩ sau filter
+  const [loading, setLoading] = useState(true); // Đang tải dữ liệu
+  const [searchTerm, setSearchTerm] = useState(""); // Từ khóa tìm kiếm
+  const [selectedSpecialty, setSelectedSpecialty] = useState("Tất cả chuyên khoa"); // Chuyên khoa filter
+  const [sortBy, setSortBy] = useState("doctorName"); // Tiêu chí sắp xếp
   const navigate = useNavigate();
 
-  // Fetch doctors từ API
+  // Lấy danh sách bác sĩ từ API khi component mount
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
         setLoading(true);
         const response = await guestService.getPublicDoctors();
+        // Định dạng lại dữ liệu bác sĩ để hiển thị
         const validDoctors = (response.data || []).map((doctor) => ({
           id: doctor.id,
           name: doctor.doctorName, // Ánh xạ doctorName sang name
@@ -68,7 +74,7 @@ const DoctorList = () => {
     fetchDoctors();
   }, []);
 
-  // Filter và sort doctors
+  // Filter và sort danh sách bác sĩ khi filter/sort thay đổi
   useEffect(() => {
     let filtered = doctors;
 
@@ -90,7 +96,7 @@ const DoctorList = () => {
       );
     }
 
-    // Sắp xếp doctors
+    // Sắp xếp danh sách bác sĩ theo tiêu chí
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "rating":
@@ -110,32 +116,39 @@ const DoctorList = () => {
     setFilteredDoctors(filtered);
   }, [searchTerm, selectedSpecialty, sortBy, doctors]);
 
+  // Xử lý khi người dùng nhập tìm kiếm
   const handleSearch = (value) => {
     setSearchTerm(value);
   };
 
+  // Xử lý khi chọn chuyên khoa
   const handleSpecialtyChange = (value) => {
     setSelectedSpecialty(value);
   };
 
+  // Xử lý khi chọn tiêu chí sắp xếp
   const handleSortChange = (value) => {
     setSortBy(value);
   };
 
+  // Xử lý khi nhấn đặt lịch bác sĩ (hiện thông báo demo)
   const handleBookAppointment = (doctorId, doctorName) => {
     message.success(
       `Đã gửi yêu cầu đặt lịch với ${doctorName}. Chúng tôi sẽ liên hệ với bạn sớm nhất!`
     );
   };
 
+  // Xử lý khi nhấn xem hồ sơ bác sĩ
   const handleViewProfile = (doctorId) => {
     navigate(`/doctors/${doctorId}`);
   };
 
+  // Render giao diện danh sách bác sĩ
   return (
     <MainLayout>
       <div className="doctor-list-page">
         <div className="doctor-list-container">
+          {/* Header giới thiệu */}
           <div className="doctor-list-header" data-aos="fade-up">
             <Title level={1} className="doctor-list-title">
               <TeamOutlined style={{ marginRight: "12px" }} />
@@ -148,6 +161,7 @@ const DoctorList = () => {
             </Paragraph>
           </div>
 
+          {/* Khu vực filter và tìm kiếm */}
           <div
             className="search-filter-section"
             data-aos="fade-up"
@@ -200,6 +214,7 @@ const DoctorList = () => {
             </Row>
           </div>
 
+          {/* Danh sách bác sĩ dạng lưới */}
           <Spin spinning={loading}>
             {filteredDoctors.length > 0 ? (
               <Row gutter={[24, 24]} className="doctor-grid">
@@ -266,6 +281,7 @@ const DoctorList = () => {
                 ))}
               </Row>
             ) : (
+              // Trạng thái không có bác sĩ phù hợp
               <div className="empty-state" data-aos="fade-up">
                 <div className="empty-icon">
                   <TeamOutlined />
@@ -290,6 +306,7 @@ const DoctorList = () => {
             )}
           </Spin>
 
+          {/* Nút xem thêm nếu có nhiều bác sĩ */}
           {filteredDoctors.length > 0 && filteredDoctors.length >= 6 && (
             <div className="load-more-section" data-aos="fade-up">
               <Button
@@ -313,3 +330,4 @@ const DoctorList = () => {
 };
 
 export default DoctorList;
+// Kết thúc file DoctorList.jsx
