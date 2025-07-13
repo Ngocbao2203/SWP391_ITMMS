@@ -1,3 +1,5 @@
+// Trang chi tiết hồ sơ bác sĩ cho khách truy cập
+// Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Typography, Button, Breadcrumb, message, Tag, Spin } from "antd";
@@ -12,18 +14,23 @@ import guestService from "../../services/guestService";
 
 const { Title, Paragraph, Text } = Typography;
 
+// Component chính hiển thị chi tiết bác sĩ
 const DoctorProfile = () => {
+  // Lấy id bác sĩ từ URL
   const { id } = useParams();
   const navigate = useNavigate();
+  // State lưu trữ thông tin bác sĩ và trạng thái loading
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Lấy thông tin chi tiết bác sĩ từ API khi component mount hoặc id thay đổi
   useEffect(() => {
     const fetchDoctor = async () => {
       try {
         setLoading(true);
         const response = await guestService.getPublicDoctorDetails(id);
         console.log("API Response:", response);
+        // Định dạng lại dữ liệu bác sĩ để hiển thị
         const doctorData = response.data || {};
         const mappedDoctor = {
           id: doctorData.id,
@@ -54,18 +61,21 @@ const DoctorProfile = () => {
     fetchDoctor();
   }, [id]);
 
+  // Xử lý khi nhấn đặt lịch tư vấn (hiện thông báo demo)
   const handleBookConsultation = () => {
     message.success(
       `Đã gửi yêu cầu đặt lịch tư vấn với ${doctor.name}. Chúng tôi sẽ liên hệ với bạn trong 24h!`
     );
   };
 
+  // Xử lý khi nhấn liên hệ bác sĩ (hiện thông báo demo)
   const handleContactDoctor = () => {
     message.info(
       "Tính năng nhắn tin trực tiếp với bác sĩ sẽ được phát triển trong phiên bản tiếp theo."
     );
   };
 
+  // Hiển thị loading khi đang tải dữ liệu
   if (loading) {
     return (
       <MainLayout>
@@ -90,6 +100,7 @@ const DoctorProfile = () => {
     );
   }
 
+  // Hiển thị khi không tìm thấy bác sĩ
   if (!doctor) {
     return (
       <MainLayout>
@@ -132,6 +143,7 @@ const DoctorProfile = () => {
     );
   }
 
+  // Render giao diện chi tiết bác sĩ
   return (
     <MainLayout>
       <div style={{
@@ -144,7 +156,7 @@ const DoctorProfile = () => {
           margin: '0 auto',
           padding: '0 20px'
         }}>
-          {/* Navigation Bar */}
+          {/* Navigation Bar breadcrumb */}
           <div style={{ marginBottom: '30px' }}>
             <div style={{
               background: 'white',
@@ -161,6 +173,7 @@ const DoctorProfile = () => {
                     color: '#666',
                     textDecoration: 'none'
                   }}>
+                    {/* Icon home */}
                     <svg
                       viewBox="0 0 24 24"
                       width="14"
@@ -187,6 +200,7 @@ const DoctorProfile = () => {
                     color: '#666',
                     textDecoration: 'none'
                   }}>
+                    {/* Icon doctor list */}
                     <svg
                       viewBox="0 0 24 24"
                       width="14"
@@ -212,6 +226,7 @@ const DoctorProfile = () => {
                   color: '#1890ff',
                   fontWeight: '500'
                 }}>
+                  {/* Icon profile */}
                   <svg
                     viewBox="0 0 24 24"
                     width="14"
@@ -233,7 +248,7 @@ const DoctorProfile = () => {
             </div>
           </div>
 
-          {/* Doctor Header Card */}
+          {/* Card header thông tin bác sĩ */}
           <Card style={{
             borderRadius: '20px',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
@@ -247,7 +262,7 @@ const DoctorProfile = () => {
               alignItems: 'flex-start',
               padding: '20px'
             }}>
-              {/* Doctor Avatar Section */}
+              {/* Avatar bác sĩ */}
               <div style={{
                 flexShrink: 0,
                 display: 'flex',
@@ -289,7 +304,7 @@ const DoctorProfile = () => {
                 </div>
               </div>
 
-              {/* Doctor Info Section */}
+              {/* Thông tin chính bác sĩ */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <Title level={1} style={{
                   color: '#2c3e50',
@@ -310,6 +325,7 @@ const DoctorProfile = () => {
                   borderRadius: '16px',
                   border: '1px solid #e9ecef'
                 }}>
+                  {/* Số năm kinh nghiệm */}
                   <div style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -333,6 +349,7 @@ const DoctorProfile = () => {
                       Năm kinh nghiệm
                     </span>
                   </div>
+                  {/* Số bệnh nhân */}
                   <div style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -356,6 +373,7 @@ const DoctorProfile = () => {
                       Bệnh nhân
                     </span>
                   </div>
+                  {/* Phí tư vấn */}
                   <div style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -431,7 +449,7 @@ const DoctorProfile = () => {
             </div>
           </Card>
 
-          {/* Details Section */}
+          {/* Card thông tin chi tiết bác sĩ */}
           <Card style={{
             borderRadius: '20px',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
@@ -457,6 +475,7 @@ const DoctorProfile = () => {
                 gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
                 gap: '20px'
               }}>
+                {/* Học vấn */}
                 <div style={{
                   background: 'rgba(255, 255, 255, 0.1)',
                   padding: '20px',
@@ -482,6 +501,7 @@ const DoctorProfile = () => {
                   </Text>
                 </div>
 
+                {/* Số giấy phép */}
                 <div style={{
                   background: 'rgba(255, 255, 255, 0.1)',
                   padding: '20px',
@@ -507,6 +527,7 @@ const DoctorProfile = () => {
                   </Text>
                 </div>
 
+                {/* Đánh giá */}
                 <div style={{
                   background: 'rgba(255, 255, 255, 0.1)',
                   padding: '20px',
@@ -532,6 +553,7 @@ const DoctorProfile = () => {
                   </Text>
                 </div>
 
+                {/* Số phản hồi */}
                 <div style={{
                   background: 'rgba(255, 255, 255, 0.1)',
                   padding: '20px',
@@ -566,3 +588,4 @@ const DoctorProfile = () => {
 };
 
 export default DoctorProfile;
+// Kết thúc file DoctorProfile.jsx
