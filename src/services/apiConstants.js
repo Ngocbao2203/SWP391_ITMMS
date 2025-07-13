@@ -66,28 +66,28 @@ export const API_ENDPOINTS = {
 
   // Treatment Plans APIs
   TREATMENT_PLANS: {
-    BASE: "/treatmentPlans",
-    CREATE: "/treatmentPlans",
-    GET_BY_CUSTOMER: (customerId) => `/treatmentPlans/customer/${customerId}`,
-    GET_BY_DOCTOR: (doctorId) => `/treatmentPlans/doctor/${doctorId}`,
-    GET_BY_ID: (id) => `/treatmentPlans/${id}`,
-    UPDATE: (id) => `/treatmentPlans/${id}`,
-    UPDATE_PROGRESS: (id) => `/treatmentPlans/${id}/progress`,
-    GET_PROGRESS: (id) => `/treatmentPlans/${id}/progress`,
-    COMPLETE: (id) => `/treatmentPlans/${id}/complete`,
-    TEST: "/treatmentPlans/test",
+    BASE: "/TreatmentPlans",
+    CREATE: "/TreatmentPlans",
+    GET_BY_CUSTOMER: (customerId) => `/TreatmentPlans/customer/${customerId}`,
+    GET_BY_DOCTOR: (doctorId) => `/TreatmentPlans/doctor/${doctorId}`,
+    GET_BY_ID: (id) => `/TreatmentPlans/${id}`,
+    UPDATE: (id) => `/TreatmentPlans/${id}`,
+    UPDATE_PROGRESS: (id) => `/TreatmentPlans/${id}/progress`,
+    GET_PROGRESS: (id) => `/TreatmentPlans/${id}/progress`,
+    COMPLETE: (id) => `/TreatmentPlans/${id}/complete`,
+    TEST: "/TreatmentPlans/test",
   },
 
   // Medical Records APIs
   MEDICAL_RECORDS: {
-    BASE: "/medicalrecords",
-    COMPLETE_APPOINTMENT: (doctorId) => `/medicalrecords/complete/${doctorId}`,
+    BASE: "/MedicalRecords",
+    COMPLETE_APPOINTMENT: (doctorId) => `/MedicalRecords/complete/${doctorId}`,
     GET_BY_APPOINTMENT: (appointmentId) =>
-      `/medicalrecords/appointment/${appointmentId}`,
+      `/MedicalRecords/appointment/${appointmentId}`,
     GET_PATIENT_HISTORY: (customerId) =>
-      `/medicalrecords/patient/${customerId}/history`,
-    GET_BY_DOCTOR: (doctorId) => `/medicalrecords/doctor/${doctorId}`,
-    TEST: "/medicalrecords/test",
+      `/MedicalRecords/patient/${customerId}/history`,
+    GET_BY_DOCTOR: (doctorId) => `/MedicalRecords/doctor/${doctorId}`,
+    TEST: "/MedicalRecords/test",
   },
 
   // Test Results APIs

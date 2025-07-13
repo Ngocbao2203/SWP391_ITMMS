@@ -22,8 +22,13 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
   };
 
   const menuItems = [
+    { path: "/doctor/dashboard", name: "Tổng quan", icon: <FaHome /> },
     { path: "/doctor/appointments", name: "Lịch hẹn", icon: <FaCalendarAlt /> },
-
+    {
+      path: "/doctor/treatment-plans",
+      name: "Kế hoạch điều trị",
+      icon: <FaPrescriptionBottleAlt />,
+    },
     {
       path: "/doctor/treatmentsprogress",
       name: "Tiến trình điều trị",
