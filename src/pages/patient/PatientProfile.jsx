@@ -1,48 +1,74 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
-  Card, Row, Col, Avatar, Button, Space,
-  Typography, Tabs, Descriptions, Tag, Divider, Statistic,
-  Dropdown, List, Empty, Input,
-  DatePicker, message, Upload
-} from 'antd';
+  Card,
+  Row,
+  Col,
+  Avatar,
+  Button,
+  Space,
+  Typography,
+  Tabs,
+  Descriptions,
+  Tag,
+  Divider,
+  Statistic,
+  Dropdown,
+  List,
+  Empty,
+  Input,
+  DatePicker,
+  message,
+  Badge,
+  Timeline,
+} from "antd";
 import {
-  UserOutlined, EditOutlined,
-  CalendarOutlined, FileTextOutlined, MedicineBoxOutlined,
-  SafetyOutlined, CheckCircleOutlined,
+  UserOutlined,
+  EditOutlined,
+  CalendarOutlined,
+  FileTextOutlined,
+  MedicineBoxOutlined,
+  SafetyOutlined,
+  CheckCircleOutlined,
   HourglassOutlined,
-  InfoCircleOutlined, ClockCircleOutlined,
-  LogoutOutlined, UploadOutlined
-} from '@ant-design/icons';
-import moment from 'moment';
-import authService from '../../services/authService';
-import treatmentService from '../../services/treatmentService';
-import guestService from '../../services/guestService';
-import patientService from '../../services/patientService'; // Thêm import
-import '../../styles/PatientProfile.css';
-import 'moment/locale/vi';
+  InfoCircleOutlined,
+  ClockCircleOutlined,
+  LogoutOutlined,
+  ScheduleOutlined,
+  ExclamationCircleOutlined,
+  UserSwitchOutlined,
+  EnvironmentOutlined,
+  PhoneOutlined,
+} from "@ant-design/icons";
+import moment from "moment";
+import authService from "../../services/authService";
+import treatmentService from "../../services/treatmentService";
+import guestService from "../../services/guestService";
+import patientService from "../../services/patientService";
+import "../../styles/PatientProfile.css";
+import "moment/locale/vi";
 
-moment.locale('vi');
+moment.locale("vi");
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 
 const PatientProfile = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [editMode, setEditMode] = useState(false);
   const [userData, setUserData] = useState(null);
   const [editableData, setEditableData] = useState({});
   const [loading, setLoading] = useState(true);
   const [treatments, setTreatments] = useState([]);
   const [appointments, setAppointments] = useState([]);
-  const [medicalHistory, setMedicalHistory] = useState([]); // Thêm state cho lịch sử y tế
-  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [medicalHistory, setMedicalHistory] = useState([]);
 
   useEffect(() => {
     const storedUser = authService.getCurrentUser();
     if (storedUser && storedUser.id) {
       setLoading(true);
-      authService.getUserProfile(storedUser.id)
-        .then(profile => {
+      authService
+        .getUserProfile(storedUser.id)
+        .then((profile) => {
           setUserData({
             ...profile,
             treatments: profile.treatments || [],
@@ -58,7 +84,7 @@ const PatientProfile = () => {
             allergies: profile.allergies || [],
           });
         })
-        .catch(() => message.error('Không thể tải thông tin hồ sơ!'))
+        .catch(() => message.error("Không thể tải thông tin hồ sơ!"))
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -72,37 +98,40 @@ const PatientProfile = () => {
       const customerId = storedUser.customer.id;
       console.log("Loading profile for customer ID:", customerId);
 
-      // Gọi API và set userData
       setUserData({
         ...storedUser,
-        ...storedUser.customer, // gộp customer fields như birthDate, gender nếu cần
+        ...storedUser.customer,
       });
 
-      // Lịch sử điều trị
-      treatmentService.getCustomerTreatmentPlans(customerId)
-        .then(data => setTreatments(Array.isArray(data) ? data : []))
+      treatmentService
+        .getCustomerTreatmentPlans(customerId)
+        .then((data) => setTreatments(Array.isArray(data) ? data : []))
         .catch(() => setTreatments([]));
 
-      // Lịch hẹn
-      guestService.getMyAppointments()
-        .then(response => {
+      guestService
+        .getMyAppointments()
+        .then((response) => {
           console.log("Appointments loaded:", response.data.appointments);
-          setAppointments(Array.isArray(response.data.appointments) ? response.data.appointments : []);
+          setAppointments(
+            Array.isArray(response.data.appointments)
+              ? response.data.appointments
+              : []
+          );
         })
-        .catch(error => {
-          console.error('Failed to fetch appointments:', error);
+        .catch((error) => {
+          console.error("Failed to fetch appointments:", error);
           setAppointments([]);
         });
 
-      // Lịch sử y tế
-      patientService.getPatientMedicalHistory(customerId)
-        .then(response => {
+      patientService
+        .getPatientMedicalHistory(customerId)
+        .then((response) => {
           const records = response?.data?.medicalRecords || response || [];
           console.log("Medical history loaded:", records);
           setMedicalHistory(Array.isArray(records) ? records : []);
         })
-        .catch(error => {
-          console.error('Failed to fetch medical history:', error);
+        .catch((error) => {
+          console.error("Failed to fetch medical history:", error);
           setMedicalHistory([]);
         })
         .finally(() => setLoading(false));
@@ -110,7 +139,6 @@ const PatientProfile = () => {
       setLoading(false);
     }
   }, []);
-
 
   const handleTabChange = (key) => {
     setActiveTab(key);
@@ -136,102 +164,133 @@ const PatientProfile = () => {
       if (res.success) {
         setUserData({ ...userData, ...editableData });
         setEditMode(false);
-        message.success('Cập nhật hồ sơ thành công!');
+        message.success("Cập nhật hồ sơ thành công!");
       } else {
-        message.error(res.message || 'Cập nhật thất bại!');
+        message.error(res.message || "Cập nhật thất bại!");
       }
     } catch (err) {
-      message.error('Cập nhật thất bại!');
+      message.error("Cập nhật thất bại!");
     } finally {
       setLoading(false);
     }
   };
 
   const handleInputChange = (fieldName, value) => {
-    setEditableData(prev => ({
+    setEditableData((prev) => ({
       ...prev,
-      [fieldName]: value
+      [fieldName]: value,
     }));
   };
 
-  const handleAvatarChange = (info) => {
-    if (info.file.status === 'done' || info.file.status === 'uploading' || info.file.originFileObj) {
-      const reader = new FileReader();
-      reader.onload = e => setAvatarUrl(e.target.result);
-      reader.readAsDataURL(info.file.originFileObj);
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "scheduled":
+        return "processing";
+      case "completed":
+        return "success";
+      case "cancelled":
+        return "error";
+      case "in-progress":
+        return "orange";
+      default:
+        return "default";
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case "scheduled":
+        return "Đã lên lịch";
+      case "completed":
+        return "Hoàn thành";
+      case "cancelled":
+        return "Đã hủy";
+      case "in-progress":
+        return "Đang điều trị";
+      default:
+        return status;
     }
   };
 
   if (loading) return <div>Đang tải...</div>;
   if (!userData) return <div>Không có dữ liệu hồ sơ.</div>;
 
-  const displayBirthDate = userData.birthDate && moment(userData.birthDate, ['YYYY-MM-DD', 'DD/MM/YYYY']).isValid()
-    ? moment(userData.birthDate, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY')
-    : 'Chưa cập nhật';
+  const displayBirthDate =
+    userData.birthDate &&
+    moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]).isValid()
+      ? moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]).format(
+          "DD/MM/YYYY"
+        )
+      : "Chưa cập nhật";
 
-  const displayAge = userData.birthDate && moment(userData.birthDate, ['YYYY-MM-DD', 'DD/MM/YYYY']).isValid()
-    ? `${moment().diff(moment(userData.birthDate, ['YYYY-MM-DD', 'DD/MM/YYYY']), 'years')} tuổi`
-    : 'Chưa cập nhật';
+  const displayAge =
+    userData.birthDate &&
+    moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]).isValid()
+      ? `${moment().diff(
+          moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]),
+          "years"
+        )} tuổi`
+      : "Chưa cập nhật";
 
   return (
     <div className="patient-profile-container">
-      {/* Phần đầu trang với thông tin cơ bản và avatar */}
       <div className="profile-header">
         <div className="profile-header-content">
           <div className="profile-avatar-section">
-            <Dropdown menu={{
-              items: [
-                {
-                  key: 'name',
-                  label: userData.fullName,
-                  disabled: true,
-                  style: { color: '#1890ff', fontWeight: 'bold' }
-                },
-                { type: 'divider' },
-                {
-                  key: 'profile',
-                  label: 'Hồ sơ cá nhân',
-                  icon: <UserOutlined />
-                },
-                { type: 'divider' },
-                {
-                  key: 'logout',
-                  label: 'Đăng xuất',
-                  icon: <LogoutOutlined />
-                }
-              ]
-            }} placement="bottomRight" trigger={['click']}>
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: "name",
+                    label: userData.fullName,
+                    disabled: true,
+                    style: { color: "#1890ff", fontWeight: "bold" },
+                  },
+                  { type: "divider" },
+                  {
+                    key: "profile",
+                    label: "Hồ sơ cá nhân",
+                    icon: <UserOutlined />,
+                  },
+                  { type: "divider" },
+                  {
+                    key: "logout",
+                    label: "Đăng xuất",
+                    icon: <LogoutOutlined />,
+                  },
+                ],
+              }}
+              placement="bottomRight"
+              trigger={["click"]}
+            >
               <div className="avatar-dropdown-trigger">
-                <div className="avatar-upload-wrapper">
-                  <Avatar
-                    size={90}
-                    icon={<UserOutlined />}
-                    className="patient-avatar"
-                    src={avatarUrl || userData.avatar || null}
-                  />
-                  <Upload
-                    showUploadList={false}
-                    beforeUpload={() => false}
-                    onChange={handleAvatarChange}
-                    accept="image/*"
-                  >
-                    <Button icon={<UploadOutlined />} size="small" style={{ marginTop: 8 }}>Chọn ảnh</Button>
-                  </Upload>
-                </div>
+                <Avatar
+                  size={90}
+                  icon={<UserOutlined />}
+                  className="patient-avatar"
+                  src={userData.avatar || null}
+                />
               </div>
             </Dropdown>
             <div className="patient-basic-info">
               <div className="patient-name-id">
-                <Title level={3} className="patient-name">{userData.fullName}</Title>
-                <Tag color="blue" className="patient-id">ID: {userData.id}</Tag>
+                <Title level={3} className="patient-name">
+                  {userData.fullName}
+                </Title>
               </div>
               <div className="patient-metadata">
-                {userData.birthDate && moment(userData.birthDate, ['YYYY-MM-DD', 'DD/MM/YYYY']).isValid() && (
-                  <Tag icon={<CalendarOutlined />}>{`${moment().diff(moment(userData.birthDate, ['YYYY-MM-DD', 'DD/MM/YYYY']), 'years')} tuổi`}</Tag>
-                )}
+                {userData.birthDate &&
+                  moment(userData.birthDate, [
+                    "YYYY-MM-DD",
+                    "DD/MM/YYYY",
+                  ]).isValid() && (
+                    <Tag icon={<CalendarOutlined />}>{displayAge}</Tag>
+                  )}
                 <Tag icon={<SafetyOutlined />}>{userData.bloodType}</Tag>
-                {userData.status === 'Đang điều trị' && (
-                  <Tag color="processing" icon={<HourglassOutlined />}>Đang điều trị</Tag>
+                {userData.status === "Đang điều trị" && (
+                  <Tag color="processing" icon={<HourglassOutlined />}>
+                    Đang điều trị
+                  </Tag>
                 )}
               </div>
             </div>
@@ -246,7 +305,11 @@ const PatientProfile = () => {
                 {editMode ? "Hủy" : "Chỉnh sửa"}
               </Button>
               {editMode && (
-                <Button type="primary" icon={<CheckCircleOutlined />} onClick={handleSaveChanges}>
+                <Button
+                  type="primary"
+                  icon={<CheckCircleOutlined />}
+                  onClick={handleSaveChanges}
+                >
                   Lưu thay đổi
                 </Button>
               )}
@@ -258,56 +321,134 @@ const PatientProfile = () => {
           onChange={handleTabChange}
           className="profile-navigation-tabs"
         >
-          <TabPane tab={<span><InfoCircleOutlined /> Tổng quan</span>} key="overview" />
-          <TabPane tab={<span><MedicineBoxOutlined /> Điều trị</span>} key="treatments" />
-          <TabPane tab={<span><CalendarOutlined /> Lịch hẹn</span>} key="appointments" />
-          <TabPane tab={<span><FileTextOutlined /> Kết quả xét nghiệm</span>} key="tests" />
+          <TabPane
+            tab={
+              <span>
+                <InfoCircleOutlined /> Tổng quan
+              </span>
+            }
+            key="overview"
+          />
+          <TabPane
+            tab={
+              <span>
+                <MedicineBoxOutlined /> Điều trị
+              </span>
+            }
+            key="treatments"
+          />
+          <TabPane
+            tab={
+              <span>
+                <CalendarOutlined /> Lịch hẹn
+              </span>
+            }
+            key="appointments"
+          />
+          <TabPane
+            tab={
+              <span>
+                <FileTextOutlined /> Kết quả xét nghiệm
+              </span>
+            }
+            key="tests"
+          />
         </Tabs>
       </div>
 
       <div className="profile-content">
-        {activeTab === 'overview' && (
+        {activeTab === "overview" && (
           <Row gutter={[24, 24]} className="overview-content">
             <Col xs={24} lg={16}>
               <Card title="Thông tin cá nhân" className="info-card">
                 <Descriptions
                   bordered
                   column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
-                  labelStyle={{ fontWeight: '500' }}
+                  labelStyle={{ fontWeight: "500" }}
                 >
                   <Descriptions.Item label="Họ và tên">
                     {editMode ? (
-                      <Input value={editableData.fullName} onChange={e => handleInputChange('fullName', e.target.value)} />
-                    ) : userData.fullName}
+                      <Input
+                        value={editableData.fullName}
+                        onChange={(e) =>
+                          handleInputChange("fullName", e.target.value)
+                        }
+                      />
+                    ) : (
+                      userData.fullName
+                    )}
                   </Descriptions.Item>
                   <Descriptions.Item label="Tên đăng nhập">
                     {editMode ? (
-                      <Input value={editableData.username} onChange={e => handleInputChange('username', e.target.value)} disabled />
-                    ) : userData.username}
+                      <Input
+                        value={editableData.username}
+                        onChange={(e) =>
+                          handleInputChange("username", e.target.value)
+                        }
+                        disabled
+                      />
+                    ) : (
+                      userData.username
+                    )}
                   </Descriptions.Item>
                   <Descriptions.Item label="Email">
                     {editMode ? (
-                      <Input value={editableData.email} onChange={e => handleInputChange('email', e.target.value)} />
-                    ) : userData.email}
+                      <Input
+                        value={editableData.email}
+                        onChange={(e) =>
+                          handleInputChange("email", e.target.value)
+                        }
+                      />
+                    ) : (
+                      userData.email
+                    )}
                   </Descriptions.Item>
                   <Descriptions.Item label="Số điện thoại">
                     {editMode ? (
-                      <Input value={editableData.phone} onChange={e => handleInputChange('phone', e.target.value)} />
-                    ) : userData.phone}
+                      <Input
+                        value={editableData.phone}
+                        onChange={(e) =>
+                          handleInputChange("phone", e.target.value)
+                        }
+                      />
+                    ) : (
+                      userData.phone
+                    )}
                   </Descriptions.Item>
                   <Descriptions.Item label="Địa chỉ liên hệ">
                     {editMode ? (
-                      <Input value={editableData.address} onChange={e => handleInputChange('address', e.target.value)} />
-                    ) : userData.address}
+                      <Input
+                        value={editableData.address}
+                        onChange={(e) =>
+                          handleInputChange("address", e.target.value)
+                        }
+                      />
+                    ) : (
+                      userData.address
+                    )}
                   </Descriptions.Item>
                   <Descriptions.Item label="Ngày sinh">
                     {editMode ? (
                       <DatePicker
-                        value={editableData.birthDate ? moment(editableData.birthDate, ['YYYY-MM-DD', 'DD/MM/YYYY']) : null}
-                        onChange={date => handleInputChange('birthDate', date ? date.format('YYYY-MM-DD') : null)}
+                        value={
+                          editableData.birthDate
+                            ? moment(editableData.birthDate, [
+                                "YYYY-MM-DD",
+                                "DD/MM/YYYY",
+                              ])
+                            : null
+                        }
+                        onChange={(date) =>
+                          handleInputChange(
+                            "birthDate",
+                            date ? date.format("YYYY-MM-DD") : null
+                          )
+                        }
                         format="DD/MM/YYYY"
                       />
-                    ) : displayBirthDate}
+                    ) : (
+                      displayBirthDate
+                    )}
                   </Descriptions.Item>
                 </Descriptions>
               </Card>
@@ -332,20 +473,77 @@ const PatientProfile = () => {
 
                 <div className="upcoming-appointment">
                   <Title level={5}>Lịch hẹn sắp tới</Title>
-                  {appointments.filter(app => app.status === 'scheduled').length > 0 ? (
-                    <List
-                      itemLayout="horizontal"
-                      dataSource={appointments.filter(app => app.status === 'scheduled')}
-                      renderItem={appointment => (
-                        <List.Item>
-                          <List.Item.Meta
-                            avatar={<Avatar icon={<CalendarOutlined />} style={{ backgroundColor: '#1890ff' }} />}
-                            title={`${moment(appointment.date).format('DD/MM/YYYY')} - ${appointment.time}`}
-                            description={`${appointment.purpose || ''} với ${appointment.doctorName || appointment.doctor || '---'}`}
-                          />
-                        </List.Item>
-                      )}
-                    />
+                  {appointments.filter((app) => app.status === "scheduled")
+                    .length > 0 ? (
+                    <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+                      {appointments
+                        .filter((app) => app.status === "scheduled")
+                        .map((appointment) => (
+                          <Card
+                            key={appointment.id}
+                            size="small"
+                            style={{
+                              marginBottom: "12px",
+                              border: "1px solid #e6f7ff",
+                              borderRadius: "8px",
+                              background:
+                                "linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%)",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px",
+                              }}
+                            >
+                              <Avatar
+                                icon={<CalendarOutlined />}
+                                style={{
+                                  backgroundColor: "#1890ff",
+                                  flexShrink: 0,
+                                }}
+                              />
+                              <div style={{ flex: 1 }}>
+                                <div
+                                  style={{
+                                    fontWeight: "500",
+                                    color: "#1890ff",
+                                    marginBottom: "4px",
+                                  }}
+                                >
+                                  {moment(
+                                    appointment.appointmentDate ||
+                                      appointment.date
+                                  ).format("DD/MM/YYYY")}{" "}
+                                  - {appointment.timeSlot || appointment.time}
+                                </div>
+                                <div
+                                  style={{ fontSize: "12px", color: "#666" }}
+                                >
+                                  <div>
+                                    {appointment.purpose ||
+                                      appointment.type ||
+                                      "Khám bệnh"}
+                                  </div>
+                                  <div>
+                                    Bác sĩ:{" "}
+                                    {appointment.doctorName ||
+                                      appointment.doctor ||
+                                      "---"}
+                                  </div>
+                                </div>
+                              </div>
+                              <Tag
+                                color={getStatusColor(appointment.status)}
+                                size="small"
+                              >
+                                {getStatusText(appointment.status)}
+                              </Tag>
+                            </div>
+                          </Card>
+                        ))}
+                    </div>
                   ) : (
                     <Empty description="Không có lịch hẹn sắp tới" />
                   )}
@@ -354,33 +552,112 @@ const PatientProfile = () => {
             </Col>
 
             <Col xs={24}>
-              <Card title="Điều trị hiện tại" className="current-treatment-card">
-                {userData.treatments.filter(t => t.status === 'in-progress').length > 0 ? (
-                  userData.treatments
-                    .filter(t => t.status === 'in-progress')
-                    .map(treatment => (
-                      <div key={treatment.id} className="treatment-progress">
-                        <div className="treatment-header">
-                          <div>
-                            <Title level={5}>{treatment.name}</Title>
-                            <Text type="secondary">Bắt đầu: {moment(treatment.startDate).format('DD/MM/YYYY')}</Text>
+              <Card
+                title="Điều trị hiện tại"
+                className="current-treatment-card"
+              >
+                {treatments.length > 0 ? (
+                  <div style={{ display: "grid", gap: "16px" }}>
+                    {treatments
+                      .filter((t) => t.status === "in-progress")
+                      .map((treatment) => (
+                        <Card
+                          key={treatment.id}
+                          style={{
+                            border: "1px solid #f0f0f0",
+                            borderRadius: "12px",
+                            background:
+                              "linear-gradient(135deg, #fff8e1 0%, #fff3c4 100%)",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "flex-start",
+                              marginBottom: "16px",
+                            }}
+                          >
+                            <div>
+                              <Title
+                                level={5}
+                                style={{ margin: 0, color: "#d46b08" }}
+                              >
+                                <MedicineBoxOutlined
+                                  style={{ marginRight: "8px" }}
+                                />
+                                {treatment.name}
+                              </Title>
+                              <Text
+                                type="secondary"
+                                style={{ fontSize: "12px" }}
+                              >
+                                <ClockCircleOutlined
+                                  style={{ marginRight: "4px" }}
+                                />
+                                Bắt đầu:{" "}
+                                {moment(treatment.startDate).format(
+                                  "DD/MM/YYYY"
+                                )}
+                              </Text>
+                            </div>
+                            <Tag
+                              color={getStatusColor(treatment.status)}
+                              icon={<HourglassOutlined />}
+                            >
+                              {getStatusText(treatment.status)}
+                            </Tag>
                           </div>
-                          <Tag color="processing">Đang điều trị</Tag>
-                        </div>
 
-                        <div className="treatment-details">
-                          <div className="treatment-detail-item">
-                            <Text strong>Bác sĩ:</Text> {treatment.doctor}
+                          <div style={{ display: "grid", gap: "8px" }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                              }}
+                            >
+                              <UserSwitchOutlined
+                                style={{ color: "#1890ff" }}
+                              />
+                              <Text strong>Bác sĩ:</Text>
+                              <Text>{treatment.doctor}</Text>
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "flex-start",
+                                gap: "8px",
+                              }}
+                            >
+                              <InfoCircleOutlined
+                                style={{ color: "#52c41a", marginTop: "4px" }}
+                              />
+                              <Text strong>Ghi chú:</Text>
+                              <Text>{treatment.notes}</Text>
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                              }}
+                            >
+                              <ScheduleOutlined style={{ color: "#fa8c16" }} />
+                              <Text strong>Lịch hẹn tiếp theo:</Text>
+                              <Text>
+                                {treatment.nextAppointment
+                                  ? moment(treatment.nextAppointment).format(
+                                      "DD/MM/YYYY"
+                                    )
+                                  : "Chưa có"}
+                              </Text>
+                            </div>
                           </div>
-                          <div className="treatment-detail-item">
-                            <Text strong>Ghi chú:</Text> {treatment.notes}
-                          </div>
-                          <div className="treatment-detail-item">
-                            <Text strong>Lịch hẹn tiếp theo:</Text> {treatment.nextAppointment ? moment(treatment.nextAppointment).format('DD/MM/YYYY') : 'Chưa có'}
-                          </div>
-                        </div>
-                      </div>
-                    ))
+                        </Card>
+                      ))}
+                  </div>
                 ) : (
                   <Empty description="Không có điều trị đang diễn ra" />
                 )}
@@ -389,83 +666,314 @@ const PatientProfile = () => {
           </Row>
         )}
 
-        {activeTab === 'treatments' && (
+        {activeTab === "treatments" && (
           <div className="treatments-content">
-            <Card className="treatments-list-card" title="Lịch sử điều trị">
+            <Card
+              className="treatments-list-card"
+              title={
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <MedicineBoxOutlined style={{ color: "#1890ff" }} />
+                  <span>Lịch sử điều trị</span>
+                </div>
+              }
+            >
               {medicalHistory.length === 0 ? (
-                <div>Chưa có quá trình điều trị nào.</div>
+                <Empty description="Chưa có quá trình điều trị nào." />
               ) : (
-                <List
-                  dataSource={medicalHistory}
-                  renderItem={item => (
-                    <List.Item>
-                      <List.Item.Meta
-                        title={`Điều trị ngày ${item.recordDate ? moment(item.recordDate).format('DD/MM/YYYY') : '---'}`}
-                        description={
-                          <>
-                            <div>Bác sĩ: {item.doctorName || '---'}</div>
-                            <div>Chẩn đoán: {item.diagnosis || '---'}</div>
-                            <div>Phác đồ điều trị: {item.treatment || '---'}</div>
-                            <div>Loại cuộc hẹn: {item.appointmentType || '---'}</div>
-                          </>
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
+                <Timeline mode="left" style={{ marginTop: "16px" }}>
+                  {medicalHistory.map((item, index) => (
+                    <Timeline.Item
+                      key={index}
+                      dot={
+                        <Avatar
+                          size="small"
+                          icon={<MedicineBoxOutlined />}
+                          style={{ backgroundColor: "#1890ff" }}
+                        />
+                      }
+                      label={
+                        <div style={{ minWidth: "120px", textAlign: "right" }}>
+                          <div style={{ fontWeight: "500", color: "#1890ff" }}>
+                            {item.recordDate
+                              ? moment(item.recordDate).format("DD/MM/YYYY")
+                              : "---"}
+                          </div>
+                          <div style={{ fontSize: "12px", color: "#666" }}>
+                            {item.recordDate
+                              ? moment(item.recordDate).format("dddd")
+                              : ""}
+                          </div>
+                        </div>
+                      }
+                    >
+                      <Card
+                        size="small"
+                        style={{
+                          marginBottom: "12px",
+                          border: "1px solid #e6f7ff",
+                          borderRadius: "8px",
+                          background: "#fafafa",
+                        }}
+                      >
+                        <div style={{ display: "grid", gap: "8px" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                            }}
+                          >
+                            <UserSwitchOutlined style={{ color: "#1890ff" }} />
+                            <Text strong>Bác sĩ:</Text>
+                            <Text>{item.doctorName || "---"}</Text>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "flex-start",
+                              gap: "8px",
+                            }}
+                          >
+                            <ExclamationCircleOutlined
+                              style={{ color: "#fa541c", marginTop: "4px" }}
+                            />
+                            <Text strong>Chẩn đoán:</Text>
+                            <Text>{item.diagnosis || "---"}</Text>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "flex-start",
+                              gap: "8px",
+                            }}
+                          >
+                            <MedicineBoxOutlined
+                              style={{ color: "#52c41a", marginTop: "4px" }}
+                            />
+                            <Text strong>Phác đồ điều trị:</Text>
+                            <Text>{item.treatment || "---"}</Text>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                            }}
+                          >
+                            <CalendarOutlined style={{ color: "#722ed1" }} />
+                            <Text strong>Loại cuộc hẹn:</Text>
+                            <Text>{item.appointmentType || "---"}</Text>
+                          </div>
+                        </div>
+                      </Card>
+                    </Timeline.Item>
+                  ))}
+                </Timeline>
               )}
             </Card>
           </div>
         )}
 
-        {activeTab === 'appointments' && (
+        {activeTab === "appointments" && (
           <div className="appointments-content">
-            <Card className="appointments-list-card" title="Lịch hẹn">
+            <Card
+              className="appointments-list-card"
+              title={
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <CalendarOutlined style={{ color: "#1890ff" }} />
+                  <span>Lịch hẹn</span>
+                  <Badge
+                    count={
+                      appointments.filter((app) => app.status === "scheduled")
+                        .length
+                    }
+                  />
+                </div>
+              }
+            >
               {appointments.length === 0 ? (
-                <div>Chưa có lịch hẹn nào.</div>
+                <Empty description="Chưa có lịch hẹn nào." />
               ) : (
-                <List
-                  dataSource={appointments}
-                  renderItem={item => (
-                    <List.Item>
-                      <List.Item.Meta
-                        title={`Lịch hẹn ${item.type || ''}`}
-                        description={
-                          <>
-                            <div>Thời gian: {item.appointmentDate ? moment(item.appointmentDate).format('DD/MM/YYYY') : '---'} {item.timeSlot || ''}</div>
-                            <div>Loại: {item.type || '---'}</div>
-                            <div>Bác sĩ ID: {item.doctorId || '---'}</div>
-                            <div>Trạng thái: {item.status || '---'}</div>
-                          </>
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
+                <div style={{ display: "grid", gap: "16px" }}>
+                  {appointments
+                    .sort((a, b) =>
+                      moment(b.appointmentDate).diff(moment(a.appointmentDate))
+                    )
+                    .map((item, index) => (
+                      <Card
+                        key={index}
+                        size="small"
+                        style={{
+                          border: `1px solid ${
+                            item.status === "scheduled" ? "#e6f7ff" : "#f0f0f0"
+                          }`,
+                          borderRadius: "12px",
+                          background:
+                            item.status === "scheduled"
+                              ? "linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%)"
+                              : "linear-gradient(135deg, #f6f6f6 0%, #ffffff 100%)",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "12px",
+                              flex: 1,
+                            }}
+                          >
+                            <Avatar
+                              icon={<CalendarOutlined />}
+                              style={{
+                                backgroundColor:
+                                  item.status === "scheduled"
+                                    ? "#1890ff"
+                                    : "#8c8c8c",
+                                flexShrink: 0,
+                              }}
+                            />
+                            <div style={{ flex: 1 }}>
+                              <div
+                                style={{
+                                  fontWeight: "500",
+                                  color:
+                                    item.status === "scheduled"
+                                      ? "#1890ff"
+                                      : "#666",
+                                  marginBottom: "8px",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                Lịch hẹn {item.type || ""}
+                              </div>
+                              <div
+                                style={{
+                                  display: "grid",
+                                  gap: "4px",
+                                  fontSize: "12px",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "6px",
+                                  }}
+                                >
+                                  <ClockCircleOutlined
+                                    style={{ color: "#1890ff" }}
+                                  />
+                                  <Text>
+                                    Thời gian:{" "}
+                                    {item.appointmentDate
+                                      ? moment(item.appointmentDate).format(
+                                          "DD/MM/YYYY"
+                                        )
+                                      : "---"}{" "}
+                                    {item.timeSlot || ""}
+                                  </Text>
+                                </div>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "6px",
+                                  }}
+                                >
+                                  <FileTextOutlined
+                                    style={{ color: "#52c41a" }}
+                                  />
+                                  <Text>Loại: {item.type || "---"}</Text>
+                                </div>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "6px",
+                                  }}
+                                >
+                                  <UserSwitchOutlined
+                                    style={{ color: "#722ed1" }}
+                                  />
+                                  <Text>
+                                    Bác sĩ:{" "}
+                                    {item.doctorName ||
+                                      `ID: ${item.doctorId}` ||
+                                      "---"}
+                                  </Text>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "flex-end",
+                              gap: "8px",
+                            }}
+                          >
+                            <Tag
+                              color={getStatusColor(item.status)}
+                              style={{ margin: 0 }}
+                            >
+                              {getStatusText(item.status)}
+                            </Tag>
+                            {item.status === "scheduled" && (
+                              <div style={{ fontSize: "11px", color: "#666" }}>
+                                {moment(item.appointmentDate).fromNow()}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                </div>
               )}
             </Card>
           </div>
         )}
 
-        {activeTab === 'tests' && (
+        {activeTab === "tests" && (
           <div className="tests-content">
             <Card className="tests-list-card" title="Kết quả xét nghiệm">
               <List
                 className="tests-list"
                 itemLayout="horizontal"
-                dataSource={medicalHistory} // Sử dụng medicalHistory thay vì userData.medicalTests
-                renderItem={record => (
+                dataSource={medicalHistory}
+                renderItem={(record) => (
                   <List.Item
                     actions={[
-                      <Button type="link">Xem kết quả chi tiết</Button>
+                      <Button type="link">Xem kết quả chi tiết</Button>,
                     ]}
                   >
                     <List.Item.Meta
-                      avatar={<Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#1890ff' }} />}
+                      avatar={
+                        <Avatar
+                          icon={<FileTextOutlined />}
+                          style={{ backgroundColor: "#1890ff" }}
+                        />
+                      }
                       title={
                         <div className="test-title">
-                          <span>{record.name || record.testName || 'Kết quả xét nghiệm'}</span>
-                          {record.result === 'Bình thường' ? (
+                          <span>
+                            {record.name ||
+                              record.testName ||
+                              "Kết quả xét nghiệm"}
+                          </span>
+                          {record.result === "Bình thường" ? (
                             <Tag color="success">Bình thường</Tag>
                           ) : (
                             <Tag color="warning">Cần theo dõi</Tag>
@@ -474,8 +982,16 @@ const PatientProfile = () => {
                       }
                       description={
                         <div className="test-details">
-                          <div><ClockCircleOutlined /> Ngày thực hiện: {moment(record.date || record.recordDate).format('DD/MM/YYYY')}</div>
-                          <div><UserOutlined /> Bác sĩ: {record.doctor || record.doctorName || '---'}</div>
+                          <div>
+                            <ClockCircleOutlined /> Ngày thực hiện:{" "}
+                            {moment(record.date || record.recordDate).format(
+                              "DD/MM/YYYY"
+                            )}
+                          </div>
+                          <div>
+                            <UserOutlined /> Bác sĩ:{" "}
+                            {record.doctor || record.doctorName || "---"}
+                          </div>
                         </div>
                       }
                     />

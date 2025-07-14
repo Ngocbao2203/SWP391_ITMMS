@@ -29,18 +29,22 @@ export default function UserService() {
   const [loading, setLoading] = useState(true);
 
   // Lấy danh sách dịch vụ từ API khi component mount
+  // Lấy danh sách dịch vụ từ API khi component mount
   useEffect(() => {
     const fetchServices = async () => {
       try {
         setLoading(true);
         const response = await treatmentService.getAllTreatmentServices();
+        console.log("API Response:", response); // Log toàn bộ response từ API
         if (response && (response.success || Array.isArray(response))) {
           // Xử lý trường hợp API trả về mảng trực tiếp hoặc nằm trong property data
           const serviceData = Array.isArray(response)
             ? response
             : response.data || [];
-          setServices(mapServiceData(serviceData));
-          console.log(response);
+          console.log("Service Data:", serviceData); // Log dữ liệu trước khi map
+          const mappedServices = mapServiceData(serviceData);
+          setServices(mappedServices);
+          console.log("Mapped Services:", mappedServices); // Log dữ liệu sau khi map
         } else {
           message.error("Không thể tải dữ liệu dịch vụ điều trị");
         }
@@ -226,6 +230,26 @@ export default function UserService() {
               >
                 <h3 className="service-title">{service.serviceName}</h3>
                 <p className="service-description">{service.description}</p>
+
+                {/* Hiển thị thêm thông tin chi tiết */}
+                <div className="service-details">
+                  <p>
+                    <strong>Giá cơ bản:</strong>{" "}
+                    {service.basePrice.toLocaleString("vi-VN")} VND
+                  </p>
+                  <p>
+                    <strong>Quy trình:</strong> {service.procedures}
+                  </p>
+                  <p>
+                    <strong>Yêu cầu:</strong> {service.requirements}
+                  </p>
+                  <p>
+                    <strong>Thời gian:</strong> {service.durationDays} ngày
+                  </p>
+                  <p>
+                    <strong>Tỷ lệ thành công:</strong> {service.successRate}%
+                  </p>
+                </div>
 
                 {/* Tính năng nổi bật của dịch vụ */}
                 <div className="service-features">

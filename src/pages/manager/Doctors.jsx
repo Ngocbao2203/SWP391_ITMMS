@@ -1,6 +1,6 @@
 // Quản lý danh sách bác sĩ cho admin/manager
 // Sử dụng Ant Design cho UI, quản lý state bằng React hook
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Space,
@@ -12,13 +12,10 @@ import {
   message,
   Switch,
   Tooltip,
-} from 'antd';
-import {
-  EditOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import { debounce } from 'lodash';
-import doctorService from '../../services/doctorService';
+} from "antd";
+import { EditOutlined, UserOutlined } from "@ant-design/icons";
+import { debounce } from "lodash";
+import doctorService from "../../services/doctorService";
 
 const { Option } = Select;
 
@@ -28,7 +25,7 @@ const Doctors = () => {
   const [data, setData] = useState([]); // Danh sách bác sĩ
   const [isModalVisible, setIsModalVisible] = useState(false); // Hiển thị modal chỉnh sửa
   const [form] = Form.useForm(); // Form chỉnh sửa bác sĩ
-  const [searchText, setSearchText] = useState(''); // Từ khóa tìm kiếm
+  const [searchText, setSearchText] = useState(""); // Từ khóa tìm kiếm
   const [editingDoctor, setEditingDoctor] = useState(null); // Bác sĩ đang chỉnh sửa
   const [loading, setLoading] = useState(false); // Đang tải dữ liệu
 
@@ -44,13 +41,15 @@ const Doctors = () => {
       const response = await doctorService.getAllDoctors(searchParams);
       let filteredDoctors = response.doctors || [];
       if (searchParams.name) {
-        filteredDoctors = filteredDoctors.filter(doctor =>
-          doctor.fullName.toLowerCase().includes(searchParams.name.toLowerCase())
+        filteredDoctors = filteredDoctors.filter((doctor) =>
+          doctor.fullName
+            .toLowerCase()
+            .includes(searchParams.name.toLowerCase())
         );
       }
       setData(filteredDoctors);
     } catch (error) {
-      message.error('Lỗi khi lấy danh sách bác sĩ');
+      message.error("Lỗi khi lấy danh sách bác sĩ");
     } finally {
       setLoading(false);
     }
@@ -59,7 +58,10 @@ const Doctors = () => {
   // Xử lý cập nhật thông tin bác sĩ
   const handleEditDoctor = async (values) => {
     try {
-      const response = await doctorService.updateDoctor(editingDoctor.id, values);
+      const response = await doctorService.updateDoctor(
+        editingDoctor.id,
+        values
+      );
       if (response.success) {
         setData((prev) =>
           prev.map((item) =>
@@ -74,24 +76,27 @@ const Doctors = () => {
         message.error(response.message);
       }
     } catch (error) {
-      message.error('Lỗi khi cập nhật bác sĩ');
+      message.error("Lỗi khi cập nhật bác sĩ");
     }
   };
 
   // Xử lý cập nhật trạng thái hoạt động của bác sĩ
   const handleStatusChange = async (id, checked) => {
     try {
-      const response = await doctorService.updateDoctorAvailability(id, checked);
+      const response = await doctorService.updateDoctorAvailability(
+        id,
+        checked
+      );
       if (response.success) {
-        message.success('Cập nhật trạng thái thành công');
+        message.success("Cập nhật trạng thái thành công");
         // fetch lại danh sách bác sĩ để đồng bộ `isAvailable`
         fetchDoctors();
       } else {
         message.error(response.message);
       }
     } catch (error) {
-      console.error('Error updating status:', error);
-      message.error('Lỗi khi cập nhật trạng thái');
+      console.error("Error updating status:", error);
+      message.error("Lỗi khi cập nhật trạng thái");
     }
   };
 
@@ -104,21 +109,23 @@ const Doctors = () => {
   // Định nghĩa các cột cho bảng bác sĩ
   const columns = [
     {
-      title: 'Họ và Tên',
-      dataIndex: 'fullName',
-      key: 'fullName',
-      render: (text) => <span className="doctor-name">{text}</span>,
+      title: "Họ và Tên",
+      dataIndex: "fullName",
+      key: "fullName",
+      render: (text) => (
+        <span style={{ color: "#333", fontWeight: "500" }}>{text}</span>
+      ),
     },
     {
-      title: 'Chuyên môn',
-      dataIndex: 'specialization',
-      key: 'specialization',
+      title: "Chuyên môn",
+      dataIndex: "specialization",
+      key: "specialization",
       render: (text) => <span className="doctor-specialty">{text}</span>,
     },
     {
-      title: 'Trạng thái',
-      dataIndex: 'isAvailable',
-      key: 'isAvailable',
+      title: "Trạng thái",
+      dataIndex: "isAvailable",
+      key: "isAvailable",
       render: (_, record) => (
         <Switch
           checked={record.isAvailable}
@@ -127,8 +134,8 @@ const Doctors = () => {
       ),
     },
     {
-      title: 'Thao tác',
-      key: 'action',
+      title: "Thao tác",
+      key: "action",
       render: (_, record) => (
         <Space className="doctors-actions">
           <Tooltip title="Chỉnh sửa">
@@ -152,11 +159,14 @@ const Doctors = () => {
       {/* Header hiển thị tổng số bác sĩ */}
       <div className="doctors-header">
         <div className="doctors-header-left">
-          <UserOutlined style={{ fontSize: 28, marginRight: 12, color: '#fff' }} />
+          <UserOutlined
+            style={{ fontSize: 28, marginRight: 12, color: "#fff" }}
+          />
           <h2 className="doctors-title">Danh sách bác sĩ</h2>
         </div>
         <p className="doctors-subtitle">
-          Có <span className="doctors-count">{data.length}</span> bác sĩ được hiển thị.
+          Có <span className="doctors-count">{data.length}</span> bác sĩ được
+          hiển thị.
         </p>
       </div>
 
@@ -194,7 +204,7 @@ const Doctors = () => {
           form
             .validateFields()
             .then(handleEditDoctor)
-            .catch((info) => console.log('Validate Failed:', info));
+            .catch((info) => console.log("Validate Failed:", info));
         }}
         okText="Cập nhật"
         cancelText="Hủy"
@@ -204,14 +214,14 @@ const Doctors = () => {
           <Form.Item
             name="fullName"
             label="Họ và Tên"
-            rules={[{ required: true, message: 'Vui lòng nhập họ tên bác sĩ' }]}
+            rules={[{ required: true, message: "Vui lòng nhập họ tên bác sĩ" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="specialization"
             label="Chuyên môn"
-            rules={[{ required: true, message: 'Vui lòng nhập chuyên môn' }]}
+            rules={[{ required: true, message: "Vui lòng nhập chuyên môn" }]}
           >
             <Input />
           </Form.Item>

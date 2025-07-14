@@ -168,7 +168,6 @@ const ServiceDetail = () => {
                     <Rate disabled defaultValue={4.5} allowHalf />
                     <span className="rating-count">(120 đánh giá)</span>
                   </div>
-
                   <div className="stat-item">
                     <UserOutlined />
                     <span>2000+ khách hàng đã sử dụng</span>
@@ -181,6 +180,20 @@ const ServiceDetail = () => {
                     service.description ||
                     service.Description}
                 </Paragraph>
+
+                <div className="service-additional-info">
+                  <p>
+                    <strong>Giá cơ bản:</strong>{" "}
+                    {service.basePrice?.toLocaleString("vi-VN")} VND
+                  </p>
+                  <p>
+                    <strong>Thời gian điều trị:</strong> {service.durationDays}{" "}
+                    ngày
+                  </p>
+                  <p>
+                    <strong>Tỷ lệ thành công:</strong> {service.successRate}%
+                  </p>
+                </div>
 
                 <Row className="service-highlights">
                   <Col span={12}>
@@ -225,41 +238,24 @@ const ServiceDetail = () => {
             <TabPane tab="Chi tiết dịch vụ" key="details">
               <div className="service-details">
                 <Title level={4}>Mô tả chi tiết</Title>
-                <Paragraph>{service.detailedDescription}</Paragraph>
+                <Paragraph>
+                  {service.detailedDescription || service.description}
+                </Paragraph>
 
                 <Title level={4}>Quy trình điều trị</Title>
                 <div className="treatment-process">
-                  {/* Hiển thị quy trình điều trị nếu có, nếu không thì hiển thị mẫu mặc định */}
-                  {(
-                    service.processSteps ||
-                    service.ProcessSteps ||
-                    service.process_steps ||
-                    []
-                  ).length > 0 ? (
-                    (
-                      service.processSteps ||
-                      service.ProcessSteps ||
-                      service.process_steps ||
-                      []
-                    ).map((step, index) => (
+                  {service.procedures ? (
+                    service.procedures.split("→").map((step, index) => (
                       <div className="process-step" key={index}>
                         <div className="step-number">{index + 1}</div>
                         <div className="step-content">
                           <Title level={5}>
-                            {typeof step === "string"
-                              ? step
-                              : step.title || step.name || `Bước ${index + 1}`}
+                            Bước {index + 1}: {step.trim()}
                           </Title>
-                          <Paragraph>
-                            {typeof step === "string"
-                              ? ""
-                              : step.description || ""}
-                          </Paragraph>
                         </div>
                       </div>
                     ))
                   ) : (
-                    // Nếu không có quy trình thì hiển thị mẫu mặc định
                     <>
                       <div className="process-step">
                         <div className="step-number">1</div>
@@ -271,7 +267,6 @@ const ServiceDetail = () => {
                           </Paragraph>
                         </div>
                       </div>
-
                       <div className="process-step">
                         <div className="step-number">2</div>
                         <div className="step-content">
@@ -282,32 +277,14 @@ const ServiceDetail = () => {
                           </Paragraph>
                         </div>
                       </div>
-
-                      <div className="process-step">
-                        <div className="step-number">3</div>
-                        <div className="step-content">
-                          <Title level={5}>
-                            Thụ tinh trong phòng thí nghiệm
-                          </Title>
-                          <Paragraph>
-                            Trứng được thụ tinh với tinh trùng trong điều kiện
-                            phòng thí nghiệm.
-                          </Paragraph>
-                        </div>
-                      </div>
-
-                      <div className="process-step">
-                        <div className="step-number">4</div>
-                        <div className="step-content">
-                          <Title level={5}>Chuyển phôi</Title>
-                          <Paragraph>
-                            Phôi được chuyển vào tử cung của người phụ nữ.
-                          </Paragraph>
-                        </div>
-                      </div>
                     </>
                   )}
                 </div>
+
+                <Title level={4}>Yêu cầu</Title>
+                <Paragraph>
+                  {service.requirements || "Không có yêu cầu cụ thể"}
+                </Paragraph>
               </div>
             </TabPane>
 
@@ -316,65 +293,40 @@ const ServiceDetail = () => {
               <div className="service-doctors">
                 <Title level={4}>Bác sĩ chuyên khoa</Title>
                 <Row gutter={[24, 24]}>
-                  {(service.doctors || service.Doctors || []).length > 0 ? (
-                    (service.doctors || service.Doctors || []).map(
-                      (doctor, index) => (
-                        <Col xs={24} sm={12} md={8} key={doctor.id || index}>
-                          <Card
-                            className="doctor-card"
-                            hoverable
-                            cover={
-                              <div className="doctor-image-container">
-                                <img
-                                  alt={
-                                    doctor.name ||
-                                    doctor.Name ||
-                                    doctor.doctorName ||
-                                    doctor.DoctorName ||
-                                    "Bác sĩ"
-                                  }
-                                  src={
-                                    doctor.photo ||
-                                    doctor.Photo ||
-                                    doctor.image ||
-                                    doctor.Image ||
-                                    "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png"
-                                  }
-                                  className="doctor-photo"
-                                />
-                              </div>
-                            }
-                          >
-                            <div className="doctor-info">
-                              <Title level={4}>
-                                {doctor.name ||
-                                  doctor.Name ||
-                                  doctor.doctorName ||
-                                  doctor.DoctorName}
-                              </Title>
-                              <Tag color="blue">
-                                {doctor.specialty ||
-                                  doctor.Specialty ||
-                                  doctor.specialization ||
-                                  doctor.Specialization ||
-                                  "Chuyên khoa"}
-                              </Tag>
-                              <div className="doctor-experience">
-                                <Text type="secondary">
-                                  {doctor.experience ||
-                                    doctor.Experience ||
-                                    doctor.yearExperience ||
-                                    doctor.YearExperience ||
-                                    "Chuyên gia"}
-                                </Text>
-                              </div>
+                  {(service.doctors || []).length > 0 ? (
+                    (service.doctors || []).map((doctor, index) => (
+                      <Col xs={24} sm={12} md={8} key={doctor.id || index}>
+                        <Card
+                          className="doctor-card"
+                          hoverable
+                          cover={
+                            <div className="doctor-image-container">
+                              <img
+                                alt={doctor.name || "Bác sĩ"}
+                                src={
+                                  doctor.photo ||
+                                  "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png"
+                                }
+                                className="doctor-photo"
+                              />
                             </div>
-                          </Card>
-                        </Col>
-                      )
-                    )
+                          }
+                        >
+                          <div className="doctor-info">
+                            <Title level={4}>{doctor.name}</Title>
+                            <Tag color="blue">
+                              {doctor.specialty || "Chuyên khoa"}
+                            </Tag>
+                            <div className="doctor-experience">
+                              <Text type="secondary">
+                                {doctor.experience || "Chuyên gia"}
+                              </Text>
+                            </div>
+                          </div>
+                        </Card>
+                      </Col>
+                    ))
                   ) : (
-                    // Nếu chưa có bác sĩ cho dịch vụ này
                     <Col span={24}>
                       <div className="no-doctors">
                         <Text>Chưa có thông tin bác sĩ cho dịch vụ này.</Text>
@@ -392,33 +344,26 @@ const ServiceDetail = () => {
                 <List
                   itemLayout="vertical"
                   dataSource={
-                    (
-                      service.faq ||
-                      service.FAQ ||
-                      service.faqs ||
-                      service.Faqs ||
-                      []
-                    ).length > 0
-                      ? service.faq ||
-                        service.FAQ ||
-                        service.faqs ||
-                        service.Faqs
+                    (service.faq || []).length > 0
+                      ? service.faq
                       : [
                           {
                             question:
                               "Tỷ lệ thành công của phương pháp này là bao nhiêu?",
-                            answer:
-                              "Tỷ lệ thành công của phương pháp này phụ thuộc vào nhiều yếu tố như tuổi, nguyên nhân vô sinh và sức khỏe tổng thể. Tỷ lệ thành công trung bình dao động từ 30-60% sau một chu kỳ điều trị.",
+                            answer: `Tỷ lệ thành công là ${
+                              service.successRate || 0
+                            }% tùy thuộc vào tình trạng sức khỏe.`,
                           },
                           {
                             question: "Chi phí điều trị thường là bao nhiêu?",
-                            answer:
-                              "Chi phí điều trị dao động tùy thuộc vào phương pháp và nhu cầu cá nhân của từng cặp đôi. Trung tâm sẽ tư vấn chi tiết về chi phí sau khi thăm khám và đánh giá.",
+                            answer: `Chi phí cơ bản là ${
+                              service.basePrice?.toLocaleString("vi-VN") || 0
+                            } VND, có thể thay đổi theo yêu cầu cụ thể.`,
                           },
                           {
                             question: "Liệu phương pháp này có đau không?",
                             answer:
-                              "Hầu hết các thủ thuật được thực hiện dưới sự hỗ trợ của thuốc giảm đau hoặc gây tê nhẹ. Bệnh nhân có thể cảm thấy hơi khó chịu sau thủ thuật nhưng không gây đau đáng kể.",
+                              "Hầu hết các thủ thuật được thực hiện với thuốc giảm đau nhẹ, không gây đau đáng kể.",
                           },
                         ]
                   }
@@ -443,7 +388,6 @@ const ServiceDetail = () => {
         {/* Call to action cuối trang */}
         <Card className="cta-card">
           <div className="cta-content">
-            {" "}
             <Title level={3}>Bạn quan tâm đến dịch vụ này?</Title>
             <Paragraph>
               Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng hỗ trợ và giải đáp
