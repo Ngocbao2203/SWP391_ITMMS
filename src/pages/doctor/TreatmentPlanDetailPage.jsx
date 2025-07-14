@@ -729,29 +729,11 @@ const TreatmentPlanDetailPage = () => {
               </Card>
 
               {/* Nút thao tác */}
-              <div className="d-flex justify-content-between mb-5">
-                <Button
-                  variant="outline-secondary"
-                  onClick={() => navigate("/doctor/treatmentsprogress")}
-                >
-                  <i className="fas fa-arrow-left me-1"></i> Quay lại danh sách
+              <div className="d-flex justify-content-end mb-5">
+                <Button variant="info" onClick={() => setShowModal(true)}>
+                  <i className="fas fa-plus-circle me-1"></i> Thêm kế hoạch điều
+                  trị
                 </Button>
-                <div>
-                  <Button
-                    variant="info"
-                    className="me-2"
-                    onClick={() => setShowModal(true)}
-                  >
-                    <i className="fas fa-plus-circle me-1"></i> Thêm kế hoạch
-                    điều trị
-                  </Button>
-                  <Button variant="primary" className="me-2">
-                    <i className="fas fa-edit me-1"></i> Cập nhật tiến trình
-                  </Button>
-                  <Button variant="success">
-                    <i className="fas fa-file-medical me-1"></i> Thêm ghi chú
-                  </Button>
-                </div>
               </div>
             </div>
           )}
