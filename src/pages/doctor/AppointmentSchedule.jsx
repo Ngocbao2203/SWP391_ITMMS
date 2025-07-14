@@ -355,14 +355,14 @@ const AppointmentSchedule = () => {
 
   const columns = [
     {
-      title: "PATIENT",
+      title: "BỆNH NHÂN",
       dataIndex: "patientName",
       key: "patientName",
       width: "25%",
       sorter: (a, b) => a.patientName.localeCompare(b.patientName),
     },
     {
-      title: "TIME SLOT",
+      title: "MÃ GIỜ",
       dataIndex: "time",
       key: "time",
       width: "20%",
@@ -373,13 +373,13 @@ const AppointmentSchedule = () => {
       },
     },
     {
-      title: "SERVICE",
+      title: "DỊCH VỤ",
       dataIndex: "service",
       key: "service",
       width: "25%",
     },
     {
-      title: "STATUS",
+      title: "TRẠNG THÁI",
       dataIndex: "status",
       key: "status",
       width: "15%",
@@ -394,19 +394,19 @@ const AppointmentSchedule = () => {
       onFilter: (value, record) => record.status.toLowerCase() === value,
     },
     {
-      title: "ACTIONS",
+      title: "HÀNH ĐỘNG",
       key: "actions",
       width: "20%",
       render: (_, record) => (
         <Space size="small">
-          <Tooltip title="View Details">
+          <Tooltip title="Xem chi tiết">
             <Button
               icon={<InfoCircleOutlined />}
               size="small"
               onClick={() => showAppointmentDetails(record)}
             />
           </Tooltip>
-          <Tooltip title="Update Status">
+          <Tooltip title="Cập nhật trạng thái">
             <Button
               type="default"
               icon={<EditOutlined />}
@@ -425,7 +425,7 @@ const AppointmentSchedule = () => {
       <div className="appointment-schedule-header">
         <Row justify="space-between" align="middle">
           <Col>
-            <Title level={2}>Appointment Schedule</Title>
+            <Title level={2}>Lịch hẹn</Title>
           </Col>
           <Col>
             <DatePicker
@@ -466,7 +466,7 @@ const AppointmentSchedule = () => {
                 }}
               >
                 <span>
-                  <BarsOutlined /> Appointments for{" "}
+                  <BarsOutlined /> Lịch hẹn cho{" "}
                   {selectedDate.format("MMMM D, YYYY")}
                 </span>
                 <div>
@@ -476,7 +476,7 @@ const AppointmentSchedule = () => {
                     onClick={reloadSchedule}
                     style={{ marginLeft: 8 }}
                   >
-                    Refresh
+                    Làm mới
                   </Button>
                 </div>
               </div>
@@ -488,7 +488,7 @@ const AppointmentSchedule = () => {
               rowKey="id"
               size="small"
               pagination={false}
-              locale={{ emptyText: "No appointments for this date" }}
+              locale={{ emptyText: "Không có lịch hẹn cho ngày này" }}
               style={tableStyle}
               bordered
               className="appointment-table"
@@ -498,7 +498,7 @@ const AppointmentSchedule = () => {
       </div>
       {/* Appointment Details Modal */}
       <Modal
-        title="Appointment Details"
+        title="Chi tiết lịch hẹn"
         open={isAppointmentDetailsVisible}
         onCancel={handleCancel}
         footer={[
@@ -513,10 +513,10 @@ const AppointmentSchedule = () => {
               currentAppointment && currentAppointment.status === "cancelled"
             }
           >
-            Update Status
+            Cập nhật trạng thái
           </Button>,
           <Button key="close" onClick={handleCancel}>
-            Close
+            Đóng
           </Button>,
         ]}
         width={600}
@@ -528,7 +528,7 @@ const AppointmentSchedule = () => {
                 <Card
                   title={
                     <span>
-                      <CalendarOutlined /> Appointment Information
+                      <CalendarOutlined /> Thông tin lịch hẹn
                     </span>
                   }
                   className="details-card"
@@ -537,24 +537,24 @@ const AppointmentSchedule = () => {
                   <Row gutter={16}>
                     <Col span={12}>
                       <p>
-                        <Text strong>Date:</Text>{" "}
+                        <Text strong>Ngày:</Text>{" "}
                         {dayjs(currentAppointment.date).format("MMMM D, YYYY")}
                       </p>
                       <p>
-                        <Text strong>Time:</Text> {currentAppointment.time}
+                        <Text strong>Giờ:</Text> {currentAppointment.time}
                       </p>
                       <p>
-                        <Text strong>Service:</Text>{" "}
+                        <Text strong>Dịch vụ:</Text>{" "}
                         {currentAppointment.service}
                       </p>
                     </Col>
                     <Col span={12}>
                       <p>
-                        <Text strong>Status:</Text>{" "}
+                        <Text strong>Trạng thái:</Text>{" "}
                         {getStatusTag(currentAppointment.status)}
                       </p>
                       <p>
-                        <Text strong>Created On:</Text>{" "}
+                        <Text strong>Tạo lúc:</Text>{" "}
                         {currentAppointment.createdAt}
                       </p>
                     </Col>
@@ -566,7 +566,7 @@ const AppointmentSchedule = () => {
                 <Card
                   title={
                     <span>
-                      <UserOutlined /> Patient Information
+                      <UserOutlined /> Thông tin bệnh nhân
                     </span>
                   }
                   className="details-card"
@@ -575,13 +575,13 @@ const AppointmentSchedule = () => {
                   <Row gutter={16}>
                     <Col span={12}>
                       <p>
-                        <Text strong>Name:</Text>{" "}
+                        <Text strong>Tên:</Text>{" "}
                         {currentAppointment.patientName}
                       </p>
                     </Col>
                     <Col span={12}>
                       <p>
-                        <Text strong>Phone:</Text>{" "}
+                        <Text strong>Số điện thoại:</Text>{" "}
                         {currentAppointment.patientPhone}
                       </p>
                       <p>
@@ -591,10 +591,10 @@ const AppointmentSchedule = () => {
                     </Col>
                   </Row>
                   <div className="medical-history-section">
-                    <Text strong>Medical History:</Text>
+                    <Text strong>Lịch sử bệnh tật:</Text>
                     <p>
                       {currentAppointment.medicalHistory ||
-                        "No medical history recorded"}
+                        "Chưa có lịch sử bệnh tật ghi nhận"}
                     </p>
                   </div>
                 </Card>
@@ -604,12 +604,12 @@ const AppointmentSchedule = () => {
                 <Card
                   title={
                     <span>
-                      <InfoCircleOutlined /> Notes
+                      <InfoCircleOutlined /> Ghi chú
                     </span>
                   }
                   className="details-card"
                 >
-                  <p>{currentAppointment.notes || "No notes available"}</p>
+                  <p>{currentAppointment.notes || "Không có ghi chú"}</p>
                 </Card>
               </Col>
             </Row>
@@ -618,7 +618,7 @@ const AppointmentSchedule = () => {
       </Modal>
       {/* Update Status Modal */}
       <Modal
-        title="Update Appointment Status"
+        title="Cập nhật trạng thái lịch hẹn"
         open={isUpdateStatusVisible}
         onOk={handleUpdateStatus}
         onCancel={handleCancel}
@@ -627,27 +627,27 @@ const AppointmentSchedule = () => {
           <Form form={statusForm} layout="vertical">
             <div className="appointment-summary">
               <p>
-                <Text strong>Patient:</Text> {currentAppointment.patientName}
+                <Text strong>Bệnh nhân:</Text> {currentAppointment.patientName}
               </p>
               <p>
-                <Text strong>Date & Time:</Text>{" "}
-                {dayjs(currentAppointment.date).format("MMMM D, YYYY")} at{" "}
+                <Text strong>Ngày & Giờ:</Text>{" "}
+                {dayjs(currentAppointment.date).format("MMMM D, YYYY")} lúc{" "}
                 {currentAppointment.time}
               </p>
               <p>
-                <Text strong>Service:</Text> {currentAppointment.service}
+                <Text strong>Dịch vụ:</Text> {currentAppointment.service}
               </p>
               <p>
-                <Text strong>Current Status:</Text>{" "}
+                <Text strong>Trạng thái hiện tại:</Text>{" "}
                 {getStatusTag(currentAppointment.status)}
               </p>
             </div>{" "}
             <Form.Item
               name="status"
-              label="Update Status"
-              rules={[{ required: true, message: "Please select status" }]}
+              label="Cập nhật trạng thái"
+              rules={[{ required: true, message: "Vui lòng chọn trạng thái" }]}
             >
-              <Select placeholder="Select status">
+              <Select placeholder="Chọn trạng thái">
                 <Option value="Scheduled">
                   {APPOINTMENT_STATUS.SCHEDULED}
                 </Option>
