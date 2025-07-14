@@ -154,14 +154,6 @@ const PatientProfile = () => {
     }));
   };
 
-  const handleAvatarChange = (info) => {
-    if (info.file.status === 'done' || info.file.status === 'uploading' || info.file.originFileObj) {
-      const reader = new FileReader();
-      reader.onload = e => setAvatarUrl(e.target.result);
-      reader.readAsDataURL(info.file.originFileObj);
-    }
-  };
-
   if (loading) return <div>Đang tải...</div>;
   if (!userData) return <div>Không có dữ liệu hồ sơ.</div>;
 
@@ -209,21 +201,14 @@ const PatientProfile = () => {
                     className="patient-avatar"
                     src={avatarUrl || userData.avatar || null}
                   />
-                  <Upload
-                    showUploadList={false}
-                    beforeUpload={() => false}
-                    onChange={handleAvatarChange}
-                    accept="image/*"
-                  >
-                    <Button icon={<UploadOutlined />} size="small" style={{ marginTop: 8 }}>Chọn ảnh</Button>
-                  </Upload>
+                  {/* Đã xóa nút Upload chọn ảnh */}
                 </div>
               </div>
             </Dropdown>
             <div className="patient-basic-info">
               <div className="patient-name-id">
                 <Title level={3} className="patient-name">{userData.fullName}</Title>
-                <Tag color="blue" className="patient-id">ID: {userData.id}</Tag>
+                {/* Đã xóa hiển thị ID bệnh nhân */}
               </div>
               <div className="patient-metadata">
                 {userData.birthDate && moment(userData.birthDate, ['YYYY-MM-DD', 'DD/MM/YYYY']).isValid() && (
@@ -238,17 +223,21 @@ const PatientProfile = () => {
           </div>
           <div className="profile-actions">
             <Space>
-              <Button
-                type={editMode ? "default" : "primary"}
-                icon={editMode ? null : <EditOutlined />}
-                onClick={handleEditToggle}
-              >
-                {editMode ? "Hủy" : "Chỉnh sửa"}
-              </Button>
-              {editMode && (
-                <Button type="primary" icon={<CheckCircleOutlined />} onClick={handleSaveChanges}>
-                  Lưu thay đổi
-                </Button>
+              {activeTab === 'overview' && (
+                <>
+                  <Button
+                    type={editMode ? "default" : "primary"}
+                    icon={editMode ? null : <EditOutlined />}
+                    onClick={handleEditToggle}
+                  >
+                    {editMode ? "Hủy" : "Chỉnh sửa"}
+                  </Button>
+                  {editMode && (
+                    <Button type="primary" icon={<CheckCircleOutlined />} onClick={handleSaveChanges}>
+                      Lưu thay đổi
+                    </Button>
+                  )}
+                </>
               )}
             </Space>
           </div>

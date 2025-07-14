@@ -235,7 +235,7 @@ const Register = () => {
               <Col xs={24} sm={12}>
                 {/* Số điện thoại */}
                 <Form.Item
-                  name="phoneNumber"
+                  name="phone" // Đổi từ phoneNumber sang phone
                   rules={[
                     { required: true, message: "Vui lòng nhập số điện thoại!" },
                     { pattern: /^[0-9]{10}$/, message: "Số điện thoại không hợp lệ!" }
