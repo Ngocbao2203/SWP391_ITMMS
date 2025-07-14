@@ -1,44 +1,54 @@
 /* CSS chung cho cả hai trang */
 .treatment-progress-container {
-  padding: 20px 0;
+  padding: 32px 0;
   max-width: 1200px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  border-radius: 18px;
 }
 
 .treatment-progress-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e3e8ee;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 4px 24px rgba(102,126,234,0.10);
 }
 
 .page-title {
-  font-size: 1.8rem;
-  color: #2c3e50;
+  font-size: 2.1rem;
+  color: #1976d2;
   margin-bottom: 0;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 /* Card styles */
 .table-card, .plan-overview {
   border: none;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 24px rgba(102,126,234,0.10);
   margin-bottom: 25px;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
+  background: #fff;
 }
 
 .table-header {
-  background-color: #f8f9fa;
-  padding: 15px 20px;
-  border-bottom: 1px solid #eaeaea;
+  background: linear-gradient(90deg, #e3f2fd 0%, #f5f7fa 100%);
+  padding: 18px 28px;
+  border-bottom: 2px solid #e3e8ee;
+  border-radius: 16px 16px 0 0;
 }
 
 .table-header h5 {
-  color: #2c3e50;
-  font-weight: 600;
+  color: #1976d2;
+  font-weight: 700;
   margin: 0;
+  font-size: 1.2rem;
 }
 
 /* Bảng lịch hẹn */
@@ -47,11 +57,18 @@
 }
 
 .appointment-table th {
-  background-color: #f8f9fa;
-  color: #495057;
-  font-weight: 600;
-  border-bottom-width: 1px;
+  background: #f8f9fa;
+  color: #1976d2;
+  font-weight: 700;
+  border-bottom-width: 2px;
   vertical-align: middle;
+  font-size: 1rem;
+}
+
+.appointment-table td {
+  background: #fff;
+  font-size: 1rem;
+  border-bottom: 1px solid #e3e8ee;
 }
 
 .appointment-row {
@@ -59,34 +76,43 @@
 }
 
 .appointment-row:hover {
-  background-color: #f8f9fa;
+  background-color: #f0f4ff;
 }
 
 .appointment-id {
-  font-weight: 500;
-  color: #3498db;
+  font-weight: 600;
+  color: #43e97b;
 }
 
 .patient-name {
-  font-weight: 500;
+  font-weight: 600;
+  color: #1976d2;
 }
 
 .status-badge {
-  font-weight: 500;
-  padding: 5px 10px;
-  border-radius: 4px;
+  font-weight: 700;
+  padding: 6px 18px;
+  border-radius: 12px;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+  letter-spacing: 0.2px;
 }
 
 .action-button {
-  border-radius: 4px;
-  padding: 5px 10px;
-  font-size: 0.85rem;
-  transition: all 0.2s;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: #222;
+  box-shadow: 0 2px 8px rgba(67,233,123,0.10);
+  transition: box-shadow 0.2s, background 0.2s;
+  border: none;
 }
 
 .action-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #38f9d7 0%, #43e97b 100%);
+  box-shadow: 0 4px 16px rgba(67,233,123,0.18);
 }
 
 /* Loading và error states */
@@ -104,12 +130,13 @@
 
 .loading-text {
   color: #6c757d;
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .error-alert, .no-data-alert {
-  border-radius: 8px;
-  padding: 15px 20px;
+  border-radius: 12px;
+  padding: 18px 28px;
+  font-size: 1.1rem;
 }
 
 /* Chi tiết kế hoạch điều trị */

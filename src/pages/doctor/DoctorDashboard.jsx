@@ -21,10 +21,7 @@ import {
   CheckCircleOutlined, 
   ClockCircleOutlined,
   MedicineBoxOutlined,
-  PlusOutlined,
   EyeOutlined,
-  EditOutlined,
-  TrophyOutlined,
   HeartOutlined,
   TeamOutlined
 } from '@ant-design/icons';
@@ -349,7 +346,7 @@ const DoctorDashboard = () => {
     return (
       <Card className="welcome-card" style={{ marginBottom: 24 }}>
         <Row align="middle">
-          <Col span={16}>
+          <Col span={24}>
             <Space size="middle">
               <Avatar size={64} icon={<UserOutlined />} />
               <div>
@@ -362,16 +359,7 @@ const DoctorDashboard = () => {
               </div>
             </Space>
           </Col>
-          <Col span={8} style={{ textAlign: 'right' }}>
-            <Space>
-              <Button type="primary" icon={<PlusOutlined />}>
-                Tạo kế hoạch điều trị
-              </Button>
-              <Button icon={<CalendarOutlined />}>
-                Xem lịch tuần
-              </Button>
-            </Space>
-          </Col>
+
         </Row>
       </Card>
     );
@@ -523,60 +511,7 @@ const DoctorDashboard = () => {
     );
   };
 
-  const renderQuickActions = () => {
-    const actions = [
-      {
-        title: 'Tạo kế hoạch điều trị',
-        description: 'Tạo kế hoạch điều trị mới cho bệnh nhân',
-        icon: <PlusOutlined />,
-        color: '#1976d2',
-        onClick: () => {}
-      },
-      {
-        title: 'Cập nhật tiến trình',
-        description: 'Cập nhật tiến trình điều trị hiện tại',
-        icon: <EditOutlined />,
-        color: '#388e3c',
-        onClick: () => {}
-      },
-      {
-        title: 'Xem báo cáo',
-        description: 'Xem báo cáo thống kê và hiệu suất',
-        icon: <TrophyOutlined />,
-        color: '#f57c00',
-        onClick: () => {}
-      }
-    ];
 
-    return (
-      <Card title="Thao tác nhanh" className="quick-actions-card">
-        <Row gutter={[16, 16]}>
-          {actions.map((action, index) => (
-            <Col xs={24} md={8} key={index}>
-              <Card
-                hoverable
-                className="action-card"
-                onClick={action.onClick}
-                style={{ borderColor: action.color }}
-              >
-                <Space direction="vertical" align="center" style={{ width: '100%' }}>
-                  <div style={{ color: action.color, fontSize: '32px' }}>
-                    {action.icon}
-                  </div>
-                  <Title level={5} style={{ margin: 0 }}>
-                    {action.title}
-                  </Title>
-                  <Text type="secondary" style={{ textAlign: 'center' }}>
-                    {action.description}
-                  </Text>
-                </Space>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Card>
-    );
-  };
 
   if (loading) {
     return (
@@ -593,11 +528,8 @@ const DoctorDashboard = () => {
       {renderStatsCards()}
       
       <Row gutter={[24, 24]}>
-        <Col xs={24} lg={16}>
+        <Col xs={24}>
           {renderTodaySchedule()}
-        </Col>
-        <Col xs={24} lg={8}>
-          {renderQuickActions()}
         </Col>
       </Row>
 
