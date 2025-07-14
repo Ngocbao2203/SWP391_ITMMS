@@ -87,12 +87,7 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
           ))}
         </ul>
       </nav>
-      <div className="sidebar-footer">
-        <Link to="/logout" className="logout-btn">
-          <FaSignOutAlt />
-          {!isCollapsed && <span>Đăng xuất</span>}
-        </Link>
-      </div>{" "}
+      {/* Đã loại bỏ nút Đăng xuất */}
     </div>
   );
 };

@@ -65,6 +65,21 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* Compact profile style for avatar-only display */
+.doctor-profile-compact {
+  transition: all 0.2s ease;
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.doctor-profile-compact:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.avatar-highlight {
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
 .doctor-info {
   text-align: left;
 }
@@ -84,20 +99,20 @@
   .doctor-header {
     padding: 0 16px;
   }
-  
+
   .header-content {
     height: 56px;
   }
-  
+
   .doctor-info {
     display: none;
   }
-  
+
   .logo {
     font-size: 14px;
     padding: 4px 8px;
   }
-  
+
   .clinic-name {
     font-size: 12px;
   }
@@ -116,4 +131,45 @@
 .ant-dropdown-menu-item[data-menu-id*="logout"]:hover {
   background: #fff2f0 !important;
   color: #ff4d4f !important;
-} 
+}
+
+/* Dropdown styling */
+.user-dropdown-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  gap: 8px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.dropdown-item-danger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 4px 0;
+  color: #ff4d4f;
+}
+
+/* Override Ant Design dropdown styles */
+.ant-dropdown-menu {
+  padding: 4px 8px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.ant-dropdown-menu-item {
+  padding: 5px 8px !important;
+  border-radius: 4px !important;
+}
+
+/* Hide dropdown arrow */
+.ant-dropdown-trigger .anticon-down {
+  display: none;
+}

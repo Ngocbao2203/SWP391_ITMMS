@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
-import { Layout, Typography, Avatar, Dropdown, Button, Badge, Space, Divider } from 'antd';
-import { 
-  UserOutlined, 
-  LogoutOutlined, 
+import React, { useState } from "react";
+import {
+  Layout,
+  Typography,
+  Avatar,
+  Dropdown,
+  Button,
+  Badge,
+  Space,
+  Divider,
+} from "antd";
+import {
+  UserOutlined,
+  LogoutOutlined,
   SettingOutlined,
   BellOutlined,
-  DownOutlined
-} from '@ant-design/icons';
-import { authService } from '../../services';
-import '../../styles/DoctorHeader.css';
+  DownOutlined,
+} from "@ant-design/icons";
+import { authService } from "../../services";
+import "../../styles/DoctorHeader.css";
 
 const { Header } = Layout;
 const { Text } = Typography;
@@ -20,41 +29,41 @@ const DoctorHeader = () => {
 
   const handleLogout = () => {
     authService.logout();
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   const notificationItems = [
     {
-      key: '1',
+      key: "1",
       label: (
-        <div style={{ padding: '8px 0' }}>
+        <div style={{ padding: "8px 0" }}>
           <Text strong>Lịch hẹn mới</Text>
           <br />
-          <Text type="secondary" style={{ fontSize: '12px' }}>
+          <Text type="secondary" style={{ fontSize: "12px" }}>
             Bệnh nhân Nguyễn Văn A đã đặt lịch hẹn
           </Text>
         </div>
       ),
     },
     {
-      key: '2',
+      key: "2",
       label: (
-        <div style={{ padding: '8px 0' }}>
+        <div style={{ padding: "8px 0" }}>
           <Text strong>Cập nhật điều trị</Text>
           <br />
-          <Text type="secondary" style={{ fontSize: '12px' }}>
+          <Text type="secondary" style={{ fontSize: "12px" }}>
             Kế hoạch điều trị #123 cần được cập nhật
           </Text>
         </div>
       ),
     },
     {
-      key: '3',
+      key: "3",
       label: (
-        <div style={{ padding: '8px 0' }}>
+        <div style={{ padding: "8px 0" }}>
           <Text strong>Tái khám</Text>
           <br />
-          <Text type="secondary" style={{ fontSize: '12px' }}>
+          <Text type="secondary" style={{ fontSize: "12px" }}>
             3 bệnh nhân cần tái khám trong tuần này
           </Text>
         </div>
@@ -64,30 +73,53 @@ const DoctorHeader = () => {
 
   const userMenuItems = [
     {
-      key: 'profile',
+      key: "profile_header",
       label: (
-        <Space>
+        <div className="user-dropdown-header">
+          <Avatar size="small" icon={<UserOutlined />} src={doctor.avatar} />
+          <div>
+            <Text strong style={{ fontSize: "13px" }}>
+              BS. {doctor.fullName || "Doctor"}
+            </Text>
+            <br />
+            <Text type="secondary" style={{ fontSize: "12px" }}>
+              {doctor.specialization || "Chuyên khoa"}
+            </Text>
+          </div>
+        </div>
+      ),
+      disabled: true,
+    },
+    {
+      type: "divider",
+      style: { margin: "4px 0" },
+    },
+    {
+      key: "profile",
+      label: (
+        <Space className="dropdown-item">
           <UserOutlined />
           <span>Thông tin cá nhân</span>
         </Space>
       ),
     },
     {
-      key: 'settings',
+      key: "settings",
       label: (
-        <Space>
+        <Space className="dropdown-item">
           <SettingOutlined />
           <span>Cài đặt</span>
         </Space>
       ),
     },
     {
-      type: 'divider',
+      type: "divider",
+      style: { margin: "4px 0" },
     },
     {
-      key: 'logout',
+      key: "logout",
       label: (
-        <Space style={{ color: '#ff4d4f' }}>
+        <Space className="dropdown-item-danger">
           <LogoutOutlined />
           <span>Đăng xuất</span>
         </Space>
@@ -106,9 +138,7 @@ const DoctorHeader = () => {
         {/* Logo and Title */}
         <div className="header-left">
           <div className="logo-container">
-            <div className="logo">
-              ITMMS
-            </div>
+            <div className="logo">ITMMS</div>
             <Text className="clinic-name">Fertility Clinic</Text>
           </div>
         </div>
@@ -119,45 +149,39 @@ const DoctorHeader = () => {
             {/* Notifications */}
             <Dropdown
               menu={{ items: notificationItems }}
-              trigger={['click']}
+              trigger={["click"]}
               placement="bottomRight"
             >
-              <Button 
-                type="text" 
+              <Button
+                type="text"
                 icon={
                   <Badge count={notificationCount} size="small">
-                    <BellOutlined style={{ fontSize: '18px' }} />
+                    <BellOutlined style={{ fontSize: "18px" }} />
                   </Badge>
                 }
                 className="notification-btn"
               />
             </Dropdown>
 
-            <Divider type="vertical" style={{ height: '32px' }} />
+            <Divider type="vertical" style={{ height: "32px" }} />
 
-            {/* Doctor Profile */}
+            {/* Doctor Profile - Simplified */}
             <Dropdown
               menu={{ items: userMenuItems }}
-              trigger={['click']}
+              trigger={["click"]}
               placement="bottomRight"
             >
-              <div className="doctor-profile" style={{ cursor: 'pointer' }}>
+              <div
+                className="doctor-profile-compact"
+                style={{ cursor: "pointer" }}
+              >
                 <Space>
-                  <Avatar 
-                    size="small" 
+                  <Avatar
+                    size="default"
                     icon={<UserOutlined />}
                     src={doctor.avatar}
+                    className="avatar-highlight"
                   />
-                  <div className="doctor-info">
-                    <Text strong className="doctor-name">
-                      BS. {doctor.fullName || 'Doctor'}
-                    </Text>
-                    <br />
-                    <Text type="secondary" className="doctor-specialization">
-                      {doctor.specialization || 'Chuyên khoa'}
-                    </Text>
-                  </div>
-                  <DownOutlined style={{ fontSize: '12px' }} />
                 </Space>
               </div>
             </Dropdown>
@@ -168,4 +192,4 @@ const DoctorHeader = () => {
   );
 };
 
-export default DoctorHeader; 
+export default DoctorHeader;
