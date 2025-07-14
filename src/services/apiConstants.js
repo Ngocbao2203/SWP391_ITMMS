@@ -20,7 +20,7 @@ export const API_ENDPOINTS = {
     CREATE: "/appointments", // Sửa thành chữ thường để nhất quán
     GET_BY_ID: (id) => `/appointments/${id}`,
     DELETE: (id) => `/appointments/${id}`, // Sửa thành chữ thường
-    GET_MY_APPOINTMENTS: '/appointments/my-appointments', // Sửa thành chữ thường
+    GET_MY_APPOINTMENTS: "/appointments/my-appointments", // Sửa thành chữ thường
     GET_BY_CUSTOMER: (customerId) => `/appointments/customer/${customerId}`, // Sửa thành chữ thường
     GET_BY_DOCTOR: (doctorId) => `/appointments/doctor/${doctorId}`, // Sửa thành chữ thường
     GET_MY_SCHEDULE: "/appointments/my-schedule", // Sửa thành chữ thường
@@ -44,9 +44,11 @@ export const API_ENDPOINTS = {
     SEARCH: "/doctors/search",
     GET_FEEDBACK: (id) => `/doctors/${id}/feedback`,
     GET_APPOINTMENTS: (id) => `/doctors/${id}/appointments`,
-    GET_AVAILABLE: '/doctors/available',
+    GET_AVAILABLE: "/doctors/available",
     UPDATE_AVAILABILITY: (id) => `/doctors/${id}/availability`,
-    TEST: '/doctors/test'
+    GET_SCHEDULE: (id) => `/doctors/${id}/schedule`,
+    MY_SCHEDULE: "/doctors/my-schedule",
+    TEST: "/doctors/test",
   },
 
   // Treatment Services APIs
@@ -64,28 +66,28 @@ export const API_ENDPOINTS = {
 
   // Treatment Plans APIs
   TREATMENT_PLANS: {
-    BASE: "/treatmentPlans",
-    CREATE: "/treatmentPlans",
-    GET_BY_CUSTOMER: (customerId) => `/treatmentPlans/customer/${customerId}`,
-    GET_BY_DOCTOR: (doctorId) => `/treatmentPlans/doctor/${doctorId}`,
-    GET_BY_ID: (id) => `/treatmentPlans/${id}`,
-    UPDATE: (id) => `/treatmentPlans/${id}`,
-    UPDATE_PROGRESS: (id) => `/treatmentPlans/${id}/progress`,
-    GET_PROGRESS: (id) => `/treatmentPlans/${id}/progress`,
-    COMPLETE: (id) => `/treatmentPlans/${id}/complete`,
-    TEST: "/treatmentPlans/test",
+    BASE: "/TreatmentPlans",
+    CREATE: "/TreatmentPlans",
+    GET_BY_CUSTOMER: (customerId) => `/TreatmentPlans/customer/${customerId}`,
+    GET_BY_DOCTOR: (doctorId) => `/TreatmentPlans/doctor/${doctorId}`,
+    GET_BY_ID: (id) => `/TreatmentPlans/${id}`,
+    UPDATE: (id) => `/TreatmentPlans/${id}`,
+    UPDATE_PROGRESS: (id) => `/TreatmentPlans/${id}/progress`,
+    GET_PROGRESS: (id) => `/TreatmentPlans/${id}/progress`,
+    COMPLETE: (id) => `/TreatmentPlans/${id}/complete`,
+    TEST: "/TreatmentPlans/test",
   },
 
   // Medical Records APIs
   MEDICAL_RECORDS: {
-    BASE: "/medicalrecords",
-    COMPLETE_APPOINTMENT: (doctorId) => `/medicalrecords/complete/${doctorId}`,
+    BASE: "/MedicalRecords",
+    COMPLETE_APPOINTMENT: (doctorId) => `/MedicalRecords/complete/${doctorId}`,
     GET_BY_APPOINTMENT: (appointmentId) =>
-      `/medicalrecords/appointment/${appointmentId}`,
+      `/MedicalRecords/appointment/${appointmentId}`,
     GET_PATIENT_HISTORY: (customerId) =>
-      `/medicalrecords/patient/${customerId}/history`,
-    GET_BY_DOCTOR: (doctorId) => `/medicalrecords/doctor/${doctorId}`,
-    TEST: "/medicalrecords/test",
+      `/MedicalRecords/patient/${customerId}/history`,
+    GET_BY_DOCTOR: (doctorId) => `/MedicalRecords/doctor/${doctorId}`,
+    TEST: "/MedicalRecords/test",
   },
 
   // Test Results APIs
@@ -125,14 +127,14 @@ export const API_ENDPOINTS = {
     SEARCH: "/guest/search",
   },
 
-    // Blog APIs
+  // Blog APIs
   BLOG: {
-    BASE: '/blog',
-    GET_ALL: '/blog',
+    BASE: "/blog",
+    GET_ALL: "/blog",
     GET_BY_ID: (id) => `/blog/${id}`,
-    CREATE: '/blog/create',
+    CREATE: "/blog/create",
     UPDATE: (id) => `/blog/update/${id}`,
-    DELETE: (id) => `/blog/delete/${id}`
+    DELETE: (id) => `/blog/delete/${id}`,
   },
   // Dashboard APIs (Admin/Manager)
   DASHBOARD: {

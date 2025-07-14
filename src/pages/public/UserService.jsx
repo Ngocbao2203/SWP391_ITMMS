@@ -1,3 +1,5 @@
+// Trang giới thiệu và liệt kê các dịch vụ điều trị hiếm muộn cho khách truy cập
+// Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/UserService.css";
@@ -18,13 +20,15 @@ import {
 
 const { Panel } = Collapse;
 
+// Component chính hiển thị danh sách dịch vụ
 export default function UserService() {
   const navigate = useNavigate();
+  // State lưu trữ dịch vụ, loading, dịch vụ đang mở rộng
   const [expandedService, setExpandedService] = useState(null);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch services from API
+  // Lấy danh sách dịch vụ từ API khi component mount
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -66,6 +70,7 @@ export default function UserService() {
     }));
   };
 
+  // Danh sách đánh giá khách hàng mẫu
   const testimonials = [
     {
       name: "Chị Minh Anh",
@@ -93,6 +98,7 @@ export default function UserService() {
     },
   ];
 
+  // Danh sách câu hỏi thường gặp mẫu
   const faqs = [
     {
       question:
@@ -128,9 +134,10 @@ export default function UserService() {
     margin: "20px 0",
   };
 
+  // Render giao diện dịch vụ
   return (
     <MainLayout>
-      {/* Hero Section */}
+      {/* Hero Section giới thiệu */}
       <section className="fertility-hero">
         <div className="hero-content">
           <h1>
@@ -176,7 +183,7 @@ export default function UserService() {
         </div>
       </section>
 
-      {/* Main Services Section */}
+      {/* Main Services Section - danh sách dịch vụ */}
       <section className="fertility-services-container">
         <div className="services-header">
           <h2 className="section-title">Dịch vụ điều trị hiếm muộn</h2>
@@ -220,6 +227,7 @@ export default function UserService() {
                 <h3 className="service-title">{service.serviceName}</h3>
                 <p className="service-description">{service.description}</p>
 
+                {/* Tính năng nổi bật của dịch vụ */}
                 <div className="service-features">
                   {service.features && service.features.length > 0 ? (
                     service.features.map((feature, idx) => (
@@ -235,6 +243,7 @@ export default function UserService() {
                   )}
                 </div>
 
+                {/* Nút xem chi tiết và đặt lịch */}
                 <div className="service-buttons">
                   <Button type="primary" className="btn-more">
                     Tìm hiểu thêm <RightOutlined />
@@ -264,7 +273,7 @@ export default function UserService() {
           )}
         </div>
 
-        {/* Our Strengths */}
+        {/* Our Strengths - Lý do chọn */}
         <div className="strengths-section">
           <h2 className="section-title">Tại sao chọn chúng tôi</h2>
           <p className="section-description">
@@ -312,7 +321,7 @@ export default function UserService() {
           </Row>
         </div>
 
-        {/* Testimonials */}
+        {/* Testimonials - Đánh giá khách hàng */}
         <div className="testimonials-section">
           <h2 className="section-title">Khách hàng của chúng tôi nói gì?</h2>
           <div className="testimonials-grid">
@@ -334,7 +343,7 @@ export default function UserService() {
           </div>
         </div>
 
-        {/* FAQ Section */}
+        {/* FAQ Section - Câu hỏi thường gặp */}
         <div className="faq-section">
           <h2 className="section-title">Câu hỏi thường gặp</h2>
           <p className="section-description">
@@ -358,7 +367,7 @@ export default function UserService() {
           </Collapse>
         </div>
 
-        {/* Enhanced CTA */}
+        {/* Enhanced CTA cuối trang */}
         <div className="cta-container">
           <div className="cta-content">
             <h2 className="cta-title">Hãy để chúng tôi đồng hành cùng bạn</h2>
@@ -391,3 +400,4 @@ export default function UserService() {
     </MainLayout>
   );
 }
+// Kết thúc file UserService.jsx

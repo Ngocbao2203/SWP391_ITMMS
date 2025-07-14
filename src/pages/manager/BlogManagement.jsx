@@ -1,12 +1,16 @@
+// Quản lý bài viết Blog cho admin/manager
+// Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from 'react';
 import { Table, Card, Button, Modal, Form, Input, Select, Upload, Space, Statistic, Row, Col, message } from 'antd';
-import { PlusOutlined, SearchOutlined, UploadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, UploadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getAllBlogs, createBlog, updateBlog, deleteBlog } from '../../services/blogService';
 
 const { Option } = Select;
 const { TextArea } = Input;
 
+// Component chính quản lý blog
 const BlogManagement = () => {
+  // State lưu trữ danh sách blog, loading, modal, form, filter, preview, thống kê
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -19,10 +23,12 @@ const BlogManagement = () => {
   const [previewBlog, setPreviewBlog] = useState(null);
   const [stats, setStats] = useState({ total: 0, published: 0 });
 
+  // Tải danh sách blog khi component mount
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         setLoading(true);
+        // Gọi API lấy tất cả blog
         const data = await getAllBlogs();
         setBlogs(data);
         setStats({
@@ -39,6 +45,7 @@ const BlogManagement = () => {
     fetchBlogs();
   }, []);
 
+  // Lọc blog theo search và category
   const filteredBlogs = blogs.filter(blog => {
     const matchesSearch = blog.title.toLowerCase().includes(searchText.toLowerCase()) ||
                          blog.author.toLowerCase().includes(searchText.toLowerCase());
@@ -46,6 +53,7 @@ const BlogManagement = () => {
     return matchesSearch && matchesCategory;
   });
 
+  // Xử lý lưu blog (thêm mới hoặc cập nhật)
   const handleSaveBlog = async (values) => {
     try {
       const blogData = {
@@ -55,10 +63,12 @@ const BlogManagement = () => {
       };
 
       if (currentBlog) {
+        // Cập nhật blog
         const updatedBlog = await updateBlog(currentBlog.id || currentBlog.key, blogData);
         setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog));
         message.success('Bài viết đã được cập nhật thành công!');
       } else {
+        // Thêm mới blog
         const newBlog = await createBlog(blogData);
         setBlogs([...blogs, newBlog]);
         message.success('Bài viết đã được tạo thành công!');
@@ -72,11 +82,13 @@ const BlogManagement = () => {
     }
   };
 
+  // Xem trước blog
   const handlePreviewBlog = (blog) => {
     setPreviewBlog(blog);
     setPreviewVisible(true);
   };
 
+  // Sửa blog
   const handleEditBlog = (blog) => {
     setCurrentBlog(blog);
     form.setFieldsValue({
@@ -86,6 +98,7 @@ const BlogManagement = () => {
     setIsModalVisible(true);
   };
 
+  // Xóa blog
   const handleDeleteBlog = (id) => {
     Modal.confirm({
       title: 'Xác Nhận Xóa',
@@ -105,6 +118,7 @@ const BlogManagement = () => {
     });
   };
 
+  // Xử lý xóa hàng loạt
   const handleBulkAction = async (action) => {
     try {
       if (action === 'delete') {
@@ -118,6 +132,7 @@ const BlogManagement = () => {
     }
   };
 
+  // Định nghĩa các cột cho bảng blog
   const columns = [
     {
       title: 'Tiêu Đề',
@@ -166,13 +181,16 @@ const BlogManagement = () => {
     },
   ];
 
+  // Cấu hình chọn nhiều dòng cho bảng
   const rowSelection = {
     selectedRowKeys,
     onChange: setSelectedRowKeys,
   };
 
+  // Render giao diện quản lý blog
   return (
     <div className="blog-management" style={{ padding: '24px' }}>
+      {/* Thống kê số lượng bài viết */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
         <Col span={12}>
           <Statistic title="Tổng Số Bài Viết" value={stats.total} />
@@ -183,6 +201,7 @@ const BlogManagement = () => {
       </Row>
 
       <Card>
+        {/* Thanh tìm kiếm, lọc, thêm mới */}
         <Space style={{ marginBottom: 16, width: '100%', justifyContent: 'space-between' }}>
           <Space>
             <Input.Search
@@ -219,6 +238,7 @@ const BlogManagement = () => {
           </Space>
         </Space>
 
+        {/* Xóa hàng loạt */}
         {selectedRowKeys.length > 0 && (
           <Space style={{ marginBottom: 16 }}>
             <Button danger onClick={() => handleBulkAction('delete')}>
@@ -227,6 +247,7 @@ const BlogManagement = () => {
           </Space>
         )}
 
+        {/* Bảng danh sách blog */}
         <Table
           rowSelection={rowSelection}
           columns={columns}
@@ -237,6 +258,7 @@ const BlogManagement = () => {
         />
       </Card>
 
+      {/* Modal thêm/sửa blog */}
       <Modal
         title={currentBlog ? 'Chỉnh Sửa Bài Viết' : 'Thêm Bài Viết Mới'}
         open={isModalVisible}
@@ -305,6 +327,7 @@ const BlogManagement = () => {
         </Form>
       </Modal>
 
+      {/* Modal xem trước blog */}
       <Modal
         title={previewBlog?.title}
         open={previewVisible}
@@ -327,3 +350,4 @@ const BlogManagement = () => {
 };
 
 export default BlogManagement;
+// Kết thúc file BlogManagement.jsx

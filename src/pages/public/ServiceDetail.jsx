@@ -1,3 +1,5 @@
+// Trang chi tiết dịch vụ điều trị cho khách truy cập
+// Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -25,14 +27,17 @@ import "../../styles/ServiceDetail.css";
 const { Title, Paragraph, Text } = Typography;
 const { TabPane } = Tabs;
 
+// Component chính hiển thị chi tiết dịch vụ
 const ServiceDetail = () => {
+  // Lấy id dịch vụ từ URL
   const { serviceId } = useParams();
   const navigate = useNavigate();
+  // State lưu trữ dữ liệu dịch vụ, loading, error
   const [loading, setLoading] = useState(true);
   const [service, setService] = useState(null);
   const [error, setError] = useState(null);
 
-  // Tải dữ liệu dịch vụ
+  // Tải dữ liệu dịch vụ khi component mount hoặc serviceId thay đổi
   useEffect(() => {
     const fetchServiceData = async () => {
       setLoading(true);
@@ -60,7 +65,8 @@ const ServiceDetail = () => {
 
     fetchServiceData();
   }, [serviceId]);
-  // Điều hướng đến trang đăng ký dịch vụ
+
+  // Điều hướng đến trang đặt lịch dịch vụ
   const handleRegisterService = () => {
     navigate(`/bookappointment/${serviceId}`, {
       state: {
@@ -70,6 +76,7 @@ const ServiceDetail = () => {
     });
   };
 
+  // Hiển thị loading khi đang tải dữ liệu
   if (loading) {
     return (
       <MainLayout>
@@ -87,6 +94,7 @@ const ServiceDetail = () => {
     );
   }
 
+  // Hiển thị khi có lỗi
   if (error) {
     return (
       <MainLayout>
@@ -105,6 +113,7 @@ const ServiceDetail = () => {
     );
   }
 
+  // Hiển thị khi không tìm thấy dịch vụ
   if (!service) {
     return (
       <MainLayout>
@@ -123,6 +132,7 @@ const ServiceDetail = () => {
     );
   }
 
+  // Render giao diện chi tiết dịch vụ
   return (
     <MainLayout>
       <div className="service-detail-container">
@@ -195,6 +205,7 @@ const ServiceDetail = () => {
                   </Col>
                 </Row>
 
+                {/* Nút đặt lịch dịch vụ */}
                 <Button
                   type="primary"
                   size="large"
@@ -208,7 +219,7 @@ const ServiceDetail = () => {
           </Row>
         </Card>
 
-        {/* Tabs hiển thị các thông tin chi tiết */}
+        {/* Tabs hiển thị các thông tin chi tiết dịch vụ */}
         <Card className="detail-card">
           <Tabs defaultActiveKey="details">
             <TabPane tab="Chi tiết dịch vụ" key="details">
@@ -218,6 +229,7 @@ const ServiceDetail = () => {
 
                 <Title level={4}>Quy trình điều trị</Title>
                 <div className="treatment-process">
+                  {/* Hiển thị quy trình điều trị nếu có, nếu không thì hiển thị mẫu mặc định */}
                   {(
                     service.processSteps ||
                     service.ProcessSteps ||
@@ -247,6 +259,7 @@ const ServiceDetail = () => {
                       </div>
                     ))
                   ) : (
+                    // Nếu không có quy trình thì hiển thị mẫu mặc định
                     <>
                       <div className="process-step">
                         <div className="step-number">1</div>
@@ -298,6 +311,7 @@ const ServiceDetail = () => {
               </div>
             </TabPane>
 
+            {/* Tab đội ngũ chuyên gia */}
             <TabPane tab="Đội ngũ chuyên gia" key="experts">
               <div className="service-doctors">
                 <Title level={4}>Bác sĩ chuyên khoa</Title>
@@ -360,6 +374,7 @@ const ServiceDetail = () => {
                       )
                     )
                   ) : (
+                    // Nếu chưa có bác sĩ cho dịch vụ này
                     <Col span={24}>
                       <div className="no-doctors">
                         <Text>Chưa có thông tin bác sĩ cho dịch vụ này.</Text>
@@ -370,6 +385,7 @@ const ServiceDetail = () => {
               </div>
             </TabPane>
 
+            {/* Tab FAQ */}
             <TabPane tab="Câu hỏi thường gặp" key="faq">
               <div className="service-faq">
                 <Title level={4}>Những câu hỏi thường gặp</Title>
@@ -424,7 +440,7 @@ const ServiceDetail = () => {
           </Tabs>
         </Card>
 
-        {/* Call to action */}
+        {/* Call to action cuối trang */}
         <Card className="cta-card">
           <div className="cta-content">
             {" "}
@@ -444,3 +460,4 @@ const ServiceDetail = () => {
 };
 
 export default ServiceDetail;
+// Kết thúc file ServiceDetail.jsx

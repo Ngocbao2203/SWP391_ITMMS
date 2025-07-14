@@ -1,0 +1,322 @@
+.doctor-dashboard {
+  padding: 24px;
+  background: #f5f5f5;
+  min-height: calc(100vh - 64px);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: #666;
+}
+
+/* Welcome Card */
+.welcome-card {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(25, 118, 210, 0.3);
+}
+
+.welcome-card .ant-card-body {
+  padding: 32px;
+}
+
+.welcome-card h2 {
+  color: white !important;
+  margin-bottom: 8px;
+}
+
+.welcome-card .ant-typography {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.welcome-card .ant-btn {
+  border-radius: 8px;
+  height: 40px;
+  font-weight: 500;
+}
+
+.welcome-card .ant-btn-primary {
+  background: white;
+  color: #1976d2;
+  border: none;
+}
+
+.welcome-card .ant-btn-primary:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1976d2;
+}
+
+.welcome-card .ant-btn:not(.ant-btn-primary) {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.welcome-card .ant-btn:not(.ant-btn-primary):hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Stats Cards */
+.stat-card {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card .ant-card-body {
+  padding: 24px;
+}
+
+.stat-card .ant-statistic-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.stat-card .ant-statistic-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-card .ant-statistic-content-prefix {
+  font-size: 24px;
+}
+
+/* Schedule Card */
+.schedule-card {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.schedule-card .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.schedule-card .ant-card-head-title {
+  font-weight: 600;
+  color: #333;
+}
+
+.appointment-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.appointment-item:hover {
+  background: #fafafa;
+  border-radius: 8px;
+  margin: 0 -16px;
+  padding: 16px;
+}
+
+.appointment-item:last-child {
+  border-bottom: none;
+}
+
+.time-slot {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 80px;
+  font-weight: 600;
+}
+
+.appointment-item .ant-list-item-meta-title {
+  margin-bottom: 8px;
+}
+
+.appointment-item .ant-tag {
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.appointment-item .ant-btn {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* Quick Actions Card */
+.quick-actions-card {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.quick-actions-card .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.action-card {
+  border-radius: 12px;
+  border: 2px solid #f0f0f0;
+  transition: all 0.3s ease;
+  text-align: center;
+  cursor: pointer;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.action-card .ant-card-body {
+  padding: 24px 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .quick-actions-card .action-card {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .doctor-dashboard {
+    padding: 16px;
+  }
+
+  .welcome-card .ant-card-body {
+    padding: 24px 16px;
+  }
+
+  .welcome-card .ant-col:last-child {
+    text-align: left !important;
+    margin-top: 16px;
+  }
+
+  .stat-card .ant-card-body {
+    padding: 16px;
+  }
+
+  .appointment-item .ant-list-item-action {
+    margin-left: 0;
+    margin-top: 12px;
+  }
+
+  .time-slot {
+    min-width: 70px;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .doctor-dashboard {
+    padding: 12px;
+  }
+
+  .welcome-card h2 {
+    font-size: 20px;
+  }
+
+  .stat-card .ant-statistic-content-value {
+    font-size: 24px !important;
+  }
+
+  .appointment-item .ant-list-item-action li {
+    margin: 4px 0;
+  }
+
+  .appointment-item .ant-btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}
+
+/* Custom scrollbar for appointment list */
+.schedule-card .ant-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.schedule-card .ant-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.schedule-card .ant-list::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+.schedule-card .ant-list::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 3px;
+}
+
+.schedule-card .ant-list::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}
+
+/* Animation */
+.doctor-dashboard {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Loading State */
+.ant-spin-container {
+  position: relative;
+}
+
+.ant-spin-spinning .ant-spin-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 1000;
+}
+
+/* Empty State */
+.ant-empty {
+  padding: 40px 20px;
+}
+
+.ant-empty-description {
+  color: #999;
+  font-size: 14px;
+} 

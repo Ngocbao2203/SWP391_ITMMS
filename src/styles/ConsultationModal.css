@@ -1,0 +1,285 @@
+.consultation-modal .ant-modal-header {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  border-radius: 8px 8px 0 0;
+}
+
+.consultation-modal .ant-modal-title {
+  color: white;
+  font-weight: 600;
+}
+
+.consultation-modal .ant-modal-close {
+  color: white;
+}
+
+.consultation-modal .ant-modal-close:hover {
+  color: #e3f2fd;
+}
+
+.consultation-modal .ant-modal-body {
+  padding: 24px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Patient Context Card */
+.patient-context-card {
+  border: 2px solid #e3f2fd;
+  border-radius: 8px;
+}
+
+.patient-context-card .ant-card-head {
+  background: #f8fafe;
+  border-bottom: 1px solid #e3f2fd;
+}
+
+.patient-context-card .ant-card-head-title {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+/* Consultation Details Card */
+.consultation-details-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.consultation-details-card .ant-card-head {
+  background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+  border-radius: 8px 8px 0 0;
+}
+
+.consultation-details-card .ant-card-head-title {
+  color: white;
+  font-weight: 600;
+}
+
+/* Treatment Plan Card */
+.treatment-plan-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.treatment-plan-card .ant-card-head {
+  background: linear-gradient(135deg, #f57c00 0%, #ef6c00 100%);
+  border-radius: 8px 8px 0 0;
+}
+
+.treatment-plan-card .ant-card-head-title {
+  color: white;
+  font-weight: 600;
+}
+
+.treatment-plan-card .ant-switch-checked {
+  background-color: white;
+}
+
+/* Form Styling */
+.consultation-modal .ant-form-item-label > label {
+  font-weight: 600;
+  color: #333;
+}
+
+.consultation-modal .ant-input,
+.consultation-modal .ant-input-number,
+.consultation-modal .ant-select-selector,
+.consultation-modal .ant-picker {
+  border-radius: 6px;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.consultation-modal .ant-input:focus,
+.consultation-modal .ant-input-number:focus,
+.consultation-modal .ant-select-focused .ant-select-selector,
+.consultation-modal .ant-picker:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+}
+
+.consultation-modal .ant-form-item-has-error .ant-input,
+.consultation-modal .ant-form-item-has-error .ant-input-number,
+.consultation-modal .ant-form-item-has-error .ant-select-selector,
+.consultation-modal .ant-form-item-has-error .ant-picker {
+  border-color: #f5222d;
+}
+
+/* TextArea */
+.consultation-modal .ant-input {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.consultation-modal .ant-input::placeholder {
+  color: #bbb;
+  font-style: italic;
+}
+
+/* Select Options */
+.consultation-modal .ant-select-dropdown {
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Checkbox */
+.consultation-modal .ant-checkbox-wrapper {
+  font-weight: 500;
+  color: #333;
+}
+
+.consultation-modal .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #1976d2;
+  border-color: #1976d2;
+}
+
+/* Buttons */
+.consultation-modal .ant-btn {
+  border-radius: 6px;
+  font-weight: 500;
+  height: 40px;
+  padding: 0 20px;
+  transition: all 0.3s ease;
+}
+
+.consultation-modal .ant-btn-primary {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  border: none;
+}
+
+.consultation-modal .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.consultation-modal .ant-btn:not(.ant-btn-primary) {
+  border: 2px solid #e0e0e0;
+  color: #666;
+}
+
+.consultation-modal .ant-btn:not(.ant-btn-primary):hover {
+  border-color: #1976d2;
+  color: #1976d2;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Headers */
+.consultation-modal .ant-card-head {
+  border-bottom: none;
+  padding: 12px 16px;
+}
+
+.consultation-modal .ant-card-body {
+  padding: 16px;
+}
+
+/* Tags */
+.consultation-modal .ant-tag {
+  border-radius: 4px;
+  font-weight: 500;
+  padding: 2px 8px;
+}
+
+/* Avatar */
+.consultation-modal .ant-avatar {
+  border: 3px solid #e3f2fd;
+}
+
+/* Empty State */
+.consultation-modal .empty-state {
+  text-align: center;
+  color: #999;
+  padding: 40px 20px;
+}
+
+.consultation-modal .empty-state .anticon {
+  font-size: 32px;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+/* Loading */
+.consultation-modal .ant-spin-container {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .consultation-modal {
+    margin: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .consultation-modal .ant-modal-body {
+    padding: 16px;
+    max-height: 85vh;
+  }
+  
+  .consultation-modal .ant-row {
+    flex-direction: column;
+  }
+  
+  .consultation-modal .ant-col {
+    width: 100% !important;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .consultation-modal .ant-modal-body {
+    padding: 12px;
+  }
+  
+  .consultation-modal .ant-btn {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 13px;
+  }
+  
+  .consultation-modal .ant-form-item {
+    margin-bottom: 16px;
+  }
+}
+
+/* Animation */
+.consultation-modal {
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Form validation messages */
+.consultation-modal .ant-form-item-explain-error {
+  color: #f5222d;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Switch styling */
+.consultation-modal .ant-switch {
+  background-color: #bfbfbf;
+}
+
+.consultation-modal .ant-switch-checked {
+  background-color: #1976d2;
+}
+
+/* Date picker */
+.consultation-modal .ant-picker-disabled {
+  background-color: #f5f5f5;
+  color: #bbb;
+} 

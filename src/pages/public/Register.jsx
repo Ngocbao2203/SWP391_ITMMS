@@ -1,3 +1,5 @@
+// Trang đăng ký tài khoản cho người dùng mới
+// Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Typography, Row, Col } from 'antd';
 import { 
@@ -15,17 +17,23 @@ import authService from '../../services/authService';
 
 const { Title, Text } = Typography;
 
+// Component chính trang đăng ký
 const Register = () => {
+  // State loading cho nút đăng ký
   const [loading, setLoading] = useState(false);
+  // Form instance của Ant Design
   const [form] = Form.useForm();
+  // Hook điều hướng
   const navigate = useNavigate();
   
+  // Kiểm tra nếu đã đăng nhập thì chuyển hướng về trang chủ
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
     if (currentUser) {
       navigate('/');
     }
     
+    // Reset lại form và tắt autocomplete cho input
     setTimeout(() => {
       form.resetFields();
       const inputs = document.querySelectorAll('.medical-register-form input');
@@ -35,6 +43,7 @@ const Register = () => {
     }, 100);
   }, [navigate, form]);
   
+  // Xử lý khi submit form đăng ký
   const onFinish = async (values) => {
     setLoading(true);
     
@@ -45,6 +54,7 @@ const Register = () => {
         toast.success('Đăng ký thành công! Đang đăng nhập...');
         
         try {
+          // Đăng nhập tự động sau khi đăng ký thành công
           const loginResult = await authService.login({
             email: values.email,
             password: values.password
@@ -53,6 +63,7 @@ const Register = () => {
           if (loginResult.success) {
             toast.success('Chào mừng bạn đến với ITMMS!');
             
+            // Điều hướng theo vai trò người dùng
             const user = authService.getCurrentUser();
             if (user) {
               switch (user.role) {
@@ -83,6 +94,7 @@ const Register = () => {
           navigate('/login');
         }
       } else {
+        // Xử lý lỗi trả về từ server
         let errorText = result.message || 'Đăng ký thất bại';
         
         if (result.errors && Object.keys(result.errors).length > 0) {
@@ -114,10 +126,12 @@ const Register = () => {
     }
   };
 
+  // Xử lý khi submit form thất bại (validate lỗi)
   const onFinishFailed = (errorInfo) => {
     toast.error('Vui lòng kiểm tra và điền đầy đủ thông tin!');
   };
 
+  // Đổi tên field cho hiển thị lỗi tiếng Việt
   const getFieldDisplayName = (field) => {
     const fieldNames = {
       fullName: 'Họ và tên',
@@ -131,9 +145,11 @@ const Register = () => {
     return fieldNames[field] || field;
   };
 
+  // Render giao diện đăng ký
   return (
     <div className="medical-register-container">
       <div className="medical-register-card">
+        {/* Banner bên trái */}
         <div className="medical-register-left">
           <div className="register-banner">
             <MedicineBoxOutlined className="medical-banner-icon" />
@@ -142,6 +158,7 @@ const Register = () => {
           </div>
         </div>
         
+        {/* Form đăng ký bên phải */}
         <div className="medical-register-right">
           <div className="home-icon-container">
             <Link to="/">
@@ -164,6 +181,7 @@ const Register = () => {
           >
             <Row gutter={16}>
               <Col xs={24} sm={12}>
+                {/* Họ và tên */}
                 <Form.Item
                   name="fullName"
                   rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
@@ -177,6 +195,7 @@ const Register = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12}>
+                {/* Tên đăng nhập */}
                 <Form.Item
                   name="username"
                   required
@@ -197,6 +216,7 @@ const Register = () => {
 
             <Row gutter={16}>
               <Col xs={24} sm={12}>
+                {/* Email */}
                 <Form.Item
                   name="email"  
                   rules={[
@@ -213,6 +233,7 @@ const Register = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12}>
+                {/* Số điện thoại */}
                 <Form.Item
                   name="phoneNumber"
                   rules={[
@@ -230,6 +251,7 @@ const Register = () => {
               </Col>
             </Row>
             
+            {/* Địa chỉ */}
             <Form.Item
               name="address"
               rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
@@ -244,6 +266,7 @@ const Register = () => {
             
             <Row gutter={16}>
               <Col xs={24} sm={12}>
+                {/* Mật khẩu */}
                 <Form.Item
                   name="password"
                   rules={[
@@ -260,6 +283,7 @@ const Register = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12}>
+                {/* Xác nhận mật khẩu */}
                 <Form.Item
                   name="confirmPassword"
                   dependencies={["password"]}
@@ -285,6 +309,7 @@ const Register = () => {
               </Col>
             </Row>
             
+            {/* Nút đăng ký */}
             <Form.Item>
               <Button 
                 type="primary" 
@@ -297,11 +322,13 @@ const Register = () => {
               </Button>
             </Form.Item>
             
+            {/* Đã có tài khoản? */}
             <div className="login-prompt">
               <Text>Đã có tài khoản? <Link to="/login">Đăng nhập</Link></Text>
             </div>
           </Form>
           
+          {/* Footer bản quyền */}
           <div className="register-footer">
             <p>© 2025 Phần mềm quản lý và theo dõi điều trị hiếm muộn. All rights reserved.</p>
           </div>
@@ -312,3 +339,4 @@ const Register = () => {
 };
 
 export default Register;
+// Kết thúc file Register.jsx

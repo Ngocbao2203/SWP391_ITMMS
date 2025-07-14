@@ -1,6 +1,7 @@
-
+/* CSS chung cho cả hai trang */
 .treatment-progress-container {
-  padding: 20px;
+  padding: 20px 0;
+  max-width: 1200px;
 }
 
 .treatment-progress-header {
@@ -8,298 +9,310 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.treatment-progress-header h1 {
-  margin: 0;
-  color: #1890ff;
-  font-size: 24px;
+.page-title {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 0;
+  font-weight: 600;
 }
 
-.search-input {
-  width: 300px;
-  margin-right: 16px;
-}
-
-.treatment-table {
-  background-color: #fff;
+/* Card styles */
+.table-card, .plan-overview {
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
+.table-header {
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.table-header h5 {
+  color: #2c3e50;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Bảng lịch hẹn */
+.appointment-table {
+  margin-bottom: 0;
+}
+
+.appointment-table th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  border-bottom-width: 1px;
+  vertical-align: middle;
+}
+
+.appointment-row {
+  transition: background-color 0.2s;
+}
+
+.appointment-row:hover {
+  background-color: #f8f9fa;
+}
+
+.appointment-id {
+  font-weight: 500;
+  color: #3498db;
+}
+
+.patient-name {
+  font-weight: 500;
+}
+
+.status-badge {
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.action-button {
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.action-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading và error states */
 .loading-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 400px;
+  justify-content: center;
+  padding: 40px 0;
 }
 
-.treatment-details {
-  padding: 10px;
+.spinner {
+  margin-bottom: 15px;
 }
 
-.patient-info-row {
+.loading-text {
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+.error-alert, .no-data-alert {
+  border-radius: 8px;
+  padding: 15px 20px;
+}
+
+/* Chi tiết kế hoạch điều trị */
+.breadcrumb {
+  background-color: transparent;
+  padding: 0;
   margin-bottom: 20px;
 }
 
-.patient-card,
-.treatment-card {
-  height: 100%;
+.breadcrumb-item {
+  cursor: pointer;
+  color: #6c757d;
 }
 
-.progress-card {
-  margin-top: 20px;
+.breadcrumb-item.active {
+  color: #3498db;
+  font-weight: 500;
 }
 
-/* Horizontal Timeline Styles */
-.horizontal-timeline-container {
-  background-color: #fff;
-  padding: 24px;
+.plan-overview .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+}
+
+.list-group-item {
+  border-left: none;
+  border-right: none;
+  padding: 12px 20px;
+}
+
+.list-group-item:first-child {
+  border-top: none;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.list-group-item strong {
+  color: #495057;
+  margin-right: 10px;
+}
+
+/* Progress bar */
+.progress {
+  height: 10px;
+  border-radius: 5px;
+}
+
+/* Giai đoạn điều trị */
+.treatment-phase-item {
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  margin-top: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 15px;
 }
 
-.horizontal-timeline {
-  padding: 20px 0;
-  overflow-x: auto;
-  margin-top: 15px;
+.phase-header {
+  padding: 12px 15px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.timeline-steps {
+.phase-number {
   display: flex;
-  position: relative;
-  min-width: 100%;
-}
-
-.timeline-steps::before {
-  content: '';
-  position: absolute;
-  top: 30px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #e8e8e8;
-  z-index: 1;
-}
-
-.timeline-step {
-  position: relative;
-  min-width: 220px;
-  margin-right: 40px;
-  padding-top: 50px;
-  z-index: 2;
-}
-
-.timeline-step:last-child {
-  margin-right: 0;
-}
-
-.timeline-marker {
-  position: absolute;
-  top: 20px;
-  left: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: white;
-  display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  box-shadow: 0 0 0 5px white;
-  z-index: 3;
-}
-
-.timeline-content {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-}
-
-.timeline-content:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.timeline-content h4 {
-  margin: 0 0 10px;
-  font-size: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #3498db;
+  color: white;
   font-weight: 600;
-  color: #333;
+  margin-right: 15px;
 }
 
-.timeline-date {
-  font-size: 13px;
-  color: #6b7280;
-  margin-bottom: 6px;
-}
-
-.timeline-status {
-  font-weight: 500;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-}
-
-.timeline-note {
-  font-style: italic;
-  color: #666;
-  font-size: 13px;
-  margin: 10px 0;
-  border-left: 3px solid #ddd;
-  padding-left: 10px;
-}
-
-.timeline-actions {
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 15px;
-  gap: 8px;
-}
-
-/* Status color customizations */
-.status-done .timeline-content {
-  border-left: 4px solid #52c41a;
-}
-
-.status-doing .timeline-content {
-  border-left: 4px solid #1890ff;
-}
-
-.status-pending .timeline-content {
-  border-left: 4px solid #d9d9d9;
-}
-
-.timeline-step.status-done .timeline-status {
-  color: #52c41a;
-}
-
-.timeline-step.status-doing .timeline-status {
-  color: #1890ff;
-}
-
-.timeline-step.status-pending .timeline-status {
-  color: #666;
-}
-
-/* Progress styling */
-.ant-progress {
-  margin-bottom: 20px !important;
-}
-
-.progress-card {
-  margin-top: 5px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-}
-
-.progress-card .ant-card-head {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 12px 24px;
-}
-
-.progress-card .ant-card-body {
-  padding: 24px;
-}
-
-.patient-selector {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-/* Responsive styles for timeline */
-@media (max-width: 768px) {
-  .timeline-step {
-    min-width: 180px;
-    margin-right: 25px;
-  }
-  
-  .horizontal-timeline-container {
-    padding: 16px;
-  }
-  
-  .patient-selector {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .patient-selector .ant-select {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .timeline-step {
-    min-width: 160px;
-    margin-right: 20px;
-  }
-  
-  .timeline-content {
-    padding: 12px;
-  }
-}
-
-.last-update-info {
-  margin-top: 10px;
-  text-align: right;
-  font-style: italic;
-  color: #888;
-}
-
-.history-card {
-  margin-bottom: 10px;
-  border-left: 3px solid #1890ff;
-}
-
-.history-card p {
-  margin-bottom: 8px;
-}
-
-.ant-timeline-item-content {
-  padding-bottom: 20px;
-}
-
-.patient-update-info {
-  background-color: #f5f5f5;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 16px;
-}
-
-.patient-update-info p {
+.phase-title h6 {
   margin-bottom: 5px;
+  color: #2c3e50;
+  font-weight: 600;
 }
 
-.ant-tabs-tab {
-  font-weight: 500;
+.phase-content {
+  padding: 15px;
+  background-color: #f8f9fa;
 }
 
+.doctor-notes {
+  font-style: italic;
+  color: #6c757d;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .treatment-progress-header {
     flex-direction: column;
     align-items: flex-start;
   }
-
-  .treatment-progress-header h1 {
-    margin-bottom: 16px;
+  
+  .treatment-progress-header button {
+    margin-top: 15px;
   }
-
-  .search-input {
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 16px;
+  
+  .action-button {
+    padding: 3px 8px;
+    font-size: 0.8rem;
   }
+}
 
-  .patient-info-row {
-    flex-direction: column;
-  }
+/* Màu sắc cho trạng thái */
+.bg-success-subtle {
+  background-color: rgba(40, 167, 69, 0.1);
+}
 
-  .patient-card,
-  .treatment-card {
-    margin-bottom: 16px;
-  }
+.bg-primary-subtle {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.bg-warning-subtle {
+  background-color: rgba(255, 193, 7, 0.1);
+}
+
+/* Thêm hiệu ứng hover cho các nút */
+.btn {
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling cho bảng */
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead th {
+  border-top: none;
+  border-bottom: 2px solid #dee2e6;
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  padding: 12px 15px;
+}
+
+.table tbody td {
+  padding: 12px 15px;
+  vertical-align: middle;
+}
+
+/* Thêm màu nền cho các hàng chẵn */
+.table-striped tbody tr:nth-of-type(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Thêm hiệu ứng hover cho các hàng */
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Nút thao tác ở cuối trang */
+.action-buttons-container {
+  margin-top: 30px;
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Thêm màu sắc cho các badge */
+.badge-primary {
+  background-color: #3498db;
+}
+
+.badge-success {
+  background-color: #2ecc71;
+}
+
+.badge-warning {
+  background-color: #f39c12;
+  color: #fff;
+}
+
+.badge-danger {
+  background-color: #e74c3c;
+}
+
+.badge-info {
+  background-color: #3498db;
+}
+
+.badge-secondary {
+  background-color: #95a5a6;
+}
+
+/* Thêm hiệu ứng cho card */
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }

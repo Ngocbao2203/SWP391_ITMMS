@@ -1,0 +1,712 @@
+/* TreatmentPlanDetail.css */
+
+/* General Container Styling */
+.treatment-progress-container {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  max-width: 1200px;
+}
+
+/* Breadcrumb Styling */
+.custom-breadcrumb {
+  background-color: #f8fafc;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.breadcrumb-item {
+  color: #4a5568;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.breadcrumb-item:hover {
+  color: #4299e1;
+}
+
+.breadcrumb-item-active {
+  color: #2b6cb0;
+  font-weight: 600;
+}
+
+/* Patient Info Styling */
+.patient-info {
+  color: #4a5568;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.patient-id {
+  font-weight: 600;
+  background-color: #edf2f7;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: #2d3748;
+}
+
+/* Back Button */
+.back-button {
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  transform: translateX(-3px);
+}
+
+/* Loading Container */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.spinner {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 20px;
+}
+
+.loading-text {
+  color: #4a5568;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+/* Timeline Styles */
+.treatment-timeline {
+  position: relative;
+  margin: 40px 0;
+  padding: 0;
+}
+
+.timeline-track {
+  position: relative;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(233, 236, 239, 1) 0%,
+    rgba(222, 226, 230, 1) 100%
+  );
+  width: 100%;
+  margin: 40px 0;
+  border-radius: 8px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.treatment-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 40px;
+  padding: 10px 5px;
+}
+
+.treatment-plan-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+.treatment-plan-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-color: #cbd5e0;
+}
+
+.treatment-plan-card.active {
+  border: 2px solid #4299e1;
+  background-color: #f0f7ff;
+  box-shadow: 0 8px 16px rgba(66, 153, 225, 0.15);
+}
+
+.plan-marker {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border: 4px solid #a0aec0;
+  border-radius: 50%;
+  top: -9px;
+  transform: translateX(-50%);
+  z-index: 2;
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 0 4px rgba(160, 174, 192, 0.2);
+}
+
+.plan-marker.active {
+  border-color: #4299e1;
+  background-color: #4299e1;
+  width: 28px;
+  height: 28px;
+  top: -11px;
+  box-shadow: 0 0 0 6px rgba(66, 153, 225, 0.3);
+}
+
+.plan-marker.completed {
+  border-color: #48bb78;
+  background-color: #48bb78;
+  box-shadow: 0 0 0 4px rgba(72, 187, 120, 0.25);
+}
+
+.plan-marker:hover {
+  transform: translateX(-50%) scale(1.25);
+}
+
+.plan-card-header {
+  padding: 14px 20px;
+  background: linear-gradient(to right, #f8fafc, #f0f7ff);
+  border-bottom: 1px solid #e2e8f0;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.plan-card-info {
+  padding: 18px 20px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 12px;
+  align-items: center;
+  padding: 4px 0;
+  position: relative;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #4a5568;
+  min-width: 130px;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.info-label i {
+  color: #4299e1;
+  margin-right: 8px;
+  font-size: 1rem;
+}
+
+.info-value {
+  color: #2d3748;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background-color: #f7fafc;
+  padding: 4px 10px;
+  border-radius: 6px;
+  flex-grow: 1;
+  border-left: 3px solid #e2e8f0;
+}
+
+.plan-detail-section {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 1px dashed #cbd5e0;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.progress-section {
+  width: 100%;
+  padding: 12px 0;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.progress-percentage {
+  font-weight: 700;
+  color: #48bb78;
+  font-size: 1rem;
+}
+
+.plan-progress {
+  margin: 8px 0;
+  height: 14px;
+  border-radius: 8px;
+  width: 100%;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.treatment-plans-container {
+  position: relative;
+  padding-bottom: 40px;
+  background-color: #f8fafc;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+/* Improved timeline styles */
+.timeline-plans {
+  display: flex;
+  gap: 20px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 20px 10px;
+  margin-bottom: 30px;
+  scrollbar-width: thin;
+}
+
+.timeline-plans::-webkit-scrollbar {
+  height: 6px;
+}
+
+.timeline-plans::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 3px;
+}
+
+.timeline-plans::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* Card and Badge Enhancements */
+.card {
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(to right, #f8fafc, #edf2f7);
+  border-bottom: 1px solid #e2e8f0;
+  padding: 16px 20px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-header h5 {
+  color: #2d3748;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.card-header h5 i {
+  color: #4299e1;
+  margin-right: 10px;
+}
+
+.status-badge {
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.table thead th {
+  background-color: #edf2f7;
+  border-bottom: 2px solid #cbd5e0;
+  color: #4a5568;
+  font-weight: 600;
+  padding: 12px 16px;
+}
+
+.table td {
+  padding: 12px 16px;
+  vertical-align: middle;
+}
+
+.list-group-item {
+  padding: 15px;
+  border-color: #e2e8f0;
+}
+
+.list-group-item strong {
+  color: #4a5568;
+  display: inline-flex;
+  align-items: center;
+}
+
+.list-group-item strong i {
+  color: #4299e1;
+  margin-right: 8px;
+}
+
+/* Treatment progress page header */
+.treatment-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.page-title {
+  color: #2d3748;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.page-title i {
+  color: #4299e1;
+  margin-right: 10px;
+}
+
+/* Custom Modal Styles */
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  backdrop-filter: blur(3px);
+}
+
+.custom-modal {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+  /* Plan Overview Card Styling */
+  .plan-overview {
+    border: none;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .plan-overview .card-header {
+    background: linear-gradient(135deg, #ebf4ff, #e6fffa);
+    border-bottom: 1px solid #bee3f8;
+    padding: 18px 24px;
+  }
+
+  .plan-overview .card-body {
+    padding: 24px;
+  }
+
+  /* Error and Alert Styling */
+  .error-alert {
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-weight: 500;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .error-alert i {
+    font-size: 1.1rem;
+  }
+
+  /* Bottom Action Buttons */
+  .d-flex.justify-content-between.mb-5 .btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .d-flex.justify-content-between.mb-5 .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Hover effect for treatment plan cards */
+  .treatment-plan-card:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      rgba(66, 153, 225, 0) 0%,
+      rgba(66, 153, 225, 0.08) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    border-radius: 12px;
+  }
+
+  .treatment-plan-card:hover:after {
+    opacity: 1;
+  }
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid #dee2e6;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.custom-modal-title {
+  margin: 0;
+  color: #495057;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.custom-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background-color 0.15s ease;
+}
+
+.custom-modal-close:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.custom-modal-body {
+  padding: 20px;
+}
+
+.custom-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-section {
+  margin-bottom: 24px;
+  padding: 0 8px;
+}
+
+.section-header {
+  font-size: 1rem;
+  color: #007bff;
+  font-weight: 500;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 8px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -12px;
+}
+
+.form-column {
+  flex: 1;
+  padding: 0 12px;
+  min-width: 250px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  appearance: auto;
+}
+
+.form-select:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #dee2e6;
+}
+
+.btn {
+  cursor: pointer;
+  padding: 8px 16px;
+  font-size: 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 100px;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: 1px solid #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn + .btn {
+  margin-left: 10px;
+}
+
+.spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 2px solid white;
+  width: 12px;
+  height: 12px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .form-column {
+    flex: 100%;
+  }
+
+  .custom-modal {
+    width: 95%;
+  }
+}

@@ -1,3 +1,5 @@
+// Quản lý danh sách bác sĩ cho admin/manager
+// Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from 'react';
 import {
   Table,
@@ -7,7 +9,6 @@ import {
   Form,
   Input,
   Select,
-  Popconfirm,
   message,
   Switch,
   Tooltip,
@@ -21,18 +22,22 @@ import doctorService from '../../services/doctorService';
 
 const { Option } = Select;
 
+// Component chính quản lý bác sĩ
 const Doctors = () => {
-  const [data, setData] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [form] = Form.useForm();
-  const [searchText, setSearchText] = useState('');
-  const [editingDoctor, setEditingDoctor] = useState(null);
-  const [loading, setLoading] = useState(false);
+  // State lưu trữ danh sách bác sĩ, modal, form, filter, loading
+  const [data, setData] = useState([]); // Danh sách bác sĩ
+  const [isModalVisible, setIsModalVisible] = useState(false); // Hiển thị modal chỉnh sửa
+  const [form] = Form.useForm(); // Form chỉnh sửa bác sĩ
+  const [searchText, setSearchText] = useState(''); // Từ khóa tìm kiếm
+  const [editingDoctor, setEditingDoctor] = useState(null); // Bác sĩ đang chỉnh sửa
+  const [loading, setLoading] = useState(false); // Đang tải dữ liệu
 
+  // Tải danh sách bác sĩ khi component mount
   useEffect(() => {
     fetchDoctors();
   }, []);
 
+  // Gọi API lấy danh sách bác sĩ, có thể truyền searchParams để lọc
   const fetchDoctors = async (searchParams = {}) => {
     setLoading(true);
     try {
@@ -51,6 +56,7 @@ const Doctors = () => {
     }
   };
 
+  // Xử lý cập nhật thông tin bác sĩ
   const handleEditDoctor = async (values) => {
     try {
       const response = await doctorService.updateDoctor(editingDoctor.id, values);
@@ -72,6 +78,7 @@ const Doctors = () => {
     }
   };
 
+  // Xử lý cập nhật trạng thái hoạt động của bác sĩ
   const handleStatusChange = async (id, checked) => {
     try {
       const response = await doctorService.updateDoctorAvailability(id, checked);
@@ -88,11 +95,13 @@ const Doctors = () => {
     }
   };
 
+  // Xử lý tìm kiếm bác sĩ theo tên (debounce để giảm số lần gọi API)
   const handleSearch = debounce((value) => {
     setSearchText(value);
     fetchDoctors({ name: value });
   }, 300);
 
+  // Định nghĩa các cột cho bảng bác sĩ
   const columns = [
     {
       title: 'Họ và Tên',
@@ -137,8 +146,10 @@ const Doctors = () => {
     },
   ];
 
+  // Render giao diện quản lý bác sĩ
   return (
     <div className="doctors-container">
+      {/* Header hiển thị tổng số bác sĩ */}
       <div className="doctors-header">
         <div className="doctors-header-left">
           <UserOutlined style={{ fontSize: 28, marginRight: 12, color: '#fff' }} />
@@ -149,6 +160,7 @@ const Doctors = () => {
         </p>
       </div>
 
+      {/* Toolbar tìm kiếm */}
       <div className="doctors-toolbar">
         <Input.Search
           className="doctors-search"
@@ -159,6 +171,7 @@ const Doctors = () => {
         />
       </div>
 
+      {/* Bảng danh sách bác sĩ */}
       <Table
         className="doctors-table"
         columns={columns}
@@ -167,6 +180,7 @@ const Doctors = () => {
         loading={loading}
       />
 
+      {/* Modal chỉnh sửa bác sĩ */}
       <Modal
         className="doctors-modal"
         title="Chỉnh sửa bác sĩ"
@@ -226,3 +240,4 @@ const Doctors = () => {
 };
 
 export default Doctors;
+// Kết thúc file Doctors.jsx
