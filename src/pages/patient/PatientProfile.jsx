@@ -3,21 +3,20 @@ import {
   Card, Row, Col, Avatar, Button, Space,
   Typography, Tabs, Descriptions, Tag, Divider, Statistic,
   Dropdown, List, Empty, Input,
-  DatePicker, message, Upload
+  DatePicker, message
 } from 'antd';
 import {
   UserOutlined, EditOutlined,
   CalendarOutlined, FileTextOutlined, MedicineBoxOutlined,
   SafetyOutlined, CheckCircleOutlined,
-  HourglassOutlined,
-  InfoCircleOutlined, ClockCircleOutlined,
-  LogoutOutlined, UploadOutlined
+  HourglassOutlined, InfoCircleOutlined, ClockCircleOutlined,
+  LogoutOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
 import authService from '../../services/authService';
 import treatmentService from '../../services/treatmentService';
 import guestService from '../../services/guestService';
-import patientService from '../../services/patientService'; // Thêm import
+import patientService from '../../services/patientService';
 import '../../styles/PatientProfile.css';
 import 'moment/locale/vi';
 
@@ -25,6 +24,8 @@ moment.locale('vi');
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
+
+// ... (previous imports and code remain unchanged)
 
 const PatientProfile = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -34,8 +35,7 @@ const PatientProfile = () => {
   const [loading, setLoading] = useState(true);
   const [treatments, setTreatments] = useState([]);
   const [appointments, setAppointments] = useState([]);
-  const [medicalHistory, setMedicalHistory] = useState([]); // Thêm state cho lịch sử y tế
-  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [medicalHistory, setMedicalHistory] = useState([]);
 
   useEffect(() => {
     const storedUser = authService.getCurrentUser();
@@ -45,7 +45,7 @@ const PatientProfile = () => {
         .then(profile => {
           setUserData({
             ...profile,
-            treatments: profile.treatments || [],
+            treatments: profile.treatments || [], // Ensure treatments is always an array
             appointments: profile.appointments || [],
             medicalTests: profile.medicalTests || [],
             allergies: profile.allergies || [],
@@ -72,18 +72,15 @@ const PatientProfile = () => {
       const customerId = storedUser.customer.id;
       console.log("Loading profile for customer ID:", customerId);
 
-      // Gọi API và set userData
       setUserData({
         ...storedUser,
-        ...storedUser.customer, // gộp customer fields như birthDate, gender nếu cần
+        ...storedUser.customer,
       });
 
-      // Lịch sử điều trị
       treatmentService.getCustomerTreatmentPlans(customerId)
         .then(data => setTreatments(Array.isArray(data) ? data : []))
         .catch(() => setTreatments([]));
 
-      // Lịch hẹn
       guestService.getMyAppointments()
         .then(response => {
           console.log("Appointments loaded:", response.data.appointments);
@@ -94,7 +91,6 @@ const PatientProfile = () => {
           setAppointments([]);
         });
 
-      // Lịch sử y tế
       patientService.getPatientMedicalHistory(customerId)
         .then(response => {
           const records = response?.data?.medicalRecords || response || [];
@@ -110,7 +106,6 @@ const PatientProfile = () => {
       setLoading(false);
     }
   }, []);
-
 
   const handleTabChange = (key) => {
     setActiveTab(key);
@@ -154,14 +149,6 @@ const PatientProfile = () => {
     }));
   };
 
-  const handleAvatarChange = (info) => {
-    if (info.file.status === 'done' || info.file.status === 'uploading' || info.file.originFileObj) {
-      const reader = new FileReader();
-      reader.onload = e => setAvatarUrl(e.target.result);
-      reader.readAsDataURL(info.file.originFileObj);
-    }
-  };
-
   if (loading) return <div>Đang tải...</div>;
   if (!userData) return <div>Không có dữ liệu hồ sơ.</div>;
 
@@ -175,7 +162,6 @@ const PatientProfile = () => {
 
   return (
     <div className="patient-profile-container">
-      {/* Phần đầu trang với thông tin cơ bản và avatar */}
       <div className="profile-header">
         <div className="profile-header-content">
           <div className="profile-avatar-section">
@@ -202,32 +188,21 @@ const PatientProfile = () => {
               ]
             }} placement="bottomRight" trigger={['click']}>
               <div className="avatar-dropdown-trigger">
-                <div className="avatar-upload-wrapper">
-                  <Avatar
-                    size={90}
-                    icon={<UserOutlined />}
-                    className="patient-avatar"
-                    src={avatarUrl || userData.avatar || null}
-                  />
-                  <Upload
-                    showUploadList={false}
-                    beforeUpload={() => false}
-                    onChange={handleAvatarChange}
-                    accept="image/*"
-                  >
-                    <Button icon={<UploadOutlined />} size="small" style={{ marginTop: 8 }}>Chọn ảnh</Button>
-                  </Upload>
-                </div>
+                <Avatar
+                  size={90}
+                  icon={<UserOutlined />}
+                  className="patient-avatar"
+                  src={userData.avatar || null}
+                />
               </div>
             </Dropdown>
             <div className="patient-basic-info">
               <div className="patient-name-id">
                 <Title level={3} className="patient-name">{userData.fullName}</Title>
-                <Tag color="blue" className="patient-id">ID: {userData.id}</Tag>
               </div>
               <div className="patient-metadata">
                 {userData.birthDate && moment(userData.birthDate, ['YYYY-MM-DD', 'DD/MM/YYYY']).isValid() && (
-                  <Tag icon={<CalendarOutlined />}>{`${moment().diff(moment(userData.birthDate, ['YYYY-MM-DD', 'DD/MM/YYYY']), 'years')} tuổi`}</Tag>
+                  <Tag icon={<CalendarOutlined />}>{displayAge}</Tag>
                 )}
                 <Tag icon={<SafetyOutlined />}>{userData.bloodType}</Tag>
                 {userData.status === 'Đang điều trị' && (
@@ -355,8 +330,8 @@ const PatientProfile = () => {
 
             <Col xs={24}>
               <Card title="Điều trị hiện tại" className="current-treatment-card">
-                {userData.treatments.filter(t => t.status === 'in-progress').length > 0 ? (
-                  userData.treatments
+                {treatments.length > 0 ? ( // Use treatments state instead of userData.treatments
+                  treatments
                     .filter(t => t.status === 'in-progress')
                     .map(treatment => (
                       <div key={treatment.id} className="treatment-progress">
@@ -453,7 +428,7 @@ const PatientProfile = () => {
               <List
                 className="tests-list"
                 itemLayout="horizontal"
-                dataSource={medicalHistory} // Sử dụng medicalHistory thay vì userData.medicalTests
+                dataSource={medicalHistory}
                 renderItem={record => (
                   <List.Item
                     actions={[
