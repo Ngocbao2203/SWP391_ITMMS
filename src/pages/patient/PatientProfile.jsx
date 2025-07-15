@@ -61,6 +61,7 @@ const PatientProfile = () => {
   const [treatments, setTreatments] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [medicalHistory, setMedicalHistory] = useState([]);
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   useEffect(() => {
     const storedUser = authService.getCurrentUser();
@@ -97,6 +98,11 @@ const PatientProfile = () => {
       setLoading(true);
       const customerId = storedUser.customer.id;
       console.log("Loading profile for customer ID:", customerId);
+
+      // Kiểm tra và lấy avatar URL nếu có
+      if (storedUser.avatar) {
+        setAvatarUrl(storedUser.avatar);
+      }
 
       setUserData({
         ...storedUser,
