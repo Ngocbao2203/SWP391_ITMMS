@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../styles/DoctorSidebar.css";
 import {
   FaHome,
@@ -17,6 +17,7 @@ import { authService } from "../../services";
 
 const DoctorSidebar = ({ isCollapsed, onToggle }) => {
   const location = useLocation(); // Sidebar toggle functionality đã bị vô hiệu hóa
+  const navigate = useNavigate();
   const toggleSidebar = () => {
     // Không làm gì cả vì chúng ta đã fix sidebar luôn ở trạng thái mở rộng
     return;
@@ -44,11 +45,20 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
   // Lấy thông tin bác sĩ từ localStorage (authService)
   const currentUser = authService.getCurrentUser();
   const doctor = currentUser?.doctor;
+
   const doctorName = doctor?.fullName || "Bác sĩ";
   const doctorSpecialty = doctor?.specialization || "Chuyên khoa";
   const doctorAvatar =
     doctor?.avatar ||
     "https://scontent.fsgn2-10.fna.fbcdn.net/v/t39.30808-1/329377304_1332268933985538_6362045284190608584_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=109&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeFwPy56WChkZBE9WflmyFrfOBYOAEJEwxA4Fg4AQkTDEGRbSCyc9ZZDJ4Js0UVRx-Wsxf3cy3Y-9MrhTOc4uaH3&_nc_ohc=C3YhRYc7UMUQ7kNvwEGmfqX&_nc_oc=AdkQ41KGGZrplfAZpdYzBX4nURiFEA6IPERW_mc18U1XJGhMdlEOfGYGSNZwMpxGAaQ&_nc_zt=24&_nc_ht=scontent.fsgn2-10.fna&_nc_gid=JLHQOIBRb_jZmbmn9sPw8w&oh=00_AfLQwYE4cQjjfOrz19acuMGlhhPWrxsjcddYFmuaGsUhVg&oe=6843416A";
+
+  // Thêm hàm xử lý logout
+  const handleLogout = (e) => {
+    e.preventDefault();
+    authService.logout();
+    navigate("/login");
+  };
+
   return (
     <div className={`doctor-sidebar ${isCollapsed ? "collapsed" : ""}`}>
       <div className="sidebar-header">
@@ -95,7 +105,12 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
           ))}
         </ul>
       </nav>
-      {/* Đã loại bỏ nút Đăng xuất */}
+      <div className="sidebar-footer">
+        <a href="#logout" className="logout-btn" onClick={handleLogout}>
+          <FaSignOutAlt />
+          {!isCollapsed && <span>Đăng xuất</span>}
+        </a>
+      </div>{" "}
     </div>
   );
 };

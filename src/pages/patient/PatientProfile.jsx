@@ -264,12 +264,15 @@ const PatientProfile = () => {
               trigger={["click"]}
             >
               <div className="avatar-dropdown-trigger">
-                <Avatar
-                  size={90}
-                  icon={<UserOutlined />}
-                  className="patient-avatar"
-                  src={userData.avatar || null}
-                />
+                <div className="avatar-upload-wrapper">
+                  <Avatar
+                    size={90}
+                    icon={<UserOutlined />}
+                    className="patient-avatar"
+                    src={avatarUrl || userData.avatar || null}
+                  />
+                  {/* Đã xóa nút Upload chọn ảnh */}
+                </div>
               </div>
             </Dropdown>
             <div className="patient-basic-info">
@@ -277,6 +280,7 @@ const PatientProfile = () => {
                 <Title level={3} className="patient-name">
                   {userData.fullName}
                 </Title>
+                {/* Đã xóa hiển thị ID bệnh nhân */}
               </div>
               <div className="patient-metadata">
                 {userData.birthDate &&
@@ -297,6 +301,7 @@ const PatientProfile = () => {
           </div>
           <div className="profile-actions">
             <Space>
+              {/* <<<<<<< HEAD
               <Button
                 type={editMode ? "default" : "primary"}
                 icon={editMode ? null : <EditOutlined />}
@@ -312,6 +317,27 @@ const PatientProfile = () => {
                 >
                   Lưu thay đổi
                 </Button>
+======= */}
+              {activeTab === "overview" && (
+                <>
+                  <Button
+                    type={editMode ? "default" : "primary"}
+                    icon={editMode ? null : <EditOutlined />}
+                    onClick={handleEditToggle}
+                  >
+                    {editMode ? "Hủy" : "Chỉnh sửa"}
+                  </Button>
+                  {editMode && (
+                    <Button
+                      type="primary"
+                      icon={<CheckCircleOutlined />}
+                      onClick={handleSaveChanges}
+                    >
+                      Lưu thay đổi
+                    </Button>
+                  )}
+                </>
+                // >>>>>>> 0be1c7442e0451e6570771ffaa15ecb5e8d1afda
               )}
             </Space>
           </div>
