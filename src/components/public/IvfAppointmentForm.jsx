@@ -1,6 +1,7 @@
 // Form đặt lịch hẹn IVF (Thụ tinh trong ống nghiệm)
 // Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Form,
   Select,
@@ -64,6 +65,8 @@ const IvfAppointmentForm = ({
   const [isLoadingDoctors, setIsLoadingDoctors] = useState(false); // Đang tải bác sĩ
   const [hasTreatmentPlan, setHasTreatmentPlan] = useState(null); // Đã từng khám chưa
   const [treatmentPlansList, setTreatmentPlansList] = useState([]); // Danh sách kế hoạch điều trị
+
+  const navigate = useNavigate();
 
   // Tải dữ liệu dịch vụ và bác sĩ ban đầu
   useEffect(() => {
@@ -132,10 +135,13 @@ const IvfAppointmentForm = ({
   // Nếu có dịch vụ truyền vào, set giá trị mặc định cho form
   useEffect(() => {
     if (service?.id) {
+      console.log("Setting form value for service:", service); // Debug
       form.setFieldsValue({
         serviceId: service.id,
         treatmentServiceId: service.id,
       });
+    } else {
+      form.resetFields(["treatmentServiceId"]); // Reset nếu không có service
     }
   }, [service, form]);
 
@@ -232,6 +238,14 @@ const IvfAppointmentForm = ({
     if (onSubmitting) onSubmitting();
     setLoading(true);
     try {
+      // Kiểm tra đăng nhập
+      const user = authService.getCurrentUser();
+      if (!user) {
+        toast.error("Vui lòng đăng nhập để đặt lịch hẹn");
+        navigate("/login"); // Sử dụng navigate từ scope component
+        return;
+      }
+
       const appointmentData = validateAndFormatData(values);
       console.log("Dữ liệu gửi đi:", appointmentData);
       const result = await appointmentService.bookAppointment(appointmentData);
@@ -334,32 +348,30 @@ const IvfAppointmentForm = ({
                   <h3 className="ivf-form-step-title">Dịch vụ điều trị</h3>
                 </div>
                 <div className="ivf-form-control">
+                  {service && service.id && (
+                    <div style={{ marginBottom: "10px", color: "#1890ff" }}>
+                      Dịch vụ đã chọn: {service.serviceName} - {service.basePrice?.toLocaleString("vi-VN")} VND
+                    </div>
+                  )}
                   <Form.Item
                     name="treatmentServiceId"
-                    rules={[
-                      { required: true, message: "Vui lòng chọn dịch vụ" },
-                    ]}
+                    rules={[{ required: true, message: "Vui lòng chọn dịch vụ" }]}
                   >
                     <Select
                       placeholder="Chọn dịch vụ điều trị"
                       className="ivf-service-select"
-                      disabled={service?.id || isLoadingServices}
+                      disabled={isLoadingServices || (service && service.id ? true : false)} // Vô hiệu hóa nếu service có id
                       showSearch
                       loading={isLoadingServices}
+                      value={service && service.id ? service.id : undefined} // Set giá trị từ service
                       onChange={(value) => {
-                        const selected = services.find(
-                          (s) => s.id === value || s.serviceId === value
-                        );
+                        const selected = services.find((s) => s.id === value || s.serviceId === value);
                         if (selected) {
-                          toast.info(
-                            `Đã chọn: ${selected.serviceName || selected.name}`
-                          );
+                          toast.info(`Đã chọn: ${selected.serviceName || selected.name}`);
                         }
                       }}
                       filterOption={(input, option) =>
-                        option.children
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
+                        option.children.toLowerCase().includes(input.toLowerCase())
                       }
                     >
                       {isLoadingServices ? (
@@ -368,13 +380,8 @@ const IvfAppointmentForm = ({
                         </Option>
                       ) : services.length > 0 ? (
                         services.map((s) => (
-                          <Option
-                            key={s.id || s.serviceId}
-                            value={s.id || s.serviceId}
-                          >
-                            {s.serviceName || s.name} -{" "}
-                            {(s.basePrice || s.price)?.toLocaleString("vi-VN")}{" "}
-                            VNĐ
+                          <Option key={s.id || s.serviceId} value={s.id || s.serviceId}>
+                            {s.serviceName || s.name} - {(s.basePrice || s.price)?.toLocaleString("vi-VN")} VNĐ
                           </Option>
                         ))
                       ) : (
@@ -523,11 +530,10 @@ const IvfAppointmentForm = ({
                         {doctors.map((doctor) => (
                           <div
                             key={doctor.id || doctor.doctorId}
-                            className={`ivf-doctor-card ${
-                              selectedDoctor === (doctor.id || doctor.doctorId)
-                                ? "selected"
-                                : ""
-                            }`}
+                            className={`ivf-doctor-card ${selectedDoctor === (doctor.id || doctor.doctorId)
+                              ? "selected"
+                              : ""
+                              }`}
                             onClick={() =>
                               handleDoctorSelect(doctor.id || doctor.doctorId)
                             }
@@ -546,10 +552,10 @@ const IvfAppointmentForm = ({
                               />
                               {selectedDoctor ===
                                 (doctor.id || doctor.doctorId) && (
-                                <div className="ivf-doctor-selected-indicator">
-                                  ✓
-                                </div>
-                              )}
+                                  <div className="ivf-doctor-selected-indicator">
+                                    ✓
+                                  </div>
+                                )}
                             </div>
                             <h4 className="ivf-doctor-name">
                               {doctor.name || doctor.fullName}

@@ -35,68 +35,45 @@ const BookAppointment = () => {
     totalDoctors: "150+",
     satisfiedCustomers: "10k+",
   });
-
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn lên đầu trang
+  }, [])
   // Tải thông tin dịch vụ nếu có serviceId từ URL
   useEffect(() => {
     const loadServiceData = async () => {
-      if (serviceId) {
+      if (location.state && location.state.service) {
+        console.log("Using service from state:", location.state.service); // Debug
+        setSelectedService(location.state.service);
+        setPageLoading(false); // Không cần tải lại nếu có state
+      } else if (serviceId) {
         setPageLoading(true);
         try {
-          // Lấy service details từ API
-          const serviceData = await treatmentService.getTreatmentServiceDetails(
-            serviceId
-          );
+          const serviceData = await treatmentService.getTreatmentServiceDetails(serviceId);
+          console.log("Service data from API:", serviceData); // Debug
           setSelectedService(serviceData);
         } catch (error) {
           console.error("Error loading service data:", error);
           message.error(formatErrorMessage(error));
+          // Fallback to state if API fails
+          if (location.state && location.state.service) {
+            setSelectedService(location.state.service);
+          }
         } finally {
           setPageLoading(false);
-        }
-      } else if (location.state && location.state.service) {
-        // Nhận thông tin dịch vụ từ state của location (nếu được truyền)
-        setSelectedService(location.state.service);
-
-        // Lưu thông tin về trang nguồn
-        if (location.state.source) {
-          switch (location.state.source) {
-            case "UserService":
-              setSourceRoute("/userservice");
-              break;
-            case "ServiceDetail":
-              const serviceID = location.state.service?.id || "";
-              setSourceRoute(`/services/${serviceID}`);
-              break;
-            default:
-              setSourceRoute("/userservice");
-          }
-
-          // Hiển thị thông báo nếu từ UserService
-          if (location.state.source === "UserService") {
-            setTimeout(() => {
-              message.success(
-                "Bạn đã chọn dịch vụ " + location.state.service.serviceName
-              );
-            }, 500);
-          }
         }
       }
     };
 
-    // Lấy clinic stats từ guest service
     const loadClinicStats = async () => {
       try {
         const stats = await guestService.getSuccessStatistics();
         setClinicStats({
           successRate: stats.successRate || 95,
           totalDoctors: stats.totalDoctors ? `${stats.totalDoctors}+` : "150+",
-          satisfiedCustomers: stats.totalPatients
-            ? `${Math.floor(stats.totalPatients / 1000)}k+`
-            : "10k+",
+          satisfiedCustomers: stats.totalPatients ? `${Math.floor(stats.totalPatients / 1000)}k+` : "10k+",
         });
       } catch (error) {
         console.error("Error loading clinic stats:", error);
-        // Use fallback data if API fails
       }
     };
 
@@ -153,7 +130,7 @@ const BookAppointment = () => {
                 <Paragraph className="hero-subtitle">
                   {selectedService
                     ? selectedService.description ||
-                      "Hãy để chúng tôi đồng hành cùng bạn trong hành trình làm cha mẹ với giải pháp điều trị hiệu quả"
+                    "Hãy để chúng tôi đồng hành cùng bạn trong hành trình làm cha mẹ với giải pháp điều trị hiệu quả"
                     : "Hãy để chúng tôi đồng hành cùng bạn trong hành trình làm cha mẹ với giải pháp điều trị hiệu quả"}
                 </Paragraph>
 
@@ -231,9 +208,8 @@ const BookAppointment = () => {
 
             <Col xs={24} md={12} lg={12} className="appointment-right-content">
               <div
-                className={`appointment-form-wrapper ${
-                  formLoading ? "form-loading" : ""
-                }`}
+                className={`appointment-form-wrapper ${formLoading ? "form-loading" : ""
+                  }`}
               >
                 {formLoading && (
                   <div className="form-overlay">

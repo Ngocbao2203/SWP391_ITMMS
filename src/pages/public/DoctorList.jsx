@@ -16,8 +16,8 @@ import {
 import {
   SearchOutlined,
   UserOutlined,
-  CalendarOutlined,
   TeamOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layouts/MainLayout";
 import "../../styles/DoctorList.css";
@@ -129,13 +129,6 @@ const DoctorList = () => {
   // Xử lý khi chọn tiêu chí sắp xếp
   const handleSortChange = (value) => {
     setSortBy(value);
-  };
-
-  // Xử lý khi nhấn đặt lịch bác sĩ (hiện thông báo demo)
-  const handleBookAppointment = (doctorId, doctorName) => {
-    message.success(
-      `Đã gửi yêu cầu đặt lịch với ${doctorName}. Chúng tôi sẽ liên hệ với bạn sớm nhất!`
-    );
   };
 
   // Xử lý khi nhấn xem hồ sơ bác sĩ
@@ -264,16 +257,6 @@ const DoctorList = () => {
                           >
                             Xem hồ sơ
                           </Button>
-                          <Button
-                            type="primary"
-                            className="book-appointment-btn"
-                            onClick={() =>
-                              handleBookAppointment(doctor.id, doctor.name)
-                            }
-                            icon={<CalendarOutlined />}
-                          >
-                            Đặt lịch
-                          </Button>
                         </div>
                       </div>
                     </Card>
@@ -330,4 +313,3 @@ const DoctorList = () => {
 };
 
 export default DoctorList;
-// Kết thúc file DoctorList.jsx

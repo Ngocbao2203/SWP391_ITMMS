@@ -39,6 +39,7 @@ const ServiceDetail = () => {
 
   // Tải dữ liệu dịch vụ khi component mount hoặc serviceId thay đổi
   useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn lên đầu trang khi tải lại
     const fetchServiceData = async () => {
       setLoading(true);
       setError(null);

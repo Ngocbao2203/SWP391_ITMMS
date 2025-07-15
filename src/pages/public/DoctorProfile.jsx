@@ -2,10 +2,8 @@
 // Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Typography, Button, Breadcrumb, message, Tag, Spin } from "antd";
+import { Card, Typography, Button, Spin } from "antd";
 import {
-  CalendarOutlined,
-  MessageOutlined,
   TrophyOutlined,
   MedicineBoxOutlined,
 } from "@ant-design/icons";
@@ -53,27 +51,12 @@ const DoctorProfile = () => {
         setDoctor(mappedDoctor);
       } catch (error) {
         console.error("Error fetching doctor:", error);
-        message.error("Không thể tải thông tin bác sĩ");
       } finally {
         setLoading(false);
       }
     };
     fetchDoctor();
   }, [id]);
-
-  // Xử lý khi nhấn đặt lịch tư vấn (hiện thông báo demo)
-  const handleBookConsultation = () => {
-    message.success(
-      `Đã gửi yêu cầu đặt lịch tư vấn với ${doctor.name}. Chúng tôi sẽ liên hệ với bạn trong 24h!`
-    );
-  };
-
-  // Xử lý khi nhấn liên hệ bác sĩ (hiện thông báo demo)
-  const handleContactDoctor = () => {
-    message.info(
-      "Tính năng nhắn tin trực tiếp với bác sĩ sẽ được phát triển trong phiên bản tiếp theo."
-    );
-  };
 
   // Hiển thị loading khi đang tải dữ liệu
   if (loading) {
@@ -156,98 +139,6 @@ const DoctorProfile = () => {
           margin: '0 auto',
           padding: '0 20px'
         }}>
-          {/* Navigation Bar breadcrumb */}
-          <div style={{ marginBottom: '30px' }}>
-            <div style={{
-              background: 'white',
-              padding: '12px 20px',
-              borderRadius: '12px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
-            }}>
-              <Breadcrumb>
-                <Breadcrumb.Item>
-                  <a href="/guest" style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    color: '#666',
-                    textDecoration: 'none'
-                  }}>
-                    {/* Icon home */}
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="14"
-                      height="14"
-                      stroke="currentColor"
-                      fill="none"
-                      style={{ flexShrink: 0 }}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                      />
-                    </svg>
-                    Trang chủ
-                  </a>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>
-                  <a href="/doctors" style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    color: '#666',
-                    textDecoration: 'none'
-                  }}>
-                    {/* Icon doctor list */}
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="14"
-                      height="14"
-                      stroke="currentColor"
-                      fill="none"
-                      style={{ flexShrink: 0 }}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                    Danh sách bác sĩ
-                  </a>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  color: '#1890ff',
-                  fontWeight: '500'
-                }}>
-                  {/* Icon profile */}
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="14"
-                    height="14"
-                    stroke="currentColor"
-                    fill="none"
-                    style={{ flexShrink: 0 }}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  {doctor.name}
-                </Breadcrumb.Item>
-              </Breadcrumb>
-            </div>
-          </div>
-
           {/* Card header thông tin bác sĩ */}
           <Card style={{
             borderRadius: '20px',
@@ -407,44 +298,6 @@ const DoctorProfile = () => {
                 }}>
                   {doctor.description}
                 </Paragraph>
-
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <Button
-                    type="primary"
-                    size="large"
-                    icon={<CalendarOutlined />}
-                    onClick={handleBookConsultation}
-                    style={{
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      border: 'none',
-                      borderRadius: '12px',
-                      height: '48px',
-                      padding: '0 24px',
-                      fontWeight: '600',
-                      fontSize: '16px',
-                      boxShadow: '0 4px 16px rgba(102, 126, 234, 0.3)'
-                    }}
-                  >
-                    Đặt lịch
-                  </Button>
-                  <Button
-                    size="large"
-                    icon={<MessageOutlined />}
-                    onClick={handleContactDoctor}
-                    style={{
-                      border: '2px solid #1890ff',
-                      color: '#1890ff',
-                      borderRadius: '12px',
-                      height: '48px',
-                      padding: '0 24px',
-                      fontWeight: '600',
-                      fontSize: '16px',
-                      background: 'white'
-                    }}
-                  >
-                    Liên hệ
-                  </Button>
-                </div>
               </div>
             </div>
           </Card>
@@ -588,4 +441,3 @@ const DoctorProfile = () => {
 };
 
 export default DoctorProfile;
-// Kết thúc file DoctorProfile.jsx

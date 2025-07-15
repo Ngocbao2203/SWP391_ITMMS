@@ -67,10 +67,7 @@ export default function UserService() {
         ? typeof service.features === "string"
           ? service.features.split(",").map((feat) => feat.trim())
           : service.features
-        : [
-            "Phù hợp với nhiều nguyên nhân hiếm muộn",
-            "Quy trình điều trị chuẩn",
-          ],
+        : [],
     }));
   };
 
@@ -207,9 +204,8 @@ export default function UserService() {
               <Card
                 key={service.id}
                 hoverable
-                className={`fertility-service-card ${
-                  expandedService === service.id ? "expanded" : ""
-                }`}
+                className={`fertility-service-card ${expandedService === service.id ? "expanded" : ""
+                  }`}
                 onClick={() => navigate(`/services/${service.id}`)}
                 cover={
                   <div className="service-image">
@@ -253,20 +249,14 @@ export default function UserService() {
 
                 {/* Tính năng nổi bật của dịch vụ */}
                 <div className="service-features">
-                  {service.features && service.features.length > 0 ? (
+                  {service.features && service.features.length > 0 &&
                     service.features.map((feature, idx) => (
                       <div className="feature-item" key={idx}>
                         <CheckCircleOutlined className="check-icon" /> {feature}
                       </div>
                     ))
-                  ) : (
-                    <div className="feature-item">
-                      <CheckCircleOutlined className="check-icon" /> Dịch vụ
-                      chất lượng cao
-                    </div>
-                  )}
+                  }
                 </div>
-
                 {/* Nút xem chi tiết và đặt lịch */}
                 <div className="service-buttons">
                   <Button type="primary" className="btn-more">
