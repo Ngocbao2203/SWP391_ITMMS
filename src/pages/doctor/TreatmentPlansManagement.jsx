@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   Table,
@@ -47,6 +48,7 @@ const { TextArea } = Input;
 const { TabPane } = Tabs;
 
 const TreatmentPlansManagement = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [treatmentPlans, setTreatmentPlans] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
@@ -196,21 +198,29 @@ const TreatmentPlansManagement = () => {
   };
 
   const handleViewDetails = (plan) => {
-    setSelectedPlan(plan);
-    setDetailModalVisible(true);
+    // Navigate to detail page with patient ID
+    const patientId = plan.customer?.id || plan.patientId;
+    if (patientId) {
+      navigate(`/doctor/treatmentsprogress/detail/${patientId}`);
+    } else {
+      message.error(
+        "Không tìm thấy thông tin bệnh nhân cho kế hoạch điều trị này"
+      );
+    }
   };
 
   const handleUpdateProgress = (planData) => {
     setSelectedPlan(planData);
 
     const plan = planData.treatmentPlan || planData;
-    const nextDate =
-      plan.nextVisitDate || plan.nextAppointmentDate || plan.nextPhaseDate;
+    const nextVisitDate = plan.nextVisitDate || plan.nextAppointmentDate;
+    const nextPhaseDate = plan.nextPhaseDate;
 
     form.setFieldsValue({
       currentPhase: plan.currentPhase || plan.phase || 1,
       phaseDescription: plan.phaseDescription || plan.description || "",
-      nextVisitDate: nextDate ? dayjs(nextDate) : null,
+      nextVisitDate: nextVisitDate ? dayjs(nextVisitDate) : null,
+      nextPhaseDate: nextPhaseDate ? dayjs(nextPhaseDate) : null,
       progressNotes: plan.progressNotes || plan.notes || "",
       status: plan.status || "Active",
     });
@@ -227,10 +237,20 @@ const TreatmentPlansManagement = () => {
         return;
       }
 
+      // Format dates properly - handle both dayjs objects and string values from date inputs
+      const formatDate = (dateValue) => {
+        if (!dateValue) return null;
+        if (dayjs.isDayjs(dateValue)) {
+          return dateValue.format("YYYY-MM-DD");
+        }
+        return dateValue; // Already a string from the date input
+      };
+
       const updateData = {
         currentPhase: values.currentPhase,
         phaseDescription: values.phaseDescription,
-        nextVisitDate: values.nextVisitDate?.format("YYYY-MM-DD"),
+        nextVisitDate: formatDate(values.nextVisitDate),
+        nextPhaseDate: formatDate(values.nextPhaseDate),
         progressNotes: values.progressNotes,
         status: values.status,
       };
@@ -307,8 +327,7 @@ const TreatmentPlansManagement = () => {
       key: "patientName",
       render: (_, record) => {
         const customer = record.customer || {};
-        const patientName =
-          customer.fullName || customer.user?.fullName || "Chưa có tên";
+        const patientName = customer.fullName || customer.name || "Chưa có tên";
         const customerId = customer.id || "N/A";
         const phone = customer.phone || "";
 
@@ -462,13 +481,13 @@ const TreatmentPlansManagement = () => {
       key: "actions",
       render: (_, record) => (
         <Space>
-          {/* <Button 
-            size="small" 
+          <Button
+            size="small"
             icon={<EyeOutlined />}
             onClick={() => handleViewDetails(record)}
           >
             Chi tiết
-          </Button> */}
+          </Button>
           <Button
             size="small"
             type="primary"
@@ -490,15 +509,6 @@ const TreatmentPlansManagement = () => {
     <div className="treatment-plans-management">
       <div className="page-header">
         <Title level={2}>Quản lý kế hoạch điều trị</Title>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            /* Handle create new plan */
-          }}
-        >
-          Tạo kế hoạch mới
-        </Button>
       </div>
 
       {/* Filters */}
@@ -664,6 +674,18 @@ const TreatmentPlansManagement = () => {
                       <br />
                       <Text type="secondary">
                         {dayjs(selectedPlan.treatmentPlan.nextVisitDate).format(
+                          "DD/MM/YYYY"
+                        )}
+                      </Text>
+                    </Timeline.Item>
+                  )}
+
+                  {selectedPlan.treatmentPlan?.nextPhaseDate && (
+                    <Timeline.Item color="purple">
+                      <Text strong>Dự kiến chuyển giai đoạn tiếp theo</Text>
+                      <br />
+                      <Text type="secondary">
+                        {dayjs(selectedPlan.treatmentPlan.nextPhaseDate).format(
                           "DD/MM/YYYY"
                         )}
                       </Text>
@@ -883,7 +905,7 @@ const TreatmentPlansManagement = () => {
         open={updateModalVisible}
         onCancel={() => setUpdateModalVisible(false)}
         footer={null}
-        width={600}
+        width={700}
       >
         <Form form={form} layout="vertical" onFinish={handleUpdateSubmit}>
           <Form.Item
@@ -910,6 +932,50 @@ const TreatmentPlansManagement = () => {
               placeholder="Mô tả chi tiết giai đoạn hiện tại..."
             />
           </Form.Item>
+
+          <Row gutter={16} className="update-form-date-inputs">
+            <Col span={12}>
+              <Form.Item
+                label="Ngày khám tiếp theo"
+                name="nextVisitDate"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn ngày khám tiếp theo",
+                  },
+                ]}
+                tooltip="Ngày bệnh nhân cần quay lại khám"
+              >
+                <Input type="date" min={dayjs().format("YYYY-MM-DD")} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Ngày chuyển giai đoạn tiếp theo"
+                name="nextPhaseDate"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn ngày chuyển giai đoạn",
+                  },
+                ]}
+                tooltip="Ngày dự kiến chuyển sang giai đoạn tiếp theo của quá trình điều trị"
+              >
+                <Input type="date" min={dayjs().format("YYYY-MM-DD")} />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Text
+            type="secondary"
+            style={{ display: "block", marginBottom: "16px" }}
+          >
+            <i>
+              Lưu ý: Ngày khám tiếp theo là ngày bệnh nhân cần quay lại tái
+              khám. Ngày chuyển giai đoạn là dự kiến thời điểm bệnh nhân sẽ
+              chuyển sang giai đoạn điều trị kế tiếp.
+            </i>
+          </Text>
 
           <Form.Item label="Ghi chú tiến trình" name="progressNotes">
             <TextArea

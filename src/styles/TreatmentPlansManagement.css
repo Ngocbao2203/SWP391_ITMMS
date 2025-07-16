@@ -13,7 +13,7 @@
   padding: 24px 0;
   background: #fff;
   border-radius: 16px 16px 0 0;
-  box-shadow: 0 4px 24px rgba(102,126,234,0.10);
+  box-shadow: 0 4px 24px rgba(102, 126, 234, 0.1);
 }
 
 .page-header h2 {
@@ -45,7 +45,7 @@
 /* Filter Card */
 .treatment-plans-management .ant-card {
   border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(102,126,234,0.10);
+  box-shadow: 0 4px 24px rgba(102, 126, 234, 0.1);
   border: none;
   background: #fff;
 }
@@ -110,7 +110,7 @@
   border: none;
   padding: 6px 18px;
   font-size: 1rem;
-  box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
 }
 
 /* Action Buttons */
@@ -119,7 +119,7 @@
   font-weight: 600;
   transition: all 0.3s ease;
   font-size: 1rem;
-  box-shadow: 0 2px 8px rgba(67,233,123,0.10);
+  box-shadow: 0 2px 8px rgba(67, 233, 123, 0.1);
 }
 
 .treatment-plans-management .ant-btn-primary {
@@ -131,7 +131,7 @@
 .treatment-plans-management .ant-btn-primary:hover {
   background: linear-gradient(135deg, #38f9d7 0%, #43e97b 100%) !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(67,233,123,0.18);
+  box-shadow: 0 4px 16px rgba(67, 233, 123, 0.18);
 }
 
 .treatment-plans-management .ant-btn:not(.ant-btn-primary) {
@@ -143,7 +143,7 @@
   border-color: #43e97b;
   color: #43e97b;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(67,233,123,0.10);
+  box-shadow: 0 2px 8px rgba(67, 233, 123, 0.1);
 }
 
 /* Pagination */
@@ -217,7 +217,33 @@
 .treatment-plans-management .ant-modal .ant-select-focused .ant-select-selector,
 .treatment-plans-management .ant-modal .ant-picker:focus {
   border-color: #43e97b;
-  box-shadow: 0 0 0 2px rgba(67,233,123,0.10);
+  box-shadow: 0 0 0 2px rgba(67, 233, 123, 0.1);
+}
+
+/* Date inputs in update form */
+.update-form-date-inputs .ant-form-item {
+  margin-bottom: 16px;
+}
+
+.update-form-date-inputs input[type="date"] {
+  width: 100%;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  padding: 4px 11px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.85);
+  transition: all 0.3s;
+}
+
+.update-form-date-inputs input[type="date"]:hover {
+  border-color: #40a9ff;
+}
+
+.update-form-date-inputs input[type="date"]:focus {
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  outline: 0;
 }
 
 /* Responsive Design */
@@ -225,21 +251,21 @@
   .treatment-plans-management {
     padding: 16px;
   }
-  
+
   .page-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
-  
+
   .page-header h2 {
     font-size: 20px;
   }
-  
+
   .treatment-plans-management .ant-table-wrapper {
     overflow-x: auto;
   }
-  
+
   .treatment-plans-management .ant-modal {
     margin: 0;
     width: 100% !important;
@@ -251,17 +277,17 @@
   .treatment-plans-management {
     padding: 12px;
   }
-  
+
   .page-header h2 {
     font-size: 18px;
   }
-  
+
   .treatment-plans-management .ant-btn {
     height: 36px;
     padding: 0 16px;
     font-size: 13px;
   }
-  
+
   .treatment-plans-management .ant-table-tbody > tr > td {
     padding: 12px 8px;
   }
@@ -314,4 +340,4 @@
 .treatment-plans-management .ant-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-} 
+}

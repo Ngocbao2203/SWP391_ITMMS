@@ -15,7 +15,7 @@ import "../../../src/styles/TreatmentProgressPage.css";
 const TreatmentProgressPage = () => {
   // Thêm hook navigate
   const navigate = useNavigate();
-  
+
   // State cho danh sách lịch hẹn
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +74,9 @@ const TreatmentProgressPage = () => {
 
   // Sửa hàm handleTreatmentDetailClick để chuyển hướng sang trang chi tiết
   const handleTreatmentDetailClick = (appointmentId, customerId) => {
-    console.log(`Chuyển đến trang chi tiết điều trị cho bệnh nhân ${customerId}`);
+    console.log(
+      `Chuyển đến trang chi tiết điều trị cho bệnh nhân ${customerId}`
+    );
 
     if (!customerId) {
       console.error("Không tìm thấy ID bệnh nhân cho cuộc hẹn này");
@@ -94,7 +96,7 @@ const TreatmentProgressPage = () => {
   };
 
   return (
-    <Container className="treatment-progress-container">
+    <Container fluid className="treatment-progress-container">
       <div className="treatment-progress-header">
         <h1 className="page-title">
           <i className="fas fa-chart-line me-2"></i>
@@ -117,7 +119,7 @@ const TreatmentProgressPage = () => {
             <i className="fas fa-calendar-check me-2"></i>Danh sách lịch hẹn
           </h5>
         </Card.Header>
-        <Card.Body>
+        <Card.Body className="p-0 p-sm-2">
           {loading ? (
             <div className="loading-container">
               <Spinner
@@ -129,85 +131,86 @@ const TreatmentProgressPage = () => {
               <p className="loading-text">Đang tải dữ liệu...</p>
             </div>
           ) : !Array.isArray(appointments) || appointments.length === 0 ? (
-            <Alert variant="info" className="no-data-alert">
+            <Alert variant="info" className="no-data-alert m-3">
               <i className="fas fa-info-circle me-2"></i>
               Không có lịch hẹn nào.
             </Alert>
           ) : (
-            <Table
-              striped
-              bordered
-              hover
-              responsive
-              className="appointment-table"
-            >
-              <thead>
-                <tr className="table-header-row">
-                  <th>Mã lịch hẹn</th>
-                  <th>Bệnh nhân</th>
-                  <th>Ngày hẹn</th>
-                  <th>Giờ hẹn</th>
-                  <th>Dịch vụ</th>
-                  <th>Trạng thái</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {appointments.map((appointment) => (
-                  <tr key={appointment.id} className="appointment-row">
-                    <td className="appointment-id">
-                      <i className="fas fa-hashtag me-1"></i>
-                      {appointment.id}
-                    </td>
-                    <td className="patient-name">
-                      <i className="fas fa-user me-1"></i>
-                      {appointment.patientName || 
-                       appointment.patient?.name || 
-                       appointment.patient?.fullName || 
-                       `ID: ${appointment.customerId || appointment.patient?.id || appointment.patientId || "N/A"}`}
-                    </td>
-                    <td>
-                      <i className="far fa-calendar-alt me-1"></i>
-                      {formatDate(appointment.appointmentDate)}
-                    </td>
-                    <td>
-                      <i className="far fa-clock me-1"></i>
-                      {appointment.timeSlot}
-                    </td>
-                    <td>
-                      <i className="fas fa-stethoscope me-1"></i>
-                      {appointment.service ? appointment.service.name : "N/A"}
-                    </td>
-                    <td>
-                      <Badge
-                        bg={getStatusBadgeClass(appointment.status)}
-                        className="status-badge"
-                      >
-                        {getStatusText(appointment.status)}
-                      </Badge>
-                    </td>
-                    <td>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        className="action-button"
-                        onClick={() => 
-                          handleTreatmentDetailClick(
-                            appointment.id, 
-                            appointment.customerId || 
-                            appointment.patient?.id || 
-                            appointment.patientId
-                          )
-                        }
-                      >
-                        <i className="fas fa-info-circle me-1"></i>
-                        Chi tiết điều trị
-                      </Button>
-                    </td>
+            <div className="table-responsive">
+              <Table striped bordered hover className="appointment-table">
+                <thead>
+                  <tr className="table-header-row">
+                    <th>Mã</th>
+                    <th>Bệnh nhân</th>
+                    <th>Ngày</th>
+                    <th>Giờ</th>
+                    <th>Dịch vụ</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {appointments.map((appointment) => (
+                    <tr key={appointment.id} className="appointment-row">
+                      <td className="appointment-id">
+                        <i className="fas fa-hashtag me-1"></i>
+                        {appointment.id}
+                      </td>
+                      <td className="patient-name">
+                        <i className="fas fa-user me-1"></i>
+                        {appointment.patientName ||
+                          appointment.patient?.name ||
+                          appointment.patient?.fullName ||
+                          `ID: ${
+                            appointment.customerId ||
+                            appointment.patient?.id ||
+                            appointment.patientId ||
+                            "N/A"
+                          }`}
+                      </td>
+                      <td>
+                        <i className="far fa-calendar-alt me-1"></i>
+                        {formatDate(appointment.appointmentDate)}
+                      </td>
+                      <td>
+                        <i className="far fa-clock me-1"></i>
+                        {appointment.timeSlot}
+                      </td>
+                      <td>
+                        <i className="fas fa-stethoscope me-1"></i>
+                        {appointment ? appointment.type : "N/A"}
+                      </td>
+                      <td>
+                        <Badge
+                          bg={getStatusBadgeClass(appointment.status)}
+                          className="status-badge"
+                        >
+                          {getStatusText(appointment.status)}
+                        </Badge>
+                      </td>
+                      <td>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          className="action-button"
+                          onClick={() =>
+                            handleTreatmentDetailClick(
+                              appointment.id,
+                              appointment.customerId ||
+                                appointment.patient?.id ||
+                                appointment.patientId
+                            )
+                          }
+                        >
+                          <i className="fas fa-info-circle me-1 d-none d-sm-inline"></i>
+                          Chi tiết
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
           )}
         </Card.Body>
       </Card>
@@ -218,7 +221,7 @@ const TreatmentProgressPage = () => {
 // Helper function để lấy class cho badge trạng thái
 function getStatusBadgeClass(status) {
   if (!status) return "secondary";
-  
+
   switch (status.toLowerCase()) {
     case "pending":
       return "warning";
@@ -236,7 +239,7 @@ function getStatusBadgeClass(status) {
 // Helper function để lấy text hiển thị trạng thái
 function getStatusText(status) {
   if (!status) return "Không xác định";
-  
+
   switch (status.toLowerCase()) {
     case "pending":
       return "Chờ xử lý";
