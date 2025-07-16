@@ -5,10 +5,23 @@
   padding: 1rem;
   max-width: 100%;
   width: 100%;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: white;
   min-height: calc(100vh - 100px);
   border-radius: 10px;
   margin: 0 auto;
+}
+
+/* Treatment Plans Title Styling */
+.treatment-plans-title {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1.4rem;
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  border-left: 4px solid #3498db;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-block;
 }
 
 /* Breadcrumb Styling */
@@ -443,6 +456,33 @@
 .progress-bar {
   background-color: #48bb78;
   border-radius: 0.5rem;
+}
+
+/* Add Treatment Plan Button styling */
+.add-treatment-plan-btn {
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background-color: #3182ce;
+  border-color: #2b6cb0;
+  box-shadow: 0 4px 6px rgba(49, 130, 206, 0.25);
+  min-width: 220px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.add-treatment-plan-btn:hover {
+  background-color: #2b6cb0;
+  border-color: #2c5282;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(49, 130, 206, 0.3);
+}
+
+.add-treatment-plan-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(49, 130, 206, 0.2);
 }
 
 /* Badge styling */

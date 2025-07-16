@@ -36,8 +36,6 @@ import {
   ScheduleOutlined,
   ExclamationCircleOutlined,
   UserSwitchOutlined,
-  EnvironmentOutlined,
-  PhoneOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import authService from "../../services/authService";

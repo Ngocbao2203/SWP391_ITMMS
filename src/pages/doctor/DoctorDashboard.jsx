@@ -4,7 +4,6 @@ import {
   Row,
   Col,
   Typography,
-  Statistic,
   Spin,
   message,
   Button,
@@ -21,7 +20,6 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   MedicineBoxOutlined,
-  EyeOutlined,
   HeartOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
@@ -415,53 +413,30 @@ const DoctorDashboard = () => {
       greeting = "Chào buổi tối";
     }
 
-    return (
-      <Card className="welcome-card" style={{ marginBottom: 24 }}>
-        <Row align="middle">
-          <Col span={24}>
-            <Space size="middle">
-              <Avatar size={64} icon={<UserOutlined />} />
-              <div>
-                <Title level={2} style={{ margin: 0 }}>
-                  {greeting}
-                </Title>
-                <Paragraph style={{ margin: 0, color: "#666" }}>
-                  {dashboardData.doctor?.specialization} •{" "}
-                  {dayjs().format("dddd, DD/MM/YYYY")}
-                </Paragraph>
-              </div>
-            </Space>
-          </Col>
-        </Row>
-      </Card>
-    );
-  };
-
-  const renderStatsCards = () => {
     const stats = [
       {
-        title: "Hôm nay",
+        title: "HÔM NAY",
         value: dashboardData.stats.todayCount,
         icon: <CalendarOutlined style={{ color: "#1976d2" }} />,
         color: "#1976d2",
         suffix: "cuộc hẹn",
       },
       {
-        title: "Đang điều trị",
+        title: "ĐANG ĐIỀU TRỊ",
         value: dashboardData.stats.activePatients,
         icon: <TeamOutlined style={{ color: "#388e3c" }} />,
         color: "#388e3c",
         suffix: "bệnh nhân",
       },
       {
-        title: "Hoàn thành",
+        title: "HOÀN THÀNH",
         value: dashboardData.stats.completedToday,
         icon: <CheckCircleOutlined style={{ color: "#f57c00" }} />,
         color: "#f57c00",
         suffix: "buổi khám",
       },
       {
-        title: "Tái khám",
+        title: "TÁI KHÁM",
         value: dashboardData.stats.pendingFollowUps,
         icon: <ClockCircleOutlined style={{ color: "#7b1fa2" }} />,
         color: "#7b1fa2",
@@ -470,53 +445,103 @@ const DoctorDashboard = () => {
     ];
 
     return (
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        {stats.map((stat, index) => (
-          <Col xs={24} sm={12} lg={6} key={index}>
-            <Card className="stat-card">
-              <Statistic
-                title={stat.title}
-                value={stat.value}
-                suffix={stat.suffix}
-                prefix={stat.icon}
-                valueStyle={{
-                  color: stat.color,
-                  fontSize: "28px",
-                  fontWeight: "bold",
-                }}
+      <Card className="welcome-card">
+        <Row align="middle" style={{ marginBottom: 16 }}>
+          <Col span={24}>
+            <Space size="middle">
+              <Avatar
+                size={64}
+                icon={<UserOutlined />}
+                style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
               />
-            </Card>
+              <div>
+                <Title level={2} style={{ margin: 0, color: "white" }}>
+                  {greeting}
+                </Title>
+                <Paragraph
+                  style={{ margin: 0, color: "rgba(255, 255, 255, 0.8)" }}
+                >
+                  {dashboardData.doctor?.specialization} •{" "}
+                  {dayjs().format("dddd, DD/MM/YYYY")}
+                </Paragraph>
+              </div>
+            </Space>
           </Col>
-        ))}
-      </Row>
+        </Row>
+        <Row gutter={[16, 16]}>
+          {stats.map((stat, index) => (
+            <Col xs={24} sm={12} lg={6} key={index}>
+              <div
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.15)",
+                  borderRadius: "12px",
+                  padding: "16px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "14px",
+                    color: "rgba(255, 255, 255, 0.9)",
+                    marginBottom: "8px",
+                  }}
+                >
+                  {stat.title}
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span
+                    style={{
+                      marginRight: "12px",
+                      fontSize: "18px",
+                      color: "white",
+                    }}
+                  >
+                    {stat.icon}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "28px",
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    {stat.value}{" "}
+                    <span style={{ fontSize: "16px" }}>{stat.suffix}</span>
+                  </span>
+                </div>
+              </div>
+            </Col>
+          ))}
+        </Row>
+      </Card>
     );
   };
+
+  // Đã kết hợp stats cards với renderWelcomeHeader
 
   const renderTodaySchedule = () => {
     return (
       <Card
         title={
           <Space>
-            <CalendarOutlined />
+            <CalendarOutlined style={{ color: "#1976d2" }} />
             <span>Lịch hẹn ngày {selectedDate.format("DD/MM/YYYY")}</span>
             <Tag color="blue">{dashboardData.todayAppointments.length}</Tag>
           </Space>
         }
         extra={
-          <Space>
-            <DatePicker
-              value={selectedDate}
-              onChange={handleDateChange}
-              format="DD/MM/YYYY"
-              placeholder="Chọn ngày"
-              allowClear={false}
-            />
-            <Button type="link" icon={<EyeOutlined />}>
-              Xem tất cả
-            </Button>
-          </Space>
+          <DatePicker
+            value={selectedDate}
+            onChange={handleDateChange}
+            format="DD/MM/YYYY"
+            placeholder="Chọn ngày"
+            allowClear={false}
+          />
         }
         className="schedule-card"
+        style={{
+          borderRadius: "12px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+        }}
       >
         {dashboardData.todayAppointments.length === 0 ? (
           <Empty
@@ -537,6 +562,17 @@ const DoctorDashboard = () => {
                     icon={<MedicineBoxOutlined />}
                     onClick={() => handleStartConsultation(appointment)}
                     disabled={appointment.status === "Completed"}
+                    style={{
+                      borderRadius: "6px",
+                      background:
+                        appointment.status === "Completed"
+                          ? "#8cc4ff"
+                          : "#1976d2",
+                      boxShadow:
+                        appointment.status !== "Completed"
+                          ? "0 2px 0 rgba(5, 125, 255, 0.1)"
+                          : "none",
+                    }}
                   >
                     {appointment.status === "Completed"
                       ? "Đã khám"
@@ -553,34 +589,41 @@ const DoctorDashboard = () => {
               >
                 <List.Item.Meta
                   avatar={
-                    <div className="time-slot">
-                      <Text strong>{appointment.timeSlot}</Text>
+                    <div
+                      className="time-slot"
+                      style={{
+                        backgroundColor: "#f0f5ff",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "90px",
+                      }}
+                    >
+                      <Text strong style={{ color: "#1976d2" }}>
+                        {appointment.timeSlot}
+                      </Text>
                     </div>
                   }
                   title={
                     <Space>
-                      <Text strong>
+                      <Text strong style={{ fontSize: "15px" }}>
                         {appointment.customerName ||
                           appointment.customer?.user?.fullName}
                       </Text>
-                      <Tag color={getStatusColor(appointment.status)}>
+                      <Tag
+                        color={getStatusColor(appointment.status)}
+                        style={{ borderRadius: "4px" }}
+                      >
                         {appointment.status}
                       </Tag>
-                      <Tag icon={getAppointmentTypeIcon(appointment.type)}>
+                      <Tag
+                        icon={getAppointmentTypeIcon(appointment.type)}
+                        style={{ borderRadius: "4px" }}
+                      >
                         {appointment.type}
                       </Tag>
-                    </Space>
-                  }
-                  description={
-                    <Space direction="vertical" size="small">
-                      <Text type="secondary">
-                        📞{" "}
-                        {appointment.customerPhone ||
-                          appointment.customer?.user?.phone}
-                      </Text>
-                      {appointment.notes && (
-                        <Text type="secondary">💬 {appointment.notes}</Text>
-                      )}
                     </Space>
                   }
                 />
@@ -602,9 +645,8 @@ const DoctorDashboard = () => {
   }
 
   return (
-    <div className="doctor-dashboard">
+    <div className="doctor-dashboard" style={{ background: "#ffffffff" }}>
       {renderWelcomeHeader()}
-      {renderStatsCards()}
 
       <Row gutter={[24, 24]}>
         <Col xs={24}>{renderTodaySchedule()}</Col>
