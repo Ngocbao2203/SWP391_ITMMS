@@ -38,6 +38,8 @@ export const API_ENDPOINTS = {
   DOCTORS: {
     BASE: "/doctors",
     GET_ALL: "/doctors",
+    GET_ALL_MANAGEMENT: "/doctors/management",
+    GET_ALL_MANAGEMENT_BY_ID: (id) => `/doctors/management/${id}`,
     GET_BY_ID: (id) => `/doctors/${id}`,
     CREATE: "/doctors",
     UPDATE: (id) => `/doctors/${id}`,
@@ -46,6 +48,7 @@ export const API_ENDPOINTS = {
     GET_APPOINTMENTS: (id) => `/doctors/${id}/appointments`,
     GET_AVAILABLE: "/doctors/available",
     UPDATE_AVAILABILITY: (id) => `/doctors/${id}/availability`,
+    UPDATE_MANAGEMENT_TOGGLE_AVAILABILITY: (id) => `/doctors/management/${id}/toggle-availability`,
     GET_SCHEDULE: (id) => `/doctors/${id}/schedule`,
     MY_SCHEDULE: "/doctors/my-schedule",
     TEST: "/doctors/test",

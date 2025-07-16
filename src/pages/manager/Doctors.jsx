@@ -12,7 +12,6 @@ import {
   Tooltip,
   Tag,
   Avatar,
-  Rate,
   InputNumber,
   Typography,
   Divider,
@@ -24,24 +23,23 @@ import {
   MailOutlined,
   DollarOutlined,
   CalendarOutlined,
-  TrophyOutlined,
   MedicineBoxOutlined,
   StarOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import { debounce } from "lodash";
 import doctorService from "../../services/doctorService";
-import authService from "../../services/authService"; // Giả định file authService
+import authService from "../../services/authService";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
 
 const Doctors = () => {
   const [data, setData] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal chỉnh sửa
-  const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false); // Modal đăng ký
-  const [form] = Form.useForm(); // Form chỉnh sửa
-  const [registerForm] = Form.useForm(); // Form đăng ký
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
+  const [form] = Form.useForm();
+  const [registerForm] = Form.useForm();
   const [searchText, setSearchText] = useState("");
   const [editingDoctor, setEditingDoctor] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -53,16 +51,16 @@ const Doctors = () => {
   const fetchDoctors = async (searchParams = {}) => {
     setLoading(true);
     try {
-      const response = await doctorService.getAllDoctors(searchParams);
+      const response = await doctorService.getAllManagement(searchParams);
       let filteredDoctors = response.doctors || [];
       if (searchParams.name) {
-        filteredDoctors = filteredDoctors.filter((doctor) =>
-          doctor.fullName.toLowerCase().includes(searchParams.name.toLowerCase())
+        filteredDoctors = filteredDoctors.filter((manager) =>
+          manager.fullName.toLowerCase().includes(searchParams.name.toLowerCase())
         );
       }
       setData(filteredDoctors);
     } catch (error) {
-      message.error("Lỗi khi lấy danh sách bác sĩ");
+      message.error("Lỗi khi lấy danh sách quản lý");
     } finally {
       setLoading(false);
     }
@@ -85,21 +83,22 @@ const Doctors = () => {
         message.error(response.message);
       }
     } catch (error) {
-      message.error("Lỗi khi cập nhật bác sĩ");
+      message.error("Lỗi khi cập nhật quản lý");
     }
   };
 
   const handleStatusChange = async (id, checked) => {
+    console.log("handleStatusChange called with id:", id, "checked:", checked);
     try {
-      const response = await doctorService.updateDoctorAvailability(id, checked);
-      if (response.success) {
-        message.success("Cập nhật trạng thái thành công");
-        fetchDoctors();
+      const result = await doctorService.updateManagementAvailability(id, checked);
+      if (result.success) {
+        message.success(result.message);
+        fetchDoctors(); // Cập nhật danh sách sau khi thay đổi trạng thái
       } else {
-        message.error(response.message);
+        message.error(result.message);
       }
     } catch (error) {
-      console.error("Error updating status:", error);
+      console.error("Error in handleStatusChange:", error);
       message.error("Lỗi khi cập nhật trạng thái");
     }
   };
@@ -109,7 +108,6 @@ const Doctors = () => {
     fetchDoctors({ name: value });
   }, 300);
 
-  // Xử lý đăng ký bác sĩ
   const handleRegisterDoctor = async (values) => {
     try {
       setLoading(true);
@@ -117,20 +115,20 @@ const Doctors = () => {
         fullName: values.fullName,
         email: values.email,
         password: values.password,
-        role: "Doctor",
+        role: "Manager",
         specialization: values.specialization,
         licenseNumber: values.licenseNumber,
-        phone: values.phone, // Thêm trường Phone
-        address: values.address, // Thêm trường Address
-        username: values.username, // Thêm trường Username
+        phone: values.phone,
+        address: values.address,
+        username: values.username,
       };
-      console.log("📤 Sending registration data:", userData); // Debug dữ liệu gửi đi
+      console.log("📤 Sending registration data:", userData);
       const response = await authService.register(userData);
       if (response.success) {
-        message.success(response.message || "Đăng ký bác sĩ thành công!");
+        message.success(response.message || "Đăng ký quản lý thành công!");
         setIsRegisterModalVisible(false);
         registerForm.resetFields();
-        fetchDoctors(); // Cập nhật danh sách bác sĩ
+        fetchDoctors();
       } else {
         message.error(response.message || "Đăng ký thất bại!");
       }
@@ -144,7 +142,7 @@ const Doctors = () => {
 
   const columns = [
     {
-      title: "Thông tin bác sĩ",
+      title: "Thông tin quản lý",
       width: "30%",
       render: (_, record) => (
         <Space>
@@ -183,16 +181,16 @@ const Doctors = () => {
       render: (_, record) => (
         <Space direction="vertical" size="small">
           <span>
-            <CalendarOutlined /> {record.experienceYears} năm kinh nghiệm
+            <CalendarOutlined /> {record.experienceYears || 0} năm kinh nghiệm
           </span>
           {record.consultationFee > 0 && (
             <span>
               <DollarOutlined /> {record.consultationFee?.toLocaleString()}đ
             </span>
           )}
-          {record.rating > 0 && record.reviewCount > 0 && (
+          {record.averageRating > 0 && record.totalAppointments > 0 && (
             <span>
-              <StarOutlined /> {record.rating}
+              <StarOutlined /> {record.averageRating}
             </span>
           )}
         </Space>
@@ -238,16 +236,13 @@ const Doctors = () => {
 
   return (
     <div className="doctors-container">
-      {/* Header hiển thị tổng số bác sĩ và nút thêm */}
       <div className="doctors-header">
         <div className="doctors-header-left">
-          <UserOutlined
-            style={{ fontSize: 28, marginRight: 12, color: "#fff" }}
-          />
-          <h2 className="doctors-title">Danh sách bác sĩ</h2>
+          <UserOutlined style={{ fontSize: 28, marginRight: 12, color: "#fff" }} />
+          <h2 className="doctors-title">Danh sách quản lý</h2>
         </div>
         <p className="doctors-subtitle">
-          Có <span className="doctors-count">{data.length}</span> bác sĩ được
+          Có <span className="doctors-count">{data.length}</span> quản lý được
           hiển thị.
         </p>
         <Button
@@ -256,11 +251,10 @@ const Doctors = () => {
           onClick={() => setIsRegisterModalVisible(true)}
           style={{ marginLeft: 16 }}
         >
-          Tạo tài khoản bác sĩ
+          Tạo tài khoản quản lý
         </Button>
       </div>
 
-      {/* Toolbar tìm kiếm */}
       <div className="doctors-toolbar">
         <Input.Search
           className="doctors-search"
@@ -271,7 +265,6 @@ const Doctors = () => {
         />
       </div>
 
-      {/* Bảng danh sách bác sĩ */}
       <Table
         className="doctors-table"
         columns={columns}
@@ -280,10 +273,9 @@ const Doctors = () => {
         loading={loading}
       />
 
-      {/* Modal chỉnh sửa bác sĩ */}
       <Modal
         className="doctors-modal"
-        title="Chỉnh sửa bác sĩ"
+        title="Chỉnh sửa quản lý"
         open={isModalVisible}
         onCancel={() => {
           setIsModalVisible(false);
@@ -306,7 +298,7 @@ const Doctors = () => {
           <Form.Item
             name="fullName"
             label="Họ và Tên"
-            rules={[{ required: true, message: "Vui lòng nhập họ tên bác sĩ" }]}
+            rules={[{ required: true, message: "Vui lòng nhập họ tên quản lý" }]}
           >
             <Input prefix={<UserOutlined />} />
           </Form.Item>
@@ -366,9 +358,8 @@ const Doctors = () => {
         </Form>
       </Modal>
 
-      {/* Modal đăng ký bác sĩ */}
       <Modal
-        title="Tạo tài khoản bác sĩ"
+        title="Tạo tài khoản quản lý"
         open={isRegisterModalVisible}
         onCancel={() => {
           setIsRegisterModalVisible(false);

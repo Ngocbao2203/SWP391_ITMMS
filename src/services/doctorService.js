@@ -19,7 +19,50 @@ class DoctorService {
       throw error;
     }
   }
+  async getAllManagement() {
+    try {
+      const response = await apiService.get(API_ENDPOINTS.DOCTORS.GET_ALL_MANAGEMENT);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 
+  /**
+   * Lấy thông tin bác sĩ quản lý theo ID
+   * @param {number|string} id 
+   */
+  async getManagementById(id) {
+    try {
+      const endpoint = API_ENDPOINTS.DOCTORS.GET_ALL_MANAGEMENT_BY_ID(id);
+      const response = await apiService.get(endpoint);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async updateManagementAvailability(managerId, isAvailable) {
+    try {
+      console.log("Starting updateManagementAvailability for managerId:", managerId, "with isAvailable:", isAvailable);
+      const response = await apiService.put(
+        API_ENDPOINTS.DOCTORS.UPDATE_MANAGEMENT_TOGGLE_AVAILABILITY(managerId),
+        { isAvailable }
+      );
+      console.log("Response from API:", response);
+      return {
+        success: true,
+        message: 'Cập nhật trạng thái quản lý thành công',
+        data: response
+      };
+    } catch (error) {
+      console.error("Error caught in updateManagementAvailability:", error);
+      return {
+        success: false,
+        message: error.message || 'Cập nhật trạng thái quản lý thất bại',
+        errors: error.response?.data?.errors || []
+      };
+    }
+  }
   /**
    * Lấy chi tiết doctor
    * @param {number} doctorId
