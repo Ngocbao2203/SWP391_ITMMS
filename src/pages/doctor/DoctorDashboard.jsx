@@ -138,12 +138,10 @@ const DoctorDashboard = () => {
           console.error("Make sure backend is running on port 5037");
         }
 
-        // Lấy tất cả appointments của doctor (client-side filtering)
+        // Lấy tất cả appointments của doctor đang đăng nhập
         try {
-          console.log("Getting all doctor appointments...");
-          scheduleResponse = await appointmentService.getDoctorAppointments(
-            doctorId
-          );
+          console.log("Getting all my appointments...");
+          scheduleResponse = await appointmentService.getMyAppointments();
           console.log("All appointments result:", scheduleResponse);
         } catch (error) {
           console.warn("Failed to get all appointments:", error);
@@ -153,7 +151,7 @@ const DoctorDashboard = () => {
         console.log("Response type:", typeof scheduleResponse);
         console.log("Response keys:", Object.keys(scheduleResponse || {}));
 
-        // Extract appointments from response structure - theo Swagger API
+        // Extract appointments from response structure - theo chuẩn API mới
         let allAppointmentsData =
           scheduleResponse.data?.appointments ||
           scheduleResponse.appointments ||
@@ -166,8 +164,13 @@ const DoctorDashboard = () => {
         console.log("Is array:", Array.isArray(allAppointmentsData));
         console.log("Length:", allAppointmentsData.length);
 
-        // Lưu tất cả appointments vào state
-        setAllAppointments(allAppointmentsData);
+        // Chuẩn hóa dữ liệu - đảm bảo là mảng
+        if (!Array.isArray(allAppointmentsData)) {
+          console.warn("API response is not an array, converting to array");
+          allAppointmentsData = allAppointmentsData
+            ? [allAppointmentsData]
+            : [];
+        }
 
         console.log("=== APPOINTMENTS LOADED ===");
         console.log("Selected date:", selectedDate.format("YYYY-MM-DD"));
@@ -181,19 +184,9 @@ const DoctorDashboard = () => {
             "First appointment keys:",
             Object.keys(allAppointmentsData[0] || {})
           );
-          console.log("CustomerId field:", allAppointmentsData[0].CustomerId);
-          console.log("customerId field:", allAppointmentsData[0].customerId);
-          console.log(
-            "CustomerId type:",
-            typeof allAppointmentsData[0].CustomerId
-          );
-          console.log(
-            "customerId type:",
-            typeof allAppointmentsData[0].customerId
-          );
         }
 
-        // Always process API data first - handle field mapping and missing values
+        // Xử lý dữ liệu từ API
         console.log("=== PROCESSING API DATA ===");
         if (
           Array.isArray(allAppointmentsData) &&
@@ -203,66 +196,44 @@ const DoctorDashboard = () => {
             (appointment, index) => {
               console.log(`Processing appointment ${index}:`, appointment);
 
-              // FIX: API structure issue - customerId thực ra là appointmentId
-              console.log("=== FIXING APPOINTMENT DATA STRUCTURE ===");
-              console.log("Raw appointment:", appointment);
+              // Xác định ID cuộc hẹn
+              const appointmentId = appointment.id || index;
 
-              // Trích xuất customerId thật từ customerName nếu có pattern số
-              let realCustomerId = null;
-              if (
-                appointment.customerName &&
-                /^cus(\d+)$/.test(appointment.customerName)
-              ) {
-                // customerName có format "cus2" -> customerId = 2
-                realCustomerId = parseInt(
-                  appointment.customerName.replace("cus", "")
-                );
-              } else if (
-                appointment.customerName &&
-                /^\d+$/.test(appointment.customerName)
-              ) {
-                // customerName là số thuần -> đó là customerId
-                realCustomerId = parseInt(appointment.customerName);
-              } else {
-                // Fallback: tạm thời sử dụng một số mặc định
-                console.warn(
-                  "Cannot extract customerId from customerName:",
-                  appointment.customerName
-                );
-                realCustomerId = appointment.customerId; // Tạm thời giữ nguyên để test
-              }
+              // Xử lý customer data - API thực tế có cấu trúc customer trực tiếp
+              const customerId = appointment.customer?.id;
+
+              // Xác định tên khách hàng từ trường name trong customer
+              let customerName = appointment.customer?.name;
 
               const processedAppointment = {
                 ...appointment,
-                // Đây mới là appointmentId thật
-                appointmentId: appointment.customerId, // customerId trong API thực ra là appointmentId
-                // Đây mới là customerId thật
-                customerId: realCustomerId,
-                // Đảm bảo có customerName và customerPhone cho display
-                customerName:
-                  appointment.customerName || `Customer ${realCustomerId}`,
-                customerPhone: appointment.customerPhone || "",
+                id: appointmentId,
+                appointmentId: appointmentId,
+                customerId: customerId,
+                customerName: customerName || "Bệnh nhân không xác định",
+                customerPhone: appointment.customer?.phone || "",
+                customerEmail: appointment.customer?.email || "",
                 timeSlot: appointment.timeSlot || "",
                 type: appointment.type || "Consultation",
                 status: appointment.status || "Scheduled",
+                notes: appointment.notes || "",
+                appointmentDate: appointment.appointmentDate,
+                completedAt: appointment.completedAt || null,
+                treatmentPlan: appointment.treatmentPlan,
               };
 
-              console.log(
-                "Processed appointment - appointmentId:",
-                processedAppointment.appointmentId
-              );
-              console.log(
-                "Processed appointment - customerId:",
-                processedAppointment.customerId
-              );
-
-              console.log(
-                `Processed appointment ${index}:`,
-                processedAppointment
-              );
-              console.log(
-                `Final customerId: ${processedAppointment.customerId}`
-              );
+              // Log kết quả đã xử lý
+              console.log(`Processed appointment ${index}:`, {
+                id: processedAppointment.id,
+                customerId: processedAppointment.customerId,
+                customerName: processedAppointment.customerName,
+                customerPhone: processedAppointment.customerPhone,
+                appointmentDate: processedAppointment.appointmentDate,
+                timeSlot: processedAppointment.timeSlot,
+                status: processedAppointment.status,
+                type: processedAppointment.type,
+                notes: processedAppointment.notes,
+              });
 
               return processedAppointment;
             }
@@ -609,8 +580,7 @@ const DoctorDashboard = () => {
                   title={
                     <Space>
                       <Text strong style={{ fontSize: "15px" }}>
-                        {appointment.customerName ||
-                          appointment.customer?.user?.fullName}
+                        {appointment.customerName}
                       </Text>
                       <Tag
                         color={getStatusColor(appointment.status)}
@@ -625,6 +595,33 @@ const DoctorDashboard = () => {
                         {appointment.type}
                       </Tag>
                     </Space>
+                  }
+                  description={
+                    <>
+                      {appointment.customerPhone && (
+                        <div style={{ marginBottom: "4px" }}>
+                          <Text type="secondary">
+                            SĐT: {appointment.customerPhone}
+                          </Text>
+                        </div>
+                      )}
+                      {appointment.notes && (
+                        <div
+                          style={{
+                            marginTop: "4px",
+                            fontSize: "12px",
+                            color: "#666",
+                            fontStyle: "italic",
+                            maxWidth: "500px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          Ghi chú: {appointment.notes}
+                        </div>
+                      )}
+                    </>
                   }
                 />
               </List.Item>
