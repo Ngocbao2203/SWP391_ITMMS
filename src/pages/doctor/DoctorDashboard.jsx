@@ -4,7 +4,6 @@ import {
   Row,
   Col,
   Typography,
-  Statistic,
   Spin,
   message,
   Button,
@@ -21,7 +20,6 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   MedicineBoxOutlined,
-  EyeOutlined,
   HeartOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
@@ -140,12 +138,10 @@ const DoctorDashboard = () => {
           console.error("Make sure backend is running on port 5037");
         }
 
-        // Lấy tất cả appointments của doctor (client-side filtering)
+        // Lấy tất cả appointments của doctor đang đăng nhập
         try {
-          console.log("Getting all doctor appointments...");
-          scheduleResponse = await appointmentService.getDoctorAppointments(
-            doctorId
-          );
+          console.log("Getting all my appointments...");
+          scheduleResponse = await appointmentService.getMyAppointments();
           console.log("All appointments result:", scheduleResponse);
         } catch (error) {
           console.warn("Failed to get all appointments:", error);
@@ -155,7 +151,7 @@ const DoctorDashboard = () => {
         console.log("Response type:", typeof scheduleResponse);
         console.log("Response keys:", Object.keys(scheduleResponse || {}));
 
-        // Extract appointments from response structure - theo Swagger API
+        // Extract appointments from response structure - theo chuẩn API mới
         let allAppointmentsData =
           scheduleResponse.data?.appointments ||
           scheduleResponse.appointments ||
@@ -168,8 +164,13 @@ const DoctorDashboard = () => {
         console.log("Is array:", Array.isArray(allAppointmentsData));
         console.log("Length:", allAppointmentsData.length);
 
-        // Lưu tất cả appointments vào state
-        setAllAppointments(allAppointmentsData);
+        // Chuẩn hóa dữ liệu - đảm bảo là mảng
+        if (!Array.isArray(allAppointmentsData)) {
+          console.warn("API response is not an array, converting to array");
+          allAppointmentsData = allAppointmentsData
+            ? [allAppointmentsData]
+            : [];
+        }
 
         console.log("=== APPOINTMENTS LOADED ===");
         console.log("Selected date:", selectedDate.format("YYYY-MM-DD"));
@@ -183,19 +184,9 @@ const DoctorDashboard = () => {
             "First appointment keys:",
             Object.keys(allAppointmentsData[0] || {})
           );
-          console.log("CustomerId field:", allAppointmentsData[0].CustomerId);
-          console.log("customerId field:", allAppointmentsData[0].customerId);
-          console.log(
-            "CustomerId type:",
-            typeof allAppointmentsData[0].CustomerId
-          );
-          console.log(
-            "customerId type:",
-            typeof allAppointmentsData[0].customerId
-          );
         }
 
-        // Always process API data first - handle field mapping and missing values
+        // Xử lý dữ liệu từ API
         console.log("=== PROCESSING API DATA ===");
         if (
           Array.isArray(allAppointmentsData) &&
@@ -205,66 +196,44 @@ const DoctorDashboard = () => {
             (appointment, index) => {
               console.log(`Processing appointment ${index}:`, appointment);
 
-              // FIX: API structure issue - customerId thực ra là appointmentId
-              console.log("=== FIXING APPOINTMENT DATA STRUCTURE ===");
-              console.log("Raw appointment:", appointment);
+              // Xác định ID cuộc hẹn
+              const appointmentId = appointment.id || index;
 
-              // Trích xuất customerId thật từ customerName nếu có pattern số
-              let realCustomerId = null;
-              if (
-                appointment.customerName &&
-                /^cus(\d+)$/.test(appointment.customerName)
-              ) {
-                // customerName có format "cus2" -> customerId = 2
-                realCustomerId = parseInt(
-                  appointment.customerName.replace("cus", "")
-                );
-              } else if (
-                appointment.customerName &&
-                /^\d+$/.test(appointment.customerName)
-              ) {
-                // customerName là số thuần -> đó là customerId
-                realCustomerId = parseInt(appointment.customerName);
-              } else {
-                // Fallback: tạm thời sử dụng một số mặc định
-                console.warn(
-                  "Cannot extract customerId from customerName:",
-                  appointment.customerName
-                );
-                realCustomerId = appointment.customerId; // Tạm thời giữ nguyên để test
-              }
+              // Xử lý customer data - API thực tế có cấu trúc customer trực tiếp
+              const customerId = appointment.customer?.id;
+
+              // Xác định tên khách hàng từ trường name trong customer
+              let customerName = appointment.customer?.name;
 
               const processedAppointment = {
                 ...appointment,
-                // Đây mới là appointmentId thật
-                appointmentId: appointment.customerId, // customerId trong API thực ra là appointmentId
-                // Đây mới là customerId thật
-                customerId: realCustomerId,
-                // Đảm bảo có customerName và customerPhone cho display
-                customerName:
-                  appointment.customerName || `Customer ${realCustomerId}`,
-                customerPhone: appointment.customerPhone || "",
+                id: appointmentId,
+                appointmentId: appointmentId,
+                customerId: customerId,
+                customerName: customerName || "Bệnh nhân không xác định",
+                customerPhone: appointment.customer?.phone || "",
+                customerEmail: appointment.customer?.email || "",
                 timeSlot: appointment.timeSlot || "",
                 type: appointment.type || "Consultation",
                 status: appointment.status || "Scheduled",
+                notes: appointment.notes || "",
+                appointmentDate: appointment.appointmentDate,
+                completedAt: appointment.completedAt || null,
+                treatmentPlan: appointment.treatmentPlan,
               };
 
-              console.log(
-                "Processed appointment - appointmentId:",
-                processedAppointment.appointmentId
-              );
-              console.log(
-                "Processed appointment - customerId:",
-                processedAppointment.customerId
-              );
-
-              console.log(
-                `Processed appointment ${index}:`,
-                processedAppointment
-              );
-              console.log(
-                `Final customerId: ${processedAppointment.customerId}`
-              );
+              // Log kết quả đã xử lý
+              console.log(`Processed appointment ${index}:`, {
+                id: processedAppointment.id,
+                customerId: processedAppointment.customerId,
+                customerName: processedAppointment.customerName,
+                customerPhone: processedAppointment.customerPhone,
+                appointmentDate: processedAppointment.appointmentDate,
+                timeSlot: processedAppointment.timeSlot,
+                status: processedAppointment.status,
+                type: processedAppointment.type,
+                notes: processedAppointment.notes,
+              });
 
               return processedAppointment;
             }
@@ -415,53 +384,30 @@ const DoctorDashboard = () => {
       greeting = "Chào buổi tối";
     }
 
-    return (
-      <Card className="welcome-card" style={{ marginBottom: 24 }}>
-        <Row align="middle">
-          <Col span={24}>
-            <Space size="middle">
-              <Avatar size={64} icon={<UserOutlined />} />
-              <div>
-                <Title level={2} style={{ margin: 0 }}>
-                  {greeting}
-                </Title>
-                <Paragraph style={{ margin: 0, color: "#666" }}>
-                  {dashboardData.doctor?.specialization} •{" "}
-                  {dayjs().format("dddd, DD/MM/YYYY")}
-                </Paragraph>
-              </div>
-            </Space>
-          </Col>
-        </Row>
-      </Card>
-    );
-  };
-
-  const renderStatsCards = () => {
     const stats = [
       {
-        title: "Hôm nay",
+        title: "HÔM NAY",
         value: dashboardData.stats.todayCount,
         icon: <CalendarOutlined style={{ color: "#1976d2" }} />,
         color: "#1976d2",
         suffix: "cuộc hẹn",
       },
       {
-        title: "Đang điều trị",
+        title: "ĐANG ĐIỀU TRỊ",
         value: dashboardData.stats.activePatients,
         icon: <TeamOutlined style={{ color: "#388e3c" }} />,
         color: "#388e3c",
         suffix: "bệnh nhân",
       },
       {
-        title: "Hoàn thành",
+        title: "HOÀN THÀNH",
         value: dashboardData.stats.completedToday,
         icon: <CheckCircleOutlined style={{ color: "#f57c00" }} />,
         color: "#f57c00",
         suffix: "buổi khám",
       },
       {
-        title: "Tái khám",
+        title: "TÁI KHÁM",
         value: dashboardData.stats.pendingFollowUps,
         icon: <ClockCircleOutlined style={{ color: "#7b1fa2" }} />,
         color: "#7b1fa2",
@@ -470,53 +416,103 @@ const DoctorDashboard = () => {
     ];
 
     return (
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        {stats.map((stat, index) => (
-          <Col xs={24} sm={12} lg={6} key={index}>
-            <Card className="stat-card">
-              <Statistic
-                title={stat.title}
-                value={stat.value}
-                suffix={stat.suffix}
-                prefix={stat.icon}
-                valueStyle={{
-                  color: stat.color,
-                  fontSize: "28px",
-                  fontWeight: "bold",
-                }}
+      <Card className="welcome-card">
+        <Row align="middle" style={{ marginBottom: 16 }}>
+          <Col span={24}>
+            <Space size="middle">
+              <Avatar
+                size={64}
+                icon={<UserOutlined />}
+                style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
               />
-            </Card>
+              <div>
+                <Title level={2} style={{ margin: 0, color: "white" }}>
+                  {greeting}
+                </Title>
+                <Paragraph
+                  style={{ margin: 0, color: "rgba(255, 255, 255, 0.8)" }}
+                >
+                  {dashboardData.doctor?.specialization} •{" "}
+                  {dayjs().format("dddd, DD/MM/YYYY")}
+                </Paragraph>
+              </div>
+            </Space>
           </Col>
-        ))}
-      </Row>
+        </Row>
+        <Row gutter={[16, 16]}>
+          {stats.map((stat, index) => (
+            <Col xs={24} sm={12} lg={6} key={index}>
+              <div
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.15)",
+                  borderRadius: "12px",
+                  padding: "16px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "14px",
+                    color: "rgba(255, 255, 255, 0.9)",
+                    marginBottom: "8px",
+                  }}
+                >
+                  {stat.title}
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span
+                    style={{
+                      marginRight: "12px",
+                      fontSize: "18px",
+                      color: "white",
+                    }}
+                  >
+                    {stat.icon}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "28px",
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    {stat.value}{" "}
+                    <span style={{ fontSize: "16px" }}>{stat.suffix}</span>
+                  </span>
+                </div>
+              </div>
+            </Col>
+          ))}
+        </Row>
+      </Card>
     );
   };
+
+  // Đã kết hợp stats cards với renderWelcomeHeader
 
   const renderTodaySchedule = () => {
     return (
       <Card
         title={
           <Space>
-            <CalendarOutlined />
+            <CalendarOutlined style={{ color: "#1976d2" }} />
             <span>Lịch hẹn ngày {selectedDate.format("DD/MM/YYYY")}</span>
             <Tag color="blue">{dashboardData.todayAppointments.length}</Tag>
           </Space>
         }
         extra={
-          <Space>
-            <DatePicker
-              value={selectedDate}
-              onChange={handleDateChange}
-              format="DD/MM/YYYY"
-              placeholder="Chọn ngày"
-              allowClear={false}
-            />
-            <Button type="link" icon={<EyeOutlined />}>
-              Xem tất cả
-            </Button>
-          </Space>
+          <DatePicker
+            value={selectedDate}
+            onChange={handleDateChange}
+            format="DD/MM/YYYY"
+            placeholder="Chọn ngày"
+            allowClear={false}
+          />
         }
         className="schedule-card"
+        style={{
+          borderRadius: "12px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+        }}
       >
         {dashboardData.todayAppointments.length === 0 ? (
           <Empty
@@ -537,6 +533,17 @@ const DoctorDashboard = () => {
                     icon={<MedicineBoxOutlined />}
                     onClick={() => handleStartConsultation(appointment)}
                     disabled={appointment.status === "Completed"}
+                    style={{
+                      borderRadius: "6px",
+                      background:
+                        appointment.status === "Completed"
+                          ? "#8cc4ff"
+                          : "#1976d2",
+                      boxShadow:
+                        appointment.status !== "Completed"
+                          ? "0 2px 0 rgba(5, 125, 255, 0.1)"
+                          : "none",
+                    }}
                   >
                     {appointment.status === "Completed"
                       ? "Đã khám"
@@ -553,35 +560,68 @@ const DoctorDashboard = () => {
               >
                 <List.Item.Meta
                   avatar={
-                    <div className="time-slot">
-                      <Text strong>{appointment.timeSlot}</Text>
+                    <div
+                      className="time-slot"
+                      style={{
+                        backgroundColor: "#f0f5ff",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "90px",
+                      }}
+                    >
+                      <Text strong style={{ color: "#1976d2" }}>
+                        {appointment.timeSlot}
+                      </Text>
                     </div>
                   }
                   title={
                     <Space>
-                      <Text strong>
-                        {appointment.customerName ||
-                          appointment.customer?.user?.fullName}
+                      <Text strong style={{ fontSize: "15px" }}>
+                        {appointment.customerName}
                       </Text>
-                      <Tag color={getStatusColor(appointment.status)}>
+                      <Tag
+                        color={getStatusColor(appointment.status)}
+                        style={{ borderRadius: "4px" }}
+                      >
                         {appointment.status}
                       </Tag>
-                      <Tag icon={getAppointmentTypeIcon(appointment.type)}>
+                      <Tag
+                        icon={getAppointmentTypeIcon(appointment.type)}
+                        style={{ borderRadius: "4px" }}
+                      >
                         {appointment.type}
                       </Tag>
                     </Space>
                   }
                   description={
-                    <Space direction="vertical" size="small">
-                      <Text type="secondary">
-                        📞{" "}
-                        {appointment.customerPhone ||
-                          appointment.customer?.user?.phone}
-                      </Text>
-                      {appointment.notes && (
-                        <Text type="secondary">💬 {appointment.notes}</Text>
+                    <>
+                      {appointment.customerPhone && (
+                        <div style={{ marginBottom: "4px" }}>
+                          <Text type="secondary">
+                            SĐT: {appointment.customerPhone}
+                          </Text>
+                        </div>
                       )}
-                    </Space>
+                      {appointment.notes && (
+                        <div
+                          style={{
+                            marginTop: "4px",
+                            fontSize: "12px",
+                            color: "#666",
+                            fontStyle: "italic",
+                            maxWidth: "500px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          Ghi chú: {appointment.notes}
+                        </div>
+                      )}
+                    </>
                   }
                 />
               </List.Item>
@@ -602,9 +642,8 @@ const DoctorDashboard = () => {
   }
 
   return (
-    <div className="doctor-dashboard">
+    <div className="doctor-dashboard" style={{ background: "#ffffffff" }}>
       {renderWelcomeHeader()}
-      {renderStatsCards()}
 
       <Row gutter={[24, 24]}>
         <Col xs={24}>{renderTodaySchedule()}</Col>

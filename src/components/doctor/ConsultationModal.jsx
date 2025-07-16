@@ -21,7 +21,6 @@ import {
 import {
   UserOutlined,
   MedicineBoxOutlined,
-  SaveOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -546,11 +545,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
     }
   };
 
-  const handleSaveDraft = () => {
-    console.log("Saving draft...");
-    message.success("Đã lưu nháp!");
-  };
-
   if (!appointment) return null;
 
   return (
@@ -864,9 +858,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
           {/* Actions */}
           <div style={{ textAlign: "right", marginTop: 24 }}>
             <Space>
-              <Button onClick={handleSaveDraft} icon={<SaveOutlined />}>
-                Lưu nháp
-              </Button>
               <Button onClick={onCancel}>Hủy</Button>
               <Button
                 type="primary"
