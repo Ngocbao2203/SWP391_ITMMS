@@ -88,14 +88,14 @@ class ApiService {
     
     if (contentType && contentType.includes('application/json')) {
       const data = await response.json();
-      console.log('Response data:', data);
+      // console.log('Response data:', data);
       
       if (!response.ok) {
-        console.error('=== API ERROR DETAILS ===');
-        console.error('Status:', response.status);
-        console.error('Response data:', data);
-        console.error('Error message:', data.message || data.title || data.error);
-        console.error('Validation errors:', data.errors || data.validationErrors);
+        // console.error('=== API ERROR DETAILS ===');
+        // console.error('Status:', response.status);
+        // console.error('Response data:', data);
+        // console.error('Error message:', data.message || data.title || data.error);
+        // console.error('Validation errors:', data.errors || data.validationErrors);
         
         const error = new ApiError(data.message || data.title || 'API Error', response.status, data);
         console.error('Final API Error:', error);

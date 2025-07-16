@@ -13,12 +13,12 @@ class AuthService {
       const userData = localStorage.getItem('user');
       if (userData) {
         this.currentUser = JSON.parse(userData);
-        console.log('Loaded user from storage:', this.currentUser);
+        // console.log('Loaded user from storage:', this.currentUser);
       } else {
         console.log('No user data found in storage');
       }
     } catch (error) {
-      console.error('Error loading user from storage:', error);
+      // console.error('Error loading user from storage:', error);
       localStorage.removeItem('user');
       this.currentUser = null;
     }
@@ -29,7 +29,7 @@ class AuthService {
     try {
       localStorage.setItem('user', JSON.stringify(user));
       this.currentUser = user;
-      console.log('User saved to storage:', this.currentUser);
+      // console.log('User saved to storage:', this.currentUser);
     } catch (error) {
       console.error('Error saving user to storage:', error);
     }

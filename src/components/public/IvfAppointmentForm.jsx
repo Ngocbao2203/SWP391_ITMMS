@@ -510,7 +510,7 @@ const IvfAppointmentForm = ({
                 <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">2</div>
                   <h3 className="ivf-form-step-title">
-                    Bác sĩ đăng ký khám (tùy chọn)
+                    Bác sĩ đăng ký khám
                   </h3>
                 </div>
                 <div className="ivf-form-control">

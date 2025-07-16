@@ -20,7 +20,7 @@ const FooterComponent = () => {
         <Col xs={24} md={6}>
           <h3>Về chúng tôi</h3>
           <p>
-            <strong>My Clinic</strong> là phòng khám chuyên khoa hỗ trợ sinh
+            <strong>IVF CLINIC</strong> là phòng khám chuyên khoa hỗ trợ sinh
             sản.
           </p>
           <p>
@@ -41,9 +41,6 @@ const FooterComponent = () => {
               <a href="/doctors">Bác sĩ</a>
             </li>
             <li>
-              <a href="/login">Đăng nhập</a>
-            </li>
-            <li>
               <a href="/register">Đăng ký tư vấn</a>
             </li>
           </ul>
@@ -53,13 +50,13 @@ const FooterComponent = () => {
         <Col xs={24} md={6}>
           <h3>Liên hệ</h3>
           <p>
-            <EnvironmentOutlined /> 123 Clinic St, Quận 1, TP.HCM
+            <EnvironmentOutlined /> Quận 9, TP.HCM
           </p>
           <p>
             <PhoneOutlined /> 0123-456-789
           </p>
           <p>
-            <MailOutlined /> info@myclinic.com
+            <MailOutlined /> vfclinic@gmail.com
           </p>
           <Tooltip title="Facebook">
             <a
@@ -93,7 +90,7 @@ const FooterComponent = () => {
 
       <div className="copyright">
         <p>
-          © {year} My Clinic. Được phát triển bởi đội ngũ chuyên gia IVF Việt
+          © {year} IVF CLINIC. Được phát triển bởi đội ngũ chuyên gia IVF Việt
           Nam.
         </p>
       </div>

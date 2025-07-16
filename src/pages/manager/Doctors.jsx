@@ -12,8 +12,24 @@ import {
   message,
   Switch,
   Tooltip,
+  Tag,
+  Avatar,
+  Rate,
+  InputNumber,
+  Typography,
+  Divider,
 } from "antd";
-import { EditOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  UserOutlined,
+  PhoneOutlined,
+  MailOutlined,
+  DollarOutlined,
+  CalendarOutlined,
+  TrophyOutlined,
+  MedicineBoxOutlined,
+  StarOutlined,
+} from "@ant-design/icons";
 import { debounce } from "lodash";
 import doctorService from "../../services/doctorService";
 
@@ -109,37 +125,85 @@ const Doctors = () => {
   // Định nghĩa các cột cho bảng bác sĩ
   const columns = [
     {
-      title: "Họ và Tên",
-      dataIndex: "fullName",
-      key: "fullName",
-      render: (text) => (
-        <span style={{ color: "#333", fontWeight: "500" }}>{text}</span>
-      ),
+      title: "Thông tin bác sĩ",
+      width: "30%",
+      render: (_, record) => (
+        <Space>
+          <Avatar
+            size={64}
+            src={record.photo}
+            icon={<UserOutlined />}
+          />
+          <div>
+            <Typography.Text strong style={{ fontSize: '16px' }}>
+              {record.fullName}
+            </Typography.Text>
+            <div>
+              <Tag color="blue">{record.specialization}</Tag>
+            </div>
+            <div style={{ fontSize: '13px', color: '#666' }}>
+              <MedicineBoxOutlined /> {record.licenseNumber}
+            </div>
+          </div>
+        </Space>
+      )
     },
     {
-      title: "Chuyên môn",
-      dataIndex: "specialization",
-      key: "specialization",
-      render: (text) => <span className="doctor-specialty">{text}</span>,
+      title: "Liên hệ",
+      width: "20%",
+      render: (_, record) => (
+        <Space direction="vertical" size="small">
+          <span><MailOutlined /> {record.email}</span>
+          <span><PhoneOutlined /> {record.phone}</span>
+        </Space>
+      )
+    },
+    {
+      title: "Chi tiết",
+      width: "25%",
+      render: (_, record) => (
+        <Space direction="vertical" size="small">
+          <span>
+            <CalendarOutlined /> {record.experienceYears} năm kinh nghiệm
+          </span>
+          {record.consultationFee > 0 && (
+            <span>
+              <DollarOutlined /> {record.consultationFee?.toLocaleString()}đ
+            </span>
+          )}
+          {record.rating > 0 && record.reviewCount > 0 && (
+            <span>
+              <StarOutlined /> {record.rating}
+            </span>
+          )}
+        </Space>
+      )
     },
     {
       title: "Trạng thái",
-      dataIndex: "isAvailable",
-      key: "isAvailable",
+      width: "15%",
       render: (_, record) => (
-        <Switch
-          checked={record.isAvailable}
-          onChange={(checked) => handleStatusChange(record.id, checked)}
-        />
-      ),
+        <Space direction="vertical" align="center">
+          <Switch
+            checked={record.isAvailable}
+            onChange={(checked) => handleStatusChange(record.id, checked)}
+            checkedChildren="Đang làm việc"
+            unCheckedChildren="Tạm nghỉ"
+          />
+          <Tag color={record.isAvailable ? "success" : "error"}>
+            {record.isAvailable ? "Đang hoạt động" : "Tạm ngưng"}
+          </Tag>
+        </Space>
+      )
     },
     {
       title: "Thao tác",
-      key: "action",
+      width: "10%",
       render: (_, record) => (
-        <Space className="doctors-actions">
-          <Tooltip title="Chỉnh sửa">
+        <Space>
+          <Tooltip title="Chỉnh sửa thông tin">
             <Button
+              type="primary"
               icon={<EditOutlined />}
               onClick={() => {
                 setEditingDoctor(record);
@@ -149,8 +213,8 @@ const Doctors = () => {
             />
           </Tooltip>
         </Space>
-      ),
-    },
+      )
+    }
   ];
 
   // Render giao diện quản lý bác sĩ
@@ -216,32 +280,58 @@ const Doctors = () => {
             label="Họ và Tên"
             rules={[{ required: true, message: "Vui lòng nhập họ tên bác sĩ" }]}
           >
-            <Input />
+            <Input prefix={<UserOutlined />} />
           </Form.Item>
+
           <Form.Item
             name="specialization"
             label="Chuyên môn"
-            rules={[{ required: true, message: "Vui lòng nhập chuyên môn" }]}
+            rules={[{ required: true }]}
           >
-            <Input />
+            <Select>
+              <Option value="Sản phụ khoa">Sản phụ khoa</Option>
+              <Option value="Nam học">Nam học</Option>
+              <Option value="Hiếm muộn - IVF">Hiếm muộn - IVF</Option>
+              <Option value="Nội tiết sinh sản">Nội tiết sinh sản</Option>
+            </Select>
           </Form.Item>
-          <Form.Item name="email">
-            <Input disabled />
+
+          <Form.Item name="licenseNumber" label="Số giấy phép hành nghề">
+            <Input prefix={<MedicineBoxOutlined />} />
           </Form.Item>
-          <Form.Item name="phone">
-            <Input disabled />
+
+          <Divider />
+
+          <Form.Item name="email" label="Email">
+            <Input prefix={<MailOutlined />} disabled />
           </Form.Item>
-          <Form.Item name="licenseNumber">
-            <Input />
+
+          <Form.Item name="phone" label="Số điện thoại">
+            <Input prefix={<PhoneOutlined />} disabled />
           </Form.Item>
-          <Form.Item name="education">
-            <Input />
+
+          <Divider />
+
+          <Form.Item name="education" label="Trình độ học vấn">
+            <Input.TextArea rows={2} />
           </Form.Item>
-          <Form.Item name="experienceYears">
-            <Input type="number" />
+
+          <Form.Item name="experienceYears" label="Số năm kinh nghiệm">
+            <InputNumber min={0} style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item name="description">
-            <Input.TextArea />
+
+          <Form.Item name="consultationFee" label="Phí tư vấn (VNĐ/giờ)">
+            <InputNumber
+              min={0}
+              step={50000}
+              style={{ width: '100%' }}
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/\$\s?|(,*)/g, '')}
+            />
+          </Form.Item>
+
+          <Form.Item name="description" label="Mô tả chi tiết">
+            <Input.TextArea rows={4} />
           </Form.Item>
         </Form>
       </Modal>
