@@ -1,5 +1,3 @@
-// Quản lý danh sách bác sĩ cho admin/manager
-// Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -29,28 +27,29 @@ import {
   TrophyOutlined,
   MedicineBoxOutlined,
   StarOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import { debounce } from "lodash";
 import doctorService from "../../services/doctorService";
+import authService from "../../services/authService"; // Giả định file authService
 
 const { Option } = Select;
+const { Title, Text } = Typography;
 
-// Component chính quản lý bác sĩ
 const Doctors = () => {
-  // State lưu trữ danh sách bác sĩ, modal, form, filter, loading
-  const [data, setData] = useState([]); // Danh sách bác sĩ
-  const [isModalVisible, setIsModalVisible] = useState(false); // Hiển thị modal chỉnh sửa
-  const [form] = Form.useForm(); // Form chỉnh sửa bác sĩ
-  const [searchText, setSearchText] = useState(""); // Từ khóa tìm kiếm
-  const [editingDoctor, setEditingDoctor] = useState(null); // Bác sĩ đang chỉnh sửa
-  const [loading, setLoading] = useState(false); // Đang tải dữ liệu
+  const [data, setData] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal chỉnh sửa
+  const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false); // Modal đăng ký
+  const [form] = Form.useForm(); // Form chỉnh sửa
+  const [registerForm] = Form.useForm(); // Form đăng ký
+  const [searchText, setSearchText] = useState("");
+  const [editingDoctor, setEditingDoctor] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // Tải danh sách bác sĩ khi component mount
   useEffect(() => {
     fetchDoctors();
   }, []);
 
-  // Gọi API lấy danh sách bác sĩ, có thể truyền searchParams để lọc
   const fetchDoctors = async (searchParams = {}) => {
     setLoading(true);
     try {
@@ -58,9 +57,7 @@ const Doctors = () => {
       let filteredDoctors = response.doctors || [];
       if (searchParams.name) {
         filteredDoctors = filteredDoctors.filter((doctor) =>
-          doctor.fullName
-            .toLowerCase()
-            .includes(searchParams.name.toLowerCase())
+          doctor.fullName.toLowerCase().includes(searchParams.name.toLowerCase())
         );
       }
       setData(filteredDoctors);
@@ -71,13 +68,9 @@ const Doctors = () => {
     }
   };
 
-  // Xử lý cập nhật thông tin bác sĩ
   const handleEditDoctor = async (values) => {
     try {
-      const response = await doctorService.updateDoctor(
-        editingDoctor.id,
-        values
-      );
+      const response = await doctorService.updateDoctor(editingDoctor.id, values);
       if (response.success) {
         setData((prev) =>
           prev.map((item) =>
@@ -96,16 +89,11 @@ const Doctors = () => {
     }
   };
 
-  // Xử lý cập nhật trạng thái hoạt động của bác sĩ
   const handleStatusChange = async (id, checked) => {
     try {
-      const response = await doctorService.updateDoctorAvailability(
-        id,
-        checked
-      );
+      const response = await doctorService.updateDoctorAvailability(id, checked);
       if (response.success) {
         message.success("Cập nhật trạng thái thành công");
-        // fetch lại danh sách bác sĩ để đồng bộ `isAvailable`
         fetchDoctors();
       } else {
         message.error(response.message);
@@ -116,47 +104,78 @@ const Doctors = () => {
     }
   };
 
-  // Xử lý tìm kiếm bác sĩ theo tên (debounce để giảm số lần gọi API)
   const handleSearch = debounce((value) => {
     setSearchText(value);
     fetchDoctors({ name: value });
   }, 300);
 
-  // Định nghĩa các cột cho bảng bác sĩ
+  // Xử lý đăng ký bác sĩ
+  const handleRegisterDoctor = async (values) => {
+    try {
+      setLoading(true);
+      const userData = {
+        fullName: values.fullName,
+        email: values.email,
+        password: values.password,
+        role: "Doctor",
+        specialization: values.specialization,
+        licenseNumber: values.licenseNumber,
+        phone: values.phone, // Thêm trường Phone
+        address: values.address, // Thêm trường Address
+        username: values.username, // Thêm trường Username
+      };
+      console.log("📤 Sending registration data:", userData); // Debug dữ liệu gửi đi
+      const response = await authService.register(userData);
+      if (response.success) {
+        message.success(response.message || "Đăng ký bác sĩ thành công!");
+        setIsRegisterModalVisible(false);
+        registerForm.resetFields();
+        fetchDoctors(); // Cập nhật danh sách bác sĩ
+      } else {
+        message.error(response.message || "Đăng ký thất bại!");
+      }
+    } catch (error) {
+      message.error("Lỗi khi đăng ký: " + error.message);
+      console.error("Registration error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const columns = [
     {
       title: "Thông tin bác sĩ",
       width: "30%",
       render: (_, record) => (
         <Space>
-          <Avatar
-            size={64}
-            src={record.photo}
-            icon={<UserOutlined />}
-          />
+          <Avatar size={64} src={record.photo} icon={<UserOutlined />} />
           <div>
-            <Typography.Text strong style={{ fontSize: '16px' }}>
+            <Typography.Text strong style={{ fontSize: "16px" }}>
               {record.fullName}
             </Typography.Text>
             <div>
               <Tag color="blue">{record.specialization}</Tag>
             </div>
-            <div style={{ fontSize: '13px', color: '#666' }}>
+            <div style={{ fontSize: "13px", color: "#666" }}>
               <MedicineBoxOutlined /> {record.licenseNumber}
             </div>
           </div>
         </Space>
-      )
+      ),
     },
     {
       title: "Liên hệ",
       width: "20%",
       render: (_, record) => (
         <Space direction="vertical" size="small">
-          <span><MailOutlined /> {record.email}</span>
-          <span><PhoneOutlined /> {record.phone}</span>
+          <span>
+            <MailOutlined /> {record.email}
+          </span>
+          <span>
+            <PhoneOutlined /> {record.phone}
+          </span>
         </Space>
-      )
+      ),
     },
     {
       title: "Chi tiết",
@@ -177,7 +196,7 @@ const Doctors = () => {
             </span>
           )}
         </Space>
-      )
+      ),
     },
     {
       title: "Trạng thái",
@@ -194,7 +213,7 @@ const Doctors = () => {
             {record.isAvailable ? "Đang hoạt động" : "Tạm ngưng"}
           </Tag>
         </Space>
-      )
+      ),
     },
     {
       title: "Thao tác",
@@ -213,14 +232,13 @@ const Doctors = () => {
             />
           </Tooltip>
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
-  // Render giao diện quản lý bác sĩ
   return (
     <div className="doctors-container">
-      {/* Header hiển thị tổng số bác sĩ */}
+      {/* Header hiển thị tổng số bác sĩ và nút thêm */}
       <div className="doctors-header">
         <div className="doctors-header-left">
           <UserOutlined
@@ -232,6 +250,14 @@ const Doctors = () => {
           Có <span className="doctors-count">{data.length}</span> bác sĩ được
           hiển thị.
         </p>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => setIsRegisterModalVisible(true)}
+          style={{ marginLeft: 16 }}
+        >
+          Tạo tài khoản bác sĩ
+        </Button>
       </div>
 
       {/* Toolbar tìm kiếm */}
@@ -273,6 +299,8 @@ const Doctors = () => {
         okText="Cập nhật"
         cancelText="Hủy"
         closable={false}
+        centered
+        width={600}
       >
         <Form form={form} layout="vertical" className="doctors-form">
           <Form.Item
@@ -317,16 +345,18 @@ const Doctors = () => {
           </Form.Item>
 
           <Form.Item name="experienceYears" label="Số năm kinh nghiệm">
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item name="consultationFee" label="Phí tư vấn (VNĐ/giờ)">
             <InputNumber
               min={0}
               step={50000}
-              style={{ width: '100%' }}
-              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              parser={value => value.replace(/\$\s?|(,*)/g, '')}
+              style={{ width: "100%" }}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
             />
           </Form.Item>
 
@@ -335,9 +365,157 @@ const Doctors = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* Modal đăng ký bác sĩ */}
+      <Modal
+        title="Tạo tài khoản bác sĩ"
+        open={isRegisterModalVisible}
+        onCancel={() => {
+          setIsRegisterModalVisible(false);
+          registerForm.resetFields();
+        }}
+        onOk={() => {
+          registerForm
+            .validateFields()
+            .then(handleRegisterDoctor)
+            .catch((info) => console.log("Validate Failed:", info));
+        }}
+        okText="Đăng ký"
+        cancelText="Hủy"
+        closable={false}
+        centered
+        width={600}
+      >
+        <Form form={registerForm} layout="vertical">
+          <Form.Item
+            name="fullName"
+            label="Họ và Tên"
+            rules={[{ required: true, message: "Vui lòng nhập họ tên!" }]}
+          >
+            <Input prefix={<UserOutlined />} />
+          </Form.Item>
+
+          <Form.Item
+            name="username"
+            label="Tên đăng nhập"
+            rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập!" }]}
+          >
+            <Input prefix={<UserOutlined />} />
+          </Form.Item>
+
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              { required: true, message: "Vui lòng nhập email!" },
+              { type: "email", message: "Email không hợp lệ!" },
+            ]}
+          >
+            <Input prefix={<MailOutlined />} />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            label="Mật khẩu"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item
+            name="phone"
+            label="Số điện thoại"
+            rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+          >
+            <Input prefix={<PhoneOutlined />} />
+          </Form.Item>
+
+          <Form.Item
+            name="address"
+            label="Địa chỉ"
+            rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
+          >
+            <Input prefix={<UserOutlined />} />
+          </Form.Item>
+
+          <Form.Item
+            name="specialization"
+            label="Chuyên môn"
+            rules={[{ required: true, message: "Vui lòng chọn chuyên môn!" }]}
+          >
+            <Select>
+              <Option value="Sản phụ khoa">Sản phụ khoa</Option>
+              <Option value="Nam học">Nam học</Option>
+              <Option value="Hiếm muộn - IVF">Hiếm muộn - IVF</Option>
+              <Option value="Nội tiết sinh sản">Nội tiết sinh sản</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="licenseNumber"
+            label="Số giấy phép hành nghề"
+            rules={[{ required: true, message: "Vui lòng nhập số giấy phép!" }]}
+          >
+            <Input prefix={<MedicineBoxOutlined />} />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <style jsx>{`
+        .doctors-container {
+          padding: 24px;
+          background: #f5f5f5;
+          min-height: 100vh;
+        }
+        .doctors-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: #1890ff;
+          padding: 16px;
+          border-radius: 8px;
+          margin-bottom: 24px;
+          color: #fff;
+        }
+        .doctors-header-left {
+          display: flex;
+          align-items: center;
+        }
+        .doctors-title {
+          margin: 0;
+          font-size: 24px;
+          color: #fff;
+        }
+        .doctors-subtitle {
+          margin: 0;
+          font-size: 14px;
+          color: #fff;
+        }
+        .doctors-count {
+          font-weight: bold;
+          color: #fff;
+        }
+        .doctors-toolbar {
+          margin-bottom: 24px;
+        }
+        .doctors-search {
+          width: 300px;
+        }
+        .doctors-table {
+          background: #fff;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .doctors-modal .ant-modal-content {
+          border-radius: 12px;
+        }
+        .doctors-form .ant-form-item-label > label {
+          font-weight: 500;
+          color: #333;
+        }
+      `}</style>
     </div>
   );
 };
 
 export default Doctors;
-// Kết thúc file Doctors.jsx

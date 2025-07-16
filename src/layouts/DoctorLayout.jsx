@@ -17,9 +17,7 @@ const DoctorContent = memo(({ sidebarCollapsed, children }) => {
       }}
     >
       <Content className="manager-content">
-        <ErrorBoundary>
-          {children}
-        </ErrorBoundary>
+        <ErrorBoundary>{children}</ErrorBoundary>
       </Content>
     </Layout>
   );
@@ -33,7 +31,7 @@ export default function DoctorLayout({ children }) {
   return (
     <>
       <Layout style={{ minHeight: "100vh" }}>
-        <DoctorHeader />
+        {/* <DoctorHeader /> */}
         <DoctorSidebar isCollapsed={sidebarCollapsed} onToggle={null} />
         <DoctorContent sidebarCollapsed={sidebarCollapsed}>
           {children}

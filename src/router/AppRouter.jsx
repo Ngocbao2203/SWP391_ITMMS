@@ -11,8 +11,6 @@ import DoctorList from "../pages/public/DoctorList";
 import DoctorProfile from "../pages/public/DoctorProfile";
 import ServiceDetail from "../pages/public/ServiceDetail";
 
-// Admin
-
 // Doctor
 import DoctorLayout from "../layouts/DoctorLayout";
 import DoctorDashboard from "../pages/doctor/DoctorDashboard";
@@ -21,7 +19,7 @@ import TreatmentPlanDetailPage from "../pages/doctor/TreatmentPlanDetailPage";
 import TreatmentPlansManagement from "../pages/doctor/TreatmentPlansManagement";
 import MedicalRecords from "../pages/doctor/MedicalRecords";
 import AppointmentSchedule from "../pages/doctor/AppointmentSchedule";
-
+// Admin
 import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/admin/Dashboard";
 import Feedback from "../pages/admin/Feedback";
@@ -55,7 +53,6 @@ const AppRouter = () => {
       <Route path="/doctors" element={<DoctorList />} />
       <Route path="/doctors/:id" element={<DoctorProfile />} />
       <Route path="/services/:serviceId" element={<ServiceDetail />} />
-
       <Route path="/bookappointment" element={<BookAppointment />} />
       <Route path="/bookappointment/:serviceId" element={<BookAppointment />} />
       {/* Doctor Routes */}

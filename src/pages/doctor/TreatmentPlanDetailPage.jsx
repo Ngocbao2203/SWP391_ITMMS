@@ -376,13 +376,11 @@ const TreatmentPlanDetailPage = () => {
       {/* Breadcrumb */}
       <div className="mb-4">
         <Breadcrumb>
-          <Breadcrumb.Item
-            onClick={() => navigate("/doctor/treatmentsprogress")}
-          >
-            <i className="fas fa-chart-line me-1"></i> Tiến trình điều trị
+          <Breadcrumb.Item onClick={() => navigate("/doctor/treatment-plans")}>
+            <i className="fas fa-clipboard-list me-1"></i> Kế hoạch điều trị
           </Breadcrumb.Item>
           <Breadcrumb.Item active>
-            <i className="fas fa-clipboard-list me-1"></i> Chi tiết kế hoạch
+            <i className="fas fa-clipboard-check me-1"></i> Chi tiết kế hoạch
             điều trị
           </Breadcrumb.Item>
         </Breadcrumb>
@@ -402,11 +400,11 @@ const TreatmentPlanDetailPage = () => {
           </p>
         </div>
         <Button
-          variant="outline-primary"
+          variant="primary"
           className="back-button"
-          onClick={() => navigate("/doctor/treatmentsprogress")}
+          onClick={() => navigate("/doctor/treatment-plans")}
         >
-          <i className="fas fa-arrow-left me-2"></i> Quay lại
+          <i className="fas fa-arrow-left me-2"></i> Quay lại kế hoạch điều trị
         </Button>
       </div>
 
@@ -552,7 +550,7 @@ const TreatmentPlanDetailPage = () => {
                           <strong>
                             <i className="fas fa-stethoscope me-1"></i> Dịch vụ:
                           </strong>{" "}
-                          {selectedPlan.treatmentService?.name || "N/A"}
+                          {selectedPlan.treatmentService?.serviceName || "N/A"}
                         </ListGroup.Item>
                         <ListGroup.Item>
                           <strong>

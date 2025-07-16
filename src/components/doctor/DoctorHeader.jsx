@@ -25,6 +25,7 @@ const { Text } = Typography;
 const DoctorHeader = () => {
   const [notificationCount] = useState(3); // Mock notification count
   const currentUser = authService.getCurrentUser();
+
   const doctor = currentUser?.doctor;
 
   const handleLogout = () => {
