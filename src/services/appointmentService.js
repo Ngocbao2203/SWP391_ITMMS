@@ -1,30 +1,32 @@
-import apiService from './api';
-import { API_ENDPOINTS } from './apiConstants';
-import dayjs from 'dayjs'; // Thư viện để xử lý ngày giờ, nếu có
+import apiService from "./api";
+import { API_ENDPOINTS } from "./apiConstants";
+import dayjs from "dayjs"; // Thư viện để xử lý ngày giờ, nếu có
 
 // Hàm format ngày giờ (có thể tách ra file riêng nếu dùng nhiều nơi)
 const formatDateTimeForAPI = (dateString) => {
   try {
     // Ưu tiên dùng dayjs nếu có
-    if (typeof dayjs !== 'undefined') {
-      return dayjs(dateString).format('YYYY-MM-DDTHH:mm:ss');
+    if (typeof dayjs !== "undefined") {
+      return dayjs(dateString).format("YYYY-MM-DDTHH:mm:ss");
     }
 
     // Fallback dùng Date object
     const date = new Date(dateString);
-    const pad = (num) => num.toString().padStart(2, '0');
+    const pad = (num) => num.toString().padStart(2, "0");
 
-    return [
-      date.getFullYear(),
-      pad(date.getMonth() + 1),
-      pad(date.getDate())
-    ].join('-') + 'T' + [
-      pad(date.getHours()),
-      pad(date.getMinutes()),
-      pad(date.getSeconds())
-    ].join(':');
+    return (
+      [date.getFullYear(), pad(date.getMonth() + 1), pad(date.getDate())].join(
+        "-"
+      ) +
+      "T" +
+      [
+        pad(date.getHours()),
+        pad(date.getMinutes()),
+        pad(date.getSeconds()),
+      ].join(":")
+    );
   } catch (error) {
-    console.error('Lỗi định dạng ngày:', error);
+    console.error("Lỗi định dạng ngày:", error);
     return dateString; // Trả về nguyên bản nếu không format được
   }
 };
@@ -41,21 +43,23 @@ class AppointmentService {
         {
           ...appointmentData,
           // 👇 Format lại dữ liệu theo yêu cầu API
-          appointmentDate: dayjs(appointmentData.appointmentDate).format('YYYY-MM-DDTHH:mm:ss'),
-          notes: appointmentData.notes || ""
+          appointmentDate: dayjs(appointmentData.appointmentDate).format(
+            "YYYY-MM-DDTHH:mm:ss"
+          ),
+          notes: appointmentData.notes || "",
         }
       );
       return { success: true, data: response };
     } catch (error) {
-      console.error('🔥 Lỗi đặt lịch:', {
+      console.error("🔥 Lỗi đặt lịch:", {
         url: error.config?.url,
         status: error.response?.status,
-        data: error.response?.data
+        data: error.response?.data,
       });
       return {
         success: false,
-        message: error.response?.data?.message || 'Đặt lịch thất bại',
-        errors: error.response?.data?.errors || []
+        message: error.response?.data?.message || "Đặt lịch thất bại",
+        errors: error.response?.data?.errors || [],
       };
     }
   }
@@ -100,8 +104,8 @@ class AppointmentService {
       const queryParams = new URLSearchParams(filters).toString();
       const endpoint = queryParams
         ? `${API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(
-          customerId
-        )}?${queryParams}`
+            customerId
+          )}?${queryParams}`
         : API_ENDPOINTS.APPOINTMENTS.GET_BY_CUSTOMER(customerId);
       return await apiService.get(endpoint);
     } catch (error) {
@@ -238,11 +242,13 @@ class AppointmentService {
 
   /**
    * Hoàn thành lịch hẹn
-   * @param {number} appointmentId 
+   * @param {number} appointmentId
    */
   async completeAppointment(appointmentId) {
     try {
-      return await this.updateAppointment(appointmentId, { status: 'Completed' });
+      return await this.updateAppointment(appointmentId, {
+        status: "Completed",
+      });
     } catch (error) {
       throw error;
     }
@@ -373,6 +379,24 @@ class AppointmentService {
       return await apiService.get(endpoint);
     } catch (error) {
       console.error(`Error fetching my schedule: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Lấy tất cả lịch hẹn của bác sĩ đang đăng nhập
+   * @param {Object} filters - Bộ lọc (date, status, etc.)
+   */
+  async getMyAppointments(filters = {}) {
+    try {
+      const queryParams = new URLSearchParams(filters).toString();
+      const endpoint = queryParams
+        ? `${API_ENDPOINTS.APPOINTMENTS.GET_MY_APPOINTMENTS}?${queryParams}`
+        : API_ENDPOINTS.APPOINTMENTS.GET_MY_APPOINTMENTS;
+
+      return await apiService.get(endpoint);
+    } catch (error) {
+      console.error(`Error fetching my appointments: ${error.message}`);
       throw error;
     }
   }

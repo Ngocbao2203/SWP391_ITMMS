@@ -68,7 +68,7 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
             />
             <div className="doctor-details">
               <h3 className="doctor-name">{doctorName}</h3>
-              <span className="doctor-specialty-badge">{doctorSpecialty}</span>
+              {/* <span className="doctor-specialty-badge">{doctorSpecialty}</span> */}
             </div>
           </>
         )}

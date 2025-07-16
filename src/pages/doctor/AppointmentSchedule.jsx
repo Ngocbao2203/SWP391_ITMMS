@@ -124,7 +124,7 @@ const AppointmentSchedule = () => {
         // Chuyển đổi dữ liệu từ API sang định dạng mà giao diện hiểu được
         const formattedAppointments = appointmentsData.map((appointment) => ({
           id: appointment.id,
-          patientId: appointment.customerId || appointment.id.toString(),
+
           patientName: appointment.customerName || "Chưa có tên",
           patientPhone: appointment.customerPhone || "Chưa có SĐT",
           date: appointment.appointmentDate
@@ -362,7 +362,7 @@ const AppointmentSchedule = () => {
       sorter: (a, b) => a.patientName.localeCompare(b.patientName),
     },
     {
-      title: "MÃ GIỜ",
+      title: "KHUNG GIỜ",
       dataIndex: "time",
       key: "time",
       width: "20%",

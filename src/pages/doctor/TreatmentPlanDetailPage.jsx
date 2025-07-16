@@ -9,9 +9,7 @@ import {
   Button,
   Alert,
   ListGroup,
-  Table,
   Spinner,
-  ProgressBar,
   Breadcrumb,
 } from "react-bootstrap";
 import {
@@ -188,44 +186,6 @@ const TreatmentPlanDetailPage = () => {
       style: "currency",
       currency: "VND",
     }).format(amount);
-  };
-
-  // Tính tiến độ hoàn thành
-  const calculateProgress = (plan) => {
-    if (!plan) return 0;
-    // console.log("Tính tiến độ với dữ liệu:", plan);
-
-    // Nếu có thuộc tính progress trực tiếp, sử dụng nó
-    if (typeof plan.progress === "number") {
-      return plan.progress;
-    }
-
-    // Nếu có thuộc tính completionPercentage, sử dụng nó
-    if (typeof plan.completionPercentage === "number") {
-      return plan.completionPercentage;
-    }
-
-    // Nếu có phases, tính dựa trên số giai đoạn đã hoàn thành
-    if (plan.phases && Array.isArray(plan.phases) && plan.phases.length > 0) {
-      const completedPhases = plan.phases.filter(
-        (phase) =>
-          phase.status?.toLowerCase() === "completed" ||
-          phase.status?.toLowerCase() === "complete"
-      ).length;
-
-      return Math.round((completedPhases / plan.phases.length) * 100);
-    }
-
-    // Nếu có currentPhase và totalPhases, tính dựa trên giai đoạn hiện tại
-    if (
-      typeof plan.currentPhase === "number" &&
-      typeof plan.totalPhases === "number"
-    ) {
-      return Math.round((plan.currentPhase / plan.totalPhases) * 100);
-    }
-
-    // Nếu không có thông tin gì, trả về 0
-    return 0;
   };
 
   // Get status badge variant
@@ -430,42 +390,12 @@ const TreatmentPlanDetailPage = () => {
         <div className="treatment-plan-content">
           {/* Timeline các kế hoạch điều trị */}
           <div className="treatment-plans-container">
-            <h5 className="mb-4">
-              <i className="fas fa-project-diagram me-2"></i>
+            <h4 className="mb-4 treatment-plans-title">
+              <i className="fas fa-clipboard-list me-2"></i>
               Các kế hoạch điều trị
-            </h5>
+            </h4>
 
             <div className="treatment-timeline">
-              <div className="timeline-track">
-                {plans.map((plan, index) => {
-                  // Tính vị trí phần trăm cho marker trên timeline
-                  // Cách tính để marker phân bố đều trên timeline
-                  const position =
-                    plans.length > 1 ? (index / (plans.length - 1)) * 100 : 50;
-                  const positionStyle = { left: `${position}%` };
-
-                  // Xác định trạng thái của marker
-                  const isActive = selectedPlan?.id === plan.id;
-                  const isCompleted =
-                    plan.status?.toLowerCase() === "completed" ||
-                    plan.status?.toLowerCase() === "complete";
-
-                  return (
-                    <div
-                      key={plan.id || index}
-                      className={`plan-marker ${isActive ? "active" : ""} ${
-                        isCompleted ? "completed" : ""
-                      }`}
-                      style={positionStyle}
-                      onClick={() => handleSelectPlan(plan)}
-                      title={`${plan.treatmentType || "Kế hoạch"} - ${
-                        formatDate(plan.startDate).split(",")[0]
-                      }`}
-                    ></div>
-                  );
-                })}
-              </div>
-
               <div className="treatment-cards-container">
                 {plans.map((plan, index) => (
                   <div
@@ -500,16 +430,6 @@ const TreatmentPlanDetailPage = () => {
                         </span>
                         <span className="info-value">
                           {formatDate(plan.startDate).split(",")[0]}
-                        </span>
-                      </div>
-                      <div className="info-row">
-                        <span className="info-label">
-                          <i className="fas fa-calendar-check"></i> Kết thúc:
-                        </span>
-                        <span className="info-value">
-                          {formatDate(
-                            plan.endDate || plan.expectedEndDate
-                          ).split(",")[0] || "Chưa xác định"}
                         </span>
                       </div>
                     </div>
@@ -584,18 +504,6 @@ const TreatmentPlanDetailPage = () => {
                           </strong>{" "}
                           {selectedPlan.currentPhase || "N/A"}
                         </ListGroup.Item>
-                        <ListGroup.Item>
-                          <strong>
-                            <i className="fas fa-tasks me-1"></i> Tiến độ điều
-                            trị:
-                          </strong>
-                          <ProgressBar
-                            now={calculateProgress(selectedPlan)}
-                            label={`${calculateProgress(selectedPlan)}%`}
-                            variant="success"
-                            className="mt-2"
-                          />
-                        </ListGroup.Item>
                       </ListGroup>
                     </Col>
                   </Row>
@@ -609,127 +517,14 @@ const TreatmentPlanDetailPage = () => {
                 </Card.Body>
               </Card>
 
-              {/* Các giai đoạn điều trị */}
-              <Card className="mb-4">
-                <Card.Header>
-                  <h5 className="mb-0">
-                    <i className="fas fa-layer-group me-2"></i>
-                    Giai đoạn điều trị
-                  </h5>
-                </Card.Header>
-                <Card.Body>
-                  {selectedPlan.phases &&
-                  Array.isArray(selectedPlan.phases) &&
-                  selectedPlan.phases.length > 0 ? (
-                    <Table striped bordered hover responsive>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Tên giai đoạn</th>
-                          <th>Mô tả</th>
-                          <th>Thời gian</th>
-                          <th>Trạng thái</th>
-                          <th>Ghi chú</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {selectedPlan.phases.map((phase, index) => (
-                          <tr key={phase.id || index}>
-                            <td>{index + 1}</td>
-                            <td>
-                              <strong>
-                                {phase.name || `Giai đoạn ${index + 1}`}
-                              </strong>
-                            </td>
-                            <td>{phase.description || "Không có mô tả"}</td>
-                            <td>
-                              <i className="far fa-calendar-alt me-1"></i>
-                              {formatDate(phase.startDate).split(",")[0]}
-                              <br />
-                              <i className="far fa-calendar-check me-1"></i>
-                              {formatDate(phase.endDate).split(",")[0]}
-                            </td>
-                            <td>
-                              <Badge bg={getStatusVariant(phase.status)}>
-                                {getStatusText(phase.status)}
-                              </Badge>
-                            </td>
-                            <td>{phase.doctorNotes || "Chưa có ghi chú"}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  ) : (
-                    <Alert variant="info">
-                      <i className="fas fa-info-circle me-2"></i>
-                      Chưa có thông tin về các giai đoạn điều trị.
-                    </Alert>
-                  )}
-                </Card.Body>
-              </Card>
-
-              {/* Lịch sử cuộc hẹn */}
-              <Card className="mb-4">
-                <Card.Header>
-                  <h5 className="mb-0">
-                    <i className="fas fa-history me-2"></i>
-                    Lịch sử cuộc hẹn
-                  </h5>
-                </Card.Header>
-                <Card.Body>
-                  {selectedPlan.appointments &&
-                  Array.isArray(selectedPlan.appointments) &&
-                  selectedPlan.appointments.length > 0 ? (
-                    <Table striped bordered hover responsive>
-                      <thead>
-                        <tr>
-                          <th>Mã cuộc hẹn</th>
-                          <th>Ngày hẹn</th>
-                          <th>Loại cuộc hẹn</th>
-                          <th>Trạng thái</th>
-                          <th>Ghi chú</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {selectedPlan.appointments.map((appointment) => (
-                          <tr key={appointment.id}>
-                            <td>
-                              <i className="fas fa-hashtag me-1"></i>
-                              {appointment.id}
-                            </td>
-                            <td>
-                              <i className="far fa-calendar-alt me-1"></i>
-                              {formatDate(appointment.date)}
-                            </td>
-                            <td>
-                              <i className="fas fa-stethoscope me-1"></i>
-                              {appointment.type || "Khám thông thường"}
-                            </td>
-                            <td>
-                              <Badge bg={getStatusVariant(appointment.status)}>
-                                {getStatusText(appointment.status)}
-                              </Badge>
-                            </td>
-                            <td>
-                              {appointment.doctorNotes || "Không có ghi chú"}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  ) : (
-                    <Alert variant="info">
-                      <i className="fas fa-info-circle me-2"></i>
-                      Chưa có thông tin về lịch sử cuộc hẹn.
-                    </Alert>
-                  )}
-                </Card.Body>
-              </Card>
-
               {/* Nút thao tác */}
-              <div className="d-flex justify-content-end mb-5">
-                <Button variant="info" onClick={() => setShowModal(true)}>
-                  <i className="fas fa-plus-circle me-1"></i> Thêm kế hoạch điều
+              <div className="d-flex justify-content-center mb-5">
+                <Button
+                  variant="primary"
+                  className="add-treatment-plan-btn"
+                  onClick={() => setShowModal(true)}
+                >
+                  <i className="fas fa-plus-circle me-2"></i> Thêm kế hoạch điều
                   trị
                 </Button>
               </div>
