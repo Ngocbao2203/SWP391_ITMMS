@@ -120,8 +120,8 @@ const PatientProfile = () => {
           const appointmentsData = Array.isArray(response.appointments) // Thay response.data.appointments bằng response.appointments
             ? response.appointments
             : Array.isArray(response.data?.appointments)
-              ? response.data.appointments
-              : [];
+            ? response.data.appointments
+            : [];
           console.log("Processed Appointments data:", appointmentsData); // Debug dữ liệu sau xử lý
           setAppointments(appointmentsData);
         })
@@ -224,19 +224,19 @@ const PatientProfile = () => {
 
   const displayBirthDate =
     userData.birthDate &&
-      moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]).isValid()
+    moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]).isValid()
       ? moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]).format(
-        "DD/MM/YYYY"
-      )
+          "DD/MM/YYYY"
+        )
       : "Chưa cập nhật";
 
   const displayAge =
     userData.birthDate &&
-      moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]).isValid()
+    moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]).isValid()
       ? `${moment().diff(
-        moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]),
-        "years"
-      )} tuổi`
+          moment(userData.birthDate, ["YYYY-MM-DD", "DD/MM/YYYY"]),
+          "years"
+        )} tuổi`
       : "Chưa cập nhật";
 
   return (
@@ -378,14 +378,6 @@ const PatientProfile = () => {
             }
             key="appointments"
           />
-          <TabPane
-            tab={
-              <span>
-                <FileTextOutlined /> Kết quả xét nghiệm
-              </span>
-            }
-            key="tests"
-          />
         </Tabs>
       </div>
 
@@ -466,9 +458,9 @@ const PatientProfile = () => {
                         value={
                           editableData.birthDate
                             ? moment(editableData.birthDate, [
-                              "YYYY-MM-DD",
-                              "DD/MM/YYYY",
-                            ])
+                                "YYYY-MM-DD",
+                                "DD/MM/YYYY",
+                              ])
                             : null
                         }
                         onChange={(date) =>
@@ -506,39 +498,71 @@ const PatientProfile = () => {
 
                 <div className="upcoming-appointment">
                   <Title level={5}>Lịch hẹn sắp tới</Title>
-                  {appointments.filter(app => app.status === "scheduled").length > 0 ? (
+                  {appointments.filter((app) => app.status === "scheduled")
+                    .length > 0 ? (
                     <div style={{ maxHeight: "300px", overflowY: "auto" }}>
-                      {appointments.filter(app => app.status === "scheduled").map(appointment => (
-                        <Card
-                          key={appointment.id}
-                          size="small"
-                          style={{
-                            marginBottom: "12px",
-                            border: "1px solid #e6f7ff",
-                            borderRadius: "8px",
-                            background: "linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%)",
-                          }}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                            <Avatar
-                              icon={<CalendarOutlined />}
-                              style={{ backgroundColor: "#1890ff", flexShrink: 0 }}
-                            />
-                            <div style={{ flex: 1 }}>
-                              <div style={{ fontWeight: "500", color: "#1890ff", marginBottom: "4px" }}>
-                                {moment(appointment.appointmentDate).format("DD/MM/YYYY")} - {appointment.timeSlot}
+                      {appointments
+                        .filter((app) => app.status === "scheduled")
+                        .map((appointment) => (
+                          <Card
+                            key={appointment.id}
+                            size="small"
+                            style={{
+                              marginBottom: "12px",
+                              border: "1px solid #e6f7ff",
+                              borderRadius: "8px",
+                              background:
+                                "linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%)",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px",
+                              }}
+                            >
+                              <Avatar
+                                icon={<CalendarOutlined />}
+                                style={{
+                                  backgroundColor: "#1890ff",
+                                  flexShrink: 0,
+                                }}
+                              />
+                              <div style={{ flex: 1 }}>
+                                <div
+                                  style={{
+                                    fontWeight: "500",
+                                    color: "#1890ff",
+                                    marginBottom: "4px",
+                                  }}
+                                >
+                                  {moment(appointment.appointmentDate).format(
+                                    "DD/MM/YYYY"
+                                  )}{" "}
+                                  - {appointment.timeSlot}
+                                </div>
+                                <div
+                                  style={{ fontSize: "12px", color: "#666" }}
+                                >
+                                  <div>{appointment.type || "Khám bệnh"}</div>
+                                  <div>
+                                    Bác sĩ:{" "}
+                                    {appointment.doctor
+                                      ? appointment.doctor.name
+                                      : "Chưa xác định"}
+                                  </div>
+                                </div>
                               </div>
-                              <div style={{ fontSize: "12px", color: "#666" }}>
-                                <div>{appointment.type || "Khám bệnh"}</div>
-                                <div>Bác sĩ: {appointment.doctor ? appointment.doctor.name : "Chưa xác định"}</div>
-                              </div>
+                              <Tag
+                                color={getStatusColor(appointment.status)}
+                                size="small"
+                              >
+                                {getStatusText(appointment.status)}
+                              </Tag>
                             </div>
-                            <Tag color={getStatusColor(appointment.status)} size="small">
-                              {getStatusText(appointment.status)}
-                            </Tag>
-                          </div>
-                        </Card>
-                      ))}
+                          </Card>
+                        ))}
                     </div>
                   ) : (
                     <Empty description="Không có lịch hẹn sắp tới" />
@@ -555,26 +579,51 @@ const PatientProfile = () => {
                 {treatments.length > 0 ? (
                   <div style={{ display: "grid", gap: "16px" }}>
                     {appointments
-                      .sort((a, b) => moment(b.appointmentDate).diff(moment(a.appointmentDate)))
+                      .sort((a, b) =>
+                        moment(b.appointmentDate).diff(
+                          moment(a.appointmentDate)
+                        )
+                      )
                       .map((item, index) => (
                         <Card
                           key={index}
                           size="small"
                           style={{
-                            border: `1px solid ${item.status === "scheduled" ? "#e6f7ff" : "#f0f0f0"}`,
+                            border: `1px solid ${
+                              item.status === "scheduled"
+                                ? "#e6f7ff"
+                                : "#f0f0f0"
+                            }`,
                             borderRadius: "12px",
-                            background: item.status === "scheduled"
-                              ? "linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%)"
-                              : "linear-gradient(135deg, #f6f6f6 0%, #ffffff 100%)",
+                            background:
+                              item.status === "scheduled"
+                                ? "linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%)"
+                                : "linear-gradient(135deg, #f6f6f6 0%, #ffffff 100%)",
                             boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
                           }}
                         >
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "flex-start",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px",
+                                flex: 1,
+                              }}
+                            >
                               <Avatar
                                 icon={<CalendarOutlined />}
                                 style={{
-                                  backgroundColor: item.status === "scheduled" ? "#1890ff" : "#8c8c8c",
+                                  backgroundColor:
+                                    item.status === "scheduled"
+                                      ? "#1890ff"
+                                      : "#8c8c8c",
                                   flexShrink: 0,
                                 }}
                               />
@@ -582,37 +631,88 @@ const PatientProfile = () => {
                                 <div
                                   style={{
                                     fontWeight: "500",
-                                    color: item.status === "scheduled" ? "#1890ff" : "#666",
+                                    color:
+                                      item.status === "scheduled"
+                                        ? "#1890ff"
+                                        : "#666",
                                     marginBottom: "8px",
                                     fontSize: "14px",
                                   }}
                                 >
                                   Lịch hẹn {item.type || ""}
                                 </div>
-                                <div style={{ display: "grid", gap: "4px", fontSize: "12px" }}>
-                                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                                    <ClockCircleOutlined style={{ color: "#1890ff" }} />
+                                <div
+                                  style={{
+                                    display: "grid",
+                                    gap: "4px",
+                                    fontSize: "12px",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "6px",
+                                    }}
+                                  >
+                                    <ClockCircleOutlined
+                                      style={{ color: "#1890ff" }}
+                                    />
                                     <Text>
-                                      Thời gian: {moment(item.appointmentDate).format("DD/MM/YYYY")} {item.timeSlot}
+                                      Thời gian:{" "}
+                                      {moment(item.appointmentDate).format(
+                                        "DD/MM/YYYY"
+                                      )}{" "}
+                                      {item.timeSlot}
                                     </Text>
                                   </div>
-                                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                                    <FileTextOutlined style={{ color: "#52c41a" }} />
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "6px",
+                                    }}
+                                  >
+                                    <FileTextOutlined
+                                      style={{ color: "#52c41a" }}
+                                    />
                                     <Text>Loại: {item.type || "---"}</Text>
                                   </div>
-                                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                                    <UserSwitchOutlined style={{ color: "#722ed1" }} />
-                                    <Text>Bác sĩ: {item.doctor?.name || "---"}</Text>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "6px",
+                                    }}
+                                  >
+                                    <UserSwitchOutlined
+                                      style={{ color: "#722ed1" }}
+                                    />
+                                    <Text>
+                                      Bác sĩ: {item.doctor?.name || "---"}
+                                    </Text>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
-                              <Tag color={getStatusColor(item.status)} style={{ margin: 0 }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "flex-end",
+                                gap: "8px",
+                              }}
+                            >
+                              <Tag
+                                color={getStatusColor(item.status)}
+                                style={{ margin: 0 }}
+                              >
                                 {getStatusText(item.status)}
                               </Tag>
                               {item.status === "scheduled" && (
-                                <div style={{ fontSize: "11px", color: "#666" }}>
+                                <div
+                                  style={{ fontSize: "11px", color: "#666" }}
+                                >
                                   {moment(item.appointmentDate).fromNow()}
                                 </div>
                               )}
@@ -726,7 +826,7 @@ const PatientProfile = () => {
                             }}
                           >
                             <CalendarOutlined style={{ color: "#722ed1" }} />
-                            <Text strong>Loại cuộc hẹn:</Text>
+                            <Text strong>Phương pháp điều trị:</Text>
                             <Text>{item.appointmentType || "---"}</Text>
                           </div>
                         </div>
@@ -771,8 +871,9 @@ const PatientProfile = () => {
                         key={index}
                         size="small"
                         style={{
-                          border: `1px solid ${item.status === "scheduled" ? "#e6f7ff" : "#f0f0f0"
-                            }`,
+                          border: `1px solid ${
+                            item.status === "scheduled" ? "#e6f7ff" : "#f0f0f0"
+                          }`,
                           borderRadius: "12px",
                           background:
                             item.status === "scheduled"
@@ -841,24 +942,13 @@ const PatientProfile = () => {
                                     Thời gian:{" "}
                                     {item.appointmentDate
                                       ? moment(item.appointmentDate).format(
-                                        "DD/MM/YYYY"
-                                      )
+                                          "DD/MM/YYYY"
+                                        )
                                       : "---"}{" "}
                                     {item.timeSlot || ""}
                                   </Text>
                                 </div>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "6px",
-                                  }}
-                                >
-                                  <FileTextOutlined
-                                    style={{ color: "#52c41a" }}
-                                  />
-                                  <Text>Loại: {item.type || "---"}</Text>
-                                </div>
+
                                 <div
                                   style={{
                                     display: "flex",
@@ -869,7 +959,12 @@ const PatientProfile = () => {
                                   <UserSwitchOutlined
                                     style={{ color: "#722ed1" }}
                                   />
-                                  <Text>Bác Sĩ: {item.doctor ? item.doctor.name : "Chưa xác định"}</Text>
+                                  <Text>
+                                    Bác Sĩ:{" "}
+                                    {item.doctor
+                                      ? item.doctor.name
+                                      : "Chưa xác định"}
+                                  </Text>
                                 </div>
                               </div>
                             </div>
@@ -899,62 +994,6 @@ const PatientProfile = () => {
                     ))}
                 </div>
               )}
-            </Card>
-          </div>
-        )}
-
-        {activeTab === "tests" && (
-          <div className="tests-content">
-            <Card className="tests-list-card" title="Kết quả xét nghiệm">
-              <List
-                className="tests-list"
-                itemLayout="horizontal"
-                dataSource={medicalHistory}
-                renderItem={(record) => (
-                  <List.Item
-                    actions={[
-                      <Button type="link">Xem kết quả chi tiết</Button>,
-                    ]}
-                  >
-                    <List.Item.Meta
-                      avatar={
-                        <Avatar
-                          icon={<FileTextOutlined />}
-                          style={{ backgroundColor: "#1890ff" }}
-                        />
-                      }
-                      title={
-                        <div className="test-title">
-                          <span>
-                            {record.name ||
-                              record.testName ||
-                              "Kết quả xét nghiệm"}
-                          </span>
-                          {record.result === "Bình thường" ? (
-                            <Tag color="success">Bình thường</Tag>
-                          ) : (
-                            <Tag color="warning">Cần theo dõi</Tag>
-                          )}
-                        </div>
-                      }
-                      description={
-                        <div className="test-details">
-                          <div>
-                            <ClockCircleOutlined /> Ngày thực hiện:{" "}
-                            {moment(record.date || record.recordDate).format(
-                              "DD/MM/YYYY"
-                            )}
-                          </div>
-                          <div>
-                            <UserOutlined /> Bác sĩ:{" "}
-                            {record.doctor || record.doctorName || "---"}
-                          </div>
-                        </div>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
             </Card>
           </div>
         )}
