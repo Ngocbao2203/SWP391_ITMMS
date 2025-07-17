@@ -16,7 +16,7 @@ Hành trình IVF không dễ dàng với những mũi tiêm hàng ngày, những
 Chúng tôi mong rằng chia sẻ này sẽ tiếp thêm hy vọng cho những cặp vợ chồng đang gặp khó khăn tương tự. Đừng bỏ cuộc, hãy tìm đến các chuyên gia và tin tưởng vào hành trình của mình.`,
     author: 'Nguyễn Văn A',
     category: 'IVF',
-    coverImage: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
+    coverImage: 'https://res.cloudinary.com/dqnq00784/image/upload/v1752731688/hmue4lmoyxoppz5qcseb.jpg',
     status: 'published',
     createdAt: '2023-05-15',
   },
@@ -48,107 +48,107 @@ Tỷ lệ thành công của IUI dao động từ 10-20% mỗi chu kỳ, tùy th
 - Tuân thủ hướng dẫn của bác sĩ`,
     author: 'Trần Thị B',
     category: 'IUI',
-    coverImage: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
+    coverImage: 'https://res.cloudinary.com/dqnq00784/image/upload/v1752738968/lkjvgwblx7suspabpzd6.jpg',
     status: 'published',
     createdAt: '2023-05-10',
   },
-  {
-    id: '3',
-    title: '5 lời khuyên dinh dưỡng cho phụ nữ hiếm muộn',
-    summary: 'Những thực phẩm tốt cho khả năng sinh sản',
-    content: `Dinh dưỡng đóng vai trò quan trọng trong việc cải thiện khả năng sinh sản. Dưới đây là 5 lời khuyên dinh dưỡng dành cho phụ nữ hiếm muộn:
+//   {
+//     id: '3',
+//     title: '5 lời khuyên dinh dưỡng cho phụ nữ hiếm muộn',
+//     summary: 'Những thực phẩm tốt cho khả năng sinh sản',
+//     content: `Dinh dưỡng đóng vai trò quan trọng trong việc cải thiện khả năng sinh sản. Dưới đây là 5 lời khuyên dinh dưỡng dành cho phụ nữ hiếm muộn:
 
-**1. Bổ sung axit folic và vitamin B**
-Axit folic không chỉ quan trọng trong quá trình mang thai mà còn giúp cải thiện chất lượng trứng. Có thể tìm thấy trong rau lá xanh đậm, đậu lăng, bơ và các loại hạt.
+// **1. Bổ sung axit folic và vitamin B**
+// Axit folic không chỉ quan trọng trong quá trình mang thai mà còn giúp cải thiện chất lượng trứng. Có thể tìm thấy trong rau lá xanh đậm, đậu lăng, bơ và các loại hạt.
 
-**2. Tăng cường thực phẩm giàu chất chống oxy hóa**
-Vitamin C, E và các chất chống oxy hóa giúp bảo vệ trứng khỏi tổn thương do gốc tự do. Nên ăn nhiều trái cây tươi, rau quả nhiều màu sắc.
+// **2. Tăng cường thực phẩm giàu chất chống oxy hóa**
+// Vitamin C, E và các chất chống oxy hóa giúp bảo vệ trứng khỏi tổn thương do gốc tự do. Nên ăn nhiều trái cây tươi, rau quả nhiều màu sắc.
 
-**3. Cân bằng hormone với các thực phẩm giàu omega-3**
-Cá hồi, cá thu, hạt lanh, hạt chia chứa nhiều omega-3 giúp giảm viêm và cân bằng hormone.
+// **3. Cân bằng hormone với các thực phẩm giàu omega-3**
+// Cá hồi, cá thu, hạt lanh, hạt chia chứa nhiều omega-3 giúp giảm viêm và cân bằng hormone.
 
-**4. Kiểm soát lượng đường**
-Lượng đường cao có thể gây rối loạn nội tiết tố và ảnh hưởng đến quá trình rụng trứng. Hạn chế thực phẩm chế biến sẵn và đồ ngọt.
+// **4. Kiểm soát lượng đường**
+// Lượng đường cao có thể gây rối loạn nội tiết tố và ảnh hưởng đến quá trình rụng trứng. Hạn chế thực phẩm chế biến sẵn và đồ ngọt.
 
-**5. Cung cấp đủ protein chất lượng cao**
-Protein đóng vai trò quan trọng trong quá trình tạo hormone và phát triển nang trứng. Nên ăn đa dạng nguồn protein từ động vật và thực vật.
+// **5. Cung cấp đủ protein chất lượng cao**
+// Protein đóng vai trò quan trọng trong quá trình tạo hormone và phát triển nang trứng. Nên ăn đa dạng nguồn protein từ động vật và thực vật.
 
-Nhớ rằng, không có chế độ ăn uống nào đảm bảo khả năng thụ thai, nhưng một chế độ dinh dưỡng cân bằng và lành mạnh sẽ tạo điều kiện tốt nhất cho cơ thể của bạn.`,
-    author: 'Lê Văn C',
-    category: 'Nutrition',
-    coverImage: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
-    status: 'published',
-    createdAt: '2023-05-05',
-  },
-  {
-    id: '4',
-    title: 'ICSI - Giải pháp cho yếu tố vô sinh nam',
-    summary: 'Phương pháp tiêm tinh trùng hiện đại cho nam giới có chất lượng tinh trùng thấp',
-    content: `ICSI (Intracytoplasmic Sperm Injection) - Tiêm tinh trùng vào bào tương noãn là một kỹ thuật hỗ trợ sinh sản tiên tiến giúp điều trị vô sinh do yếu tố nam. 
+// Nhớ rằng, không có chế độ ăn uống nào đảm bảo khả năng thụ thai, nhưng một chế độ dinh dưỡng cân bằng và lành mạnh sẽ tạo điều kiện tốt nhất cho cơ thể của bạn.`,
+//     author: 'Lê Văn C',
+//     category: 'Nutrition',
+//     coverImage: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
+//     status: 'published',
+//     createdAt: '2023-05-05',
+//   },
+//   {
+//     id: '4',
+//     title: 'ICSI - Giải pháp cho yếu tố vô sinh nam',
+//     summary: 'Phương pháp tiêm tinh trùng hiện đại cho nam giới có chất lượng tinh trùng thấp',
+//     content: `ICSI (Intracytoplasmic Sperm Injection) - Tiêm tinh trùng vào bào tương noãn là một kỹ thuật hỗ trợ sinh sản tiên tiến giúp điều trị vô sinh do yếu tố nam. 
 
-**Khi nào cần áp dụng ICSI?**
-- Số lượng tinh trùng thấp
-- Khả năng di động của tinh trùng kém
-- Hình dạng tinh trùng bất thường
-- Đã thụ tinh trong ống nghiệm thông thường (IVF) nhưng thất bại
-- Trường hợp lấy tinh trùng từ mào tinh hoặc tinh hoàn
+// **Khi nào cần áp dụng ICSI?**
+// - Số lượng tinh trùng thấp
+// - Khả năng di động của tinh trùng kém
+// - Hình dạng tinh trùng bất thường
+// - Đã thụ tinh trong ống nghiệm thông thường (IVF) nhưng thất bại
+// - Trường hợp lấy tinh trùng từ mào tinh hoặc tinh hoàn
 
-**Quy trình ICSI:**
-1. Kích thích buồng trứng và thu nhận trứng (giống như IVF)
-2. Lấy mẫu tinh trùng hoặc sinh thiết tinh hoàn nếu cần
-3. Dưới kính hiển vi, các nhà phôi học chọn một tinh trùng khỏe mạnh
-4. Sử dụng kim vi phẫu tiêm trực tiếp tinh trùng vào bào tương của trứng
-5. Theo dõi quá trình thụ tinh và phát triển phôi
-6. Chuyển phôi vào tử cung
+// **Quy trình ICSI:**
+// 1. Kích thích buồng trứng và thu nhận trứng (giống như IVF)
+// 2. Lấy mẫu tinh trùng hoặc sinh thiết tinh hoàn nếu cần
+// 3. Dưới kính hiển vi, các nhà phôi học chọn một tinh trùng khỏe mạnh
+// 4. Sử dụng kim vi phẫu tiêm trực tiếp tinh trùng vào bào tương của trứng
+// 5. Theo dõi quá trình thụ tinh và phát triển phôi
+// 6. Chuyển phôi vào tử cung
 
-**Tỷ lệ thành công:**
-ICSI có tỷ lệ thụ tinh cao, khoảng 70-85% các trứng được tiêm có thể được thụ tinh thành công.
+// **Tỷ lệ thành công:**
+// ICSI có tỷ lệ thụ tinh cao, khoảng 70-85% các trứng được tiêm có thể được thụ tinh thành công.
 
-**Ưu điểm của ICSI:**
-- Chỉ cần một tinh trùng khỏe mạnh cho mỗi trứng
-- Giải pháp cho nhiều trường hợp vô sinh nam nghiêm trọng
-- Tăng tỷ lệ thụ tinh ở nhóm bệnh nhân đặc biệt
+// **Ưu điểm của ICSI:**
+// - Chỉ cần một tinh trùng khỏe mạnh cho mỗi trứng
+// - Giải pháp cho nhiều trường hợp vô sinh nam nghiêm trọng
+// - Tăng tỷ lệ thụ tinh ở nhóm bệnh nhân đặc biệt
 
-Nếu bạn đang gặp vấn đề về chất lượng tinh trùng, hãy tham khảo ý kiến bác sĩ để xem ICSI có phải là lựa chọn phù hợp cho bạn hay không.`,
-    author: 'Phạm Thị D',
-    category: 'ICSI',
-    coverImage: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
-    status: 'published',
-    createdAt: '2023-06-02',
-  },
-  {
-    id: '5',
-    title: 'Tâm lý học trong điều trị vô sinh',
-    summary: 'Chăm sóc tinh thần - Yếu tố không thể bỏ qua trong hành trình điều trị hiếm muộn',
-    content: `Quá trình điều trị vô sinh không chỉ là thách thức về mặt thể chất mà còn là áp lực tâm lý lớn. Nhiều nghiên cứu chỉ ra rằng stress và lo âu có thể ảnh hưởng tiêu cực đến kết quả điều trị.
+// Nếu bạn đang gặp vấn đề về chất lượng tinh trùng, hãy tham khảo ý kiến bác sĩ để xem ICSI có phải là lựa chọn phù hợp cho bạn hay không.`,
+//     author: 'Phạm Thị D',
+//     category: 'ICSI',
+//     coverImage: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
+//     status: 'published',
+//     createdAt: '2023-06-02',
+//   },
+//   {
+//     id: '5',
+//     title: 'Tâm lý học trong điều trị vô sinh',
+//     summary: 'Chăm sóc tinh thần - Yếu tố không thể bỏ qua trong hành trình điều trị hiếm muộn',
+//     content: `Quá trình điều trị vô sinh không chỉ là thách thức về mặt thể chất mà còn là áp lực tâm lý lớn. Nhiều nghiên cứu chỉ ra rằng stress và lo âu có thể ảnh hưởng tiêu cực đến kết quả điều trị.
 
-**Những thách thức tâm lý phổ biến:**
-- Cảm giác mất kiểm soát
-- Lo lắng về kết quả điều trị
-- Áp lực từ gia đình và xã hội
-- Tác động đến mối quan hệ vợ chồng
-- Cảm giác cô đơn và bị hiểu lầm
+// **Những thách thức tâm lý phổ biến:**
+// - Cảm giác mất kiểm soát
+// - Lo lắng về kết quả điều trị
+// - Áp lực từ gia đình và xã hội
+// - Tác động đến mối quan hệ vợ chồng
+// - Cảm giác cô đơn và bị hiểu lầm
 
-**Các chiến lược hỗ trợ tâm lý:**
-1. **Tìm kiếm hỗ trợ chuyên nghiệp:** Tham vấn tâm lý hoặc tư vấn với chuyên gia sức khỏe tâm thần
+// **Các chiến lược hỗ trợ tâm lý:**
+// 1. **Tìm kiếm hỗ trợ chuyên nghiệp:** Tham vấn tâm lý hoặc tư vấn với chuyên gia sức khỏe tâm thần
 
-2. **Tham gia nhóm hỗ trợ:** Chia sẻ với những người có trải nghiệm tương tự
+// 2. **Tham gia nhóm hỗ trợ:** Chia sẻ với những người có trải nghiệm tương tự
 
-3. **Kỹ thuật thư giãn:** Yoga, thiền, hít thở sâu có thể giúp giảm căng thẳng
+// 3. **Kỹ thuật thư giãn:** Yoga, thiền, hít thở sâu có thể giúp giảm căng thẳng
 
-4. **Giao tiếp cởi mở:** Chia sẻ cảm xúc với bạn đời và người thân
+// 4. **Giao tiếp cởi mở:** Chia sẻ cảm xúc với bạn đời và người thân
 
-5. **Đặt ranh giới:** Học cách từ chối hoặc hạn chế tham gia các sự kiện gây căng thẳng
+// 5. **Đặt ranh giới:** Học cách từ chối hoặc hạn chế tham gia các sự kiện gây căng thẳng
 
-6. **Tự chăm sóc bản thân:** Duy trì các hoạt động mang lại niềm vui và sự thoải mái
+// 6. **Tự chăm sóc bản thân:** Duy trì các hoạt động mang lại niềm vui và sự thoải mái
 
-Nếu bạn đang trong hành trình điều trị hiếm muộn, hãy nhớ rằng chăm sóc sức khỏe tinh thần cũng quan trọng không kém chăm sóc sức khỏe thể chất. Đừng ngần ngại tìm kiếm sự hỗ trợ khi cần thiết.`,
-    author: 'Hoàng Thị E',
-    category: 'Psychology',
-    coverImage: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
-    status: 'published',
-    createdAt: '2023-06-10',
-  },
+// Nếu bạn đang trong hành trình điều trị hiếm muộn, hãy nhớ rằng chăm sóc sức khỏe tinh thần cũng quan trọng không kém chăm sóc sức khỏe thể chất. Đừng ngần ngại tìm kiếm sự hỗ trợ khi cần thiết.`,
+//     author: 'Hoàng Thị E',
+//     category: 'Psychology',
+//     coverImage: 'https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png',
+//     status: 'published',
+//     createdAt: '2023-06-10',
+//   },
 ];
 
 // Get all blogs

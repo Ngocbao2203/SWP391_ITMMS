@@ -20,6 +20,13 @@ import {
 
 const { Panel } = Collapse;
 
+// Mảng ảnh cho dịch vụ (4 ảnh cố định, dịch vụ mới lấy ảnh dịch vụ 1)
+const serviceImages = [
+  "https://res.cloudinary.com/dqnq00784/image/upload/v1752731440/e6gdbumv3eodzly82zss.jpg",
+  "https://res.cloudinary.com/dqnq00784/image/upload/v1752738968/lkjvgwblx7suspabpzd6.jpg",
+  "https://res.cloudinary.com/dqnq00784/image/upload/v1752739793/eqkkcrbagtz4v6glxufd.jpg",
+  "https://res.cloudinary.com/dqnq00784/image/upload/v1752739813/fohzqnet8qajfwxraibt.jpg"
+];
 // Component chính hiển thị danh sách dịch vụ
 export default function UserService() {
   const navigate = useNavigate();
@@ -28,7 +35,6 @@ export default function UserService() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Lấy danh sách dịch vụ từ API khi component mount
   // Lấy danh sách dịch vụ từ API khi component mount
   useEffect(() => {
     const fetchServices = async () => {
@@ -61,13 +67,14 @@ export default function UserService() {
 
   // Map dữ liệu từ API đến cấu trúc phù hợp với giao diện
   const mapServiceData = (apiServices) => {
-    return apiServices.map((service) => ({
+    return apiServices.map((service, index) => ({
       ...service,
       features: service.features
         ? typeof service.features === "string"
           ? service.features.split(",").map((feat) => feat.trim())
           : service.features
         : [],
+      image: serviceImages[index % 4] || serviceImages[0] // Gán ảnh cố định theo thứ tự, dịch vụ mới lấy ảnh 1
     }));
   };
 
@@ -123,7 +130,6 @@ export default function UserService() {
         "Một chu kỳ IUI thường kéo dài 2-3 tuần. Với IVF hoặc ICSI, từ khi bắt đầu dùng thuốc kích thích buồng trứng đến khi chuyển phôi mất khoảng 4-6 tuần. Kết quả thụ thai có thể biết sau 2 tuần sau khi chuyển phôi.",
     },
   ];
-  // Không cần các hàm xử lý form đăng ký nữa
 
   // CSS inline cho loading state
   const loadingStyle = {
@@ -212,7 +218,7 @@ export default function UserService() {
                     <img
                       src={
                         service.image ||
-                        "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png"
+                        "https://res.cloudinary.com/dqnq00784/image/upload/v1752731440/e6gdbumv3eodzly82zss.jpg"
                       }
                       alt={service.name}
                     />

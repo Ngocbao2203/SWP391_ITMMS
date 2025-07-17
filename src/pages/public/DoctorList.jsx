@@ -195,9 +195,7 @@ const DoctorList = () => {
                   style={styles.selectInput}
                 >
                   <Option value="doctorName">Tên A-Z</Option>
-                  <Option value="rating">Đánh giá cao nhất</Option>
                   <Option value="experience">Kinh nghiệm nhiều nhất</Option>
-                  <Option value="reviews">Nhiều đánh giá nhất</Option>
                 </Select>
               </Col>
               <Col xs={24} sm={12} md={4}>
@@ -246,14 +244,6 @@ const DoctorList = () => {
                         <div style={styles.doctorExperience}>
                           <CalendarOutlined style={{ marginRight: "8px", color: "#52c41a" }} />
                           {doctor.experience}
-                        </div>
-
-                        <div style={styles.doctorRating}>
-                          <StarOutlined style={{ marginRight: "8px", color: "#faad14" }} />
-                          <Text strong>{doctor.rating.toFixed(1)}</Text>
-                          <Text style={{ color: "#666", marginLeft: "8px" }}>
-                            ({doctor.reviewCount} đánh giá)
-                          </Text>
                         </div>
 
                         <Paragraph style={styles.doctorDescription}>

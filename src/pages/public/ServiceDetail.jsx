@@ -164,7 +164,7 @@ const ServiceDetail = () => {
                   {service.serviceName || service.ServiceName || service.name}
                 </Title>
 
-                <div className="service-stats">
+                {/* <div className="service-stats">
                   <div className="stat-item">
                     <Rate disabled defaultValue={4.5} allowHalf />
                     <span className="rating-count">(120 đánh giá)</span>
@@ -173,7 +173,7 @@ const ServiceDetail = () => {
                     <UserOutlined />
                     <span>2000+ khách hàng đã sử dụng</span>
                   </div>
-                </div>
+                </div> */}
 
                 <Paragraph className="service-description">
                   {service.detailedDescription ||

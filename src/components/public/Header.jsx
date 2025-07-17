@@ -109,7 +109,7 @@ const Header = ({ user: initialUser, onLogout }) => {
     <AntHeader className="app-header">
       <div className="logo-section-hd">
         <Link to="/" style={{ color: "white", textDecoration: "none" }}>
-          <span className="clinic-name">IVF Clinic</span>
+          <span className="clinic-name">ITMMS</span>
         </Link>
       </div>
       <Menu

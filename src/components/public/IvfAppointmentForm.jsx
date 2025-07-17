@@ -565,12 +565,6 @@ const IvfAppointmentForm = ({
                                 doctor.specialty ||
                                 "Bác sĩ chuyên khoa"}
                             </p>
-                            <div className="ivf-doctor-rating">
-                              ⭐{" "}
-                              {doctor.averageRating?.toFixed(1) ||
-                                doctor.rating?.toFixed(1) ||
-                                "N/A"}
-                            </div>
                             <div className="ivf-doctor-experience">
                               {doctor.experienceYears ||
                                 doctor.experience ||

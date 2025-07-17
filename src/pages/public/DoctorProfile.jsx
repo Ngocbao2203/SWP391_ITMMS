@@ -379,58 +379,6 @@ const DoctorProfile = () => {
                     {doctor.licenseNumber}
                   </Text>
                 </div>
-
-                {/* Đánh giá */}
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  padding: '20px',
-                  borderRadius: '12px',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)'
-                }}>
-                  <Text strong style={{
-                    color: 'white',
-                    marginBottom: '8px',
-                    fontSize: '14px',
-                    opacity: 0.9,
-                    display: 'block'
-                  }}>
-                    Đánh giá:
-                  </Text>
-                  <Text style={{
-                    color: 'white',
-                    fontSize: '16px',
-                    fontWeight: '600'
-                  }}>
-                    {doctor.rating} ★
-                  </Text>
-                </div>
-
-                {/* Số phản hồi */}
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  padding: '20px',
-                  borderRadius: '12px',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)'
-                }}>
-                  <Text strong style={{
-                    color: 'white',
-                    marginBottom: '8px',
-                    fontSize: '14px',
-                    opacity: 0.9,
-                    display: 'block'
-                  }}>
-                    Phản hồi:
-                  </Text>
-                  <Text style={{
-                    color: 'white',
-                    fontSize: '16px',
-                    fontWeight: '600'
-                  }}>
-                    {doctor.reviewCount}
-                  </Text>
-                </div>
               </div>
             </div>
           </Card>

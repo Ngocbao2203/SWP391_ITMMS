@@ -35,7 +35,7 @@ const Home = () => {
     const fetchHomeData = async () => {
       try {
         setLoading(true);
-        
+
         // Lấy tất cả data cần thiết cho trang chủ
         const [
           homePageInfo,
@@ -57,7 +57,7 @@ const Home = () => {
       } catch (error) {
         console.error('Error fetching home data:', error);
         message.error(formatErrorMessage(error));
-        
+
         // Fallback để trang vẫn hiển thị được nếu API lỗi
         setHomeData({
           clinicInfo: {
@@ -99,8 +99,10 @@ const Home = () => {
         <div
           className="banner-section"
           style={{
-            backgroundImage:
-              "url(https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png)",
+            backgroundImage: "url(https://res.cloudinary.com/dqnq00784/image/upload/v1752728043/hbg4rvdhvazrwbo0124z.webp)",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            backgroundPosition: "center"
           }}
         >
           <div className="banner-content">
@@ -108,10 +110,10 @@ const Home = () => {
               {homeData?.clinicInfo?.name || "ITMMS"} – Chuyên sâu & Tận tâm
             </Title>
             <Paragraph className="home-subtext">
-              {homeData?.clinicInfo?.description || 
-               "ITMMS là địa chỉ tin cậy trong lĩnh vực điều trị vô sinh – hiếm muộn tại Việt Nam, nơi bạn được đồng hành và chăm sóc toàn diện trên hành trình tìm kiếm con yêu."}
+              {homeData?.clinicInfo?.description ||
+                "ITMMS là địa chỉ tin cậy trong lĩnh vực điều trị vô sinh – hiếm muộn tại Việt Nam, nơi bạn được đồng hành và chăm sóc toàn diện trên hành trình tìm kiếm con yêu."}
             </Paragraph>
-            
+
             {/* Hiển thị thống kê nếu có */}
             {homeData?.stats && (
               <div className="clinic-stats">
@@ -145,13 +147,13 @@ const Home = () => {
           <Row gutter={[32, 32]} align="middle">
             <Col xs={24} md={10}>
               <img
-                src="https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png"
+                src="https://res.cloudinary.com/dqnq00784/image/upload/v1752727783/sk47i6rjzlez6865efij.webp"
                 alt="Nhân viên y tế"
                 className="clinic-hero-image"
               />
             </Col>
             <Col xs={24} md={14}>
-              <Title level={3}>Tại sao nên chọn {homeData?.clinicInfo?.name || 'My Clinic'}?</Title>
+              <Title level={3}>Tại sao nên chọn {homeData?.clinicInfo?.name || 'ITMMS'}?</Title>
               <Row gutter={[16, 24]}>
                 <Col xs={24} sm={12}>
                   <div className="clinic-box">
@@ -237,11 +239,11 @@ const Home = () => {
         {doctors.length > 0 && (
           <div className="section doctors-section">
             <Title level={3} style={{ textAlign: "center" }}>ĐỘI NGŨ CHUYÊN GIA</Title>
-            <Carousel 
-              dots={false} 
-              arrows 
-              infinite 
-              slidesToShow={Math.min(doctors.length, 4)} 
+            <Carousel
+              dots={false}
+              arrows
+              infinite
+              slidesToShow={Math.min(doctors.length, 4)}
               responsive={[
                 {
                   breakpoint: 1024,
@@ -259,10 +261,10 @@ const Home = () => {
             >
               {doctors.map((doctor) => (
                 <div className="doctor-profile" key={doctor.id}>
-                  <img 
-                    src={doctor.profileImage || "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png"} 
-                    alt={doctor.name} 
-                    className="doctor-img" 
+                  <img
+                    src={doctor.profileImage || "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png"}
+                    alt={doctor.name}
+                    className="doctor-img"
                   />
                   <div className="doctor-info">
                     <div className="doctor-name">{doctor.name}</div>
@@ -330,9 +332,9 @@ const Home = () => {
                     bordered
                     hoverable
                     cover={
-                      <img 
-                        alt={blog.title} 
-                        src={blog.coverImage || blog.image || "https://via.placeholder.com/300x200"} 
+                      <img
+                        alt={blog.title}
+                        src={blog.coverImage || blog.image || "https://via.placeholder.com/300x200"}
                         style={{ height: 200, objectFit: 'cover' }}
                       />
                     }

@@ -20,7 +20,7 @@ const FooterComponent = () => {
         <Col xs={24} md={6}>
           <h3>Về chúng tôi</h3>
           <p>
-            <strong>IVF CLINIC</strong> là phòng khám chuyên khoa hỗ trợ sinh
+            <strong>ITMMS</strong> là phòng khám chuyên khoa hỗ trợ sinh
             sản.
           </p>
           <p>
@@ -90,7 +90,7 @@ const FooterComponent = () => {
 
       <div className="copyright">
         <p>
-          © {year} IVF CLINIC. Được phát triển bởi đội ngũ chuyên gia IVF Việt
+          © {year} ITMMS. Được phát triển bởi đội ngũ chuyên gia IVF Việt
           Nam.
         </p>
       </div>
