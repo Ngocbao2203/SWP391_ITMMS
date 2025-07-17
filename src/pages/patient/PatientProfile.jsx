@@ -36,8 +36,6 @@ import {
   ScheduleOutlined,
   ExclamationCircleOutlined,
   UserSwitchOutlined,
-  EnvironmentOutlined,
-  PhoneOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import authService from "../../services/authService";
@@ -114,15 +112,18 @@ const PatientProfile = () => {
         .then((data) => setTreatments(Array.isArray(data) ? data : []))
         .catch(() => setTreatments([]));
 
+      // Trong useEffect cho appointments
       guestService
         .getMyAppointments()
         .then((response) => {
-          console.log("Appointments loaded:", response.data.appointments);
-          setAppointments(
-            Array.isArray(response.data.appointments)
-              ? response.data.appointments
-              : []
-          );
+          console.log("Raw Appointments response from guestService:", response); // Log toàn bộ response
+          const appointmentsData = Array.isArray(response.appointments) // Thay response.data.appointments bằng response.appointments
+            ? response.appointments
+            : Array.isArray(response.data?.appointments)
+            ? response.data.appointments
+            : [];
+          console.log("Processed Appointments data:", appointmentsData); // Debug dữ liệu sau xử lý
+          setAppointments(appointmentsData);
         })
         .catch((error) => {
           console.error("Failed to fetch appointments:", error);
@@ -377,14 +378,6 @@ const PatientProfile = () => {
             }
             key="appointments"
           />
-          <TabPane
-            tab={
-              <span>
-                <FileTextOutlined /> Kết quả xét nghiệm
-              </span>
-            }
-            key="tests"
-          />
         </Tabs>
       </div>
 
@@ -574,7 +567,7 @@ const PatientProfile = () => {
                             <MedicineBoxOutlined
                               style={{ color: "#52c41a", marginTop: "4px" }}
                             />
-                            <Text strong>Phác đồ điều trị:</Text>
+                            <Text strong>Phương pháp điều trị:</Text>
                             <Text>{item.treatment || "---"}</Text>
                           </div>
                           <div
@@ -585,7 +578,7 @@ const PatientProfile = () => {
                             }}
                           >
                             <CalendarOutlined style={{ color: "#722ed1" }} />
-                            <Text strong>Loại cuộc hẹn:</Text>
+                            <Text strong>Phương pháp điều trị:</Text>
                             <Text>{item.appointmentType || "---"}</Text>
                           </div>
                         </div>
@@ -707,18 +700,7 @@ const PatientProfile = () => {
                                     {item.timeSlot || ""}
                                   </Text>
                                 </div>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "6px",
-                                  }}
-                                >
-                                  <FileTextOutlined
-                                    style={{ color: "#52c41a" }}
-                                  />
-                                  <Text>Loại: {item.type || "---"}</Text>
-                                </div>
+
                                 <div
                                   style={{
                                     display: "flex",
@@ -730,10 +712,10 @@ const PatientProfile = () => {
                                     style={{ color: "#722ed1" }}
                                   />
                                   <Text>
-                                    Bác sĩ:{" "}
-                                    {item.doctorName ||
-                                      `ID: ${item.doctorId}` ||
-                                      "---"}
+                                    Bác Sĩ:{" "}
+                                    {item.doctor
+                                      ? item.doctor.name
+                                      : "Chưa xác định"}
                                   </Text>
                                 </div>
                               </div>
@@ -764,62 +746,6 @@ const PatientProfile = () => {
                     ))}
                 </div>
               )}
-            </Card>
-          </div>
-        )}
-
-        {activeTab === "tests" && (
-          <div className="tests-content">
-            <Card className="tests-list-card" title="Kết quả xét nghiệm">
-              <List
-                className="tests-list"
-                itemLayout="horizontal"
-                dataSource={medicalHistory}
-                renderItem={(record) => (
-                  <List.Item
-                    actions={[
-                      <Button type="link">Xem kết quả chi tiết</Button>,
-                    ]}
-                  >
-                    <List.Item.Meta
-                      avatar={
-                        <Avatar
-                          icon={<FileTextOutlined />}
-                          style={{ backgroundColor: "#1890ff" }}
-                        />
-                      }
-                      title={
-                        <div className="test-title">
-                          <span>
-                            {record.name ||
-                              record.testName ||
-                              "Kết quả xét nghiệm"}
-                          </span>
-                          {record.result === "Bình thường" ? (
-                            <Tag color="success">Bình thường</Tag>
-                          ) : (
-                            <Tag color="warning">Cần theo dõi</Tag>
-                          )}
-                        </div>
-                      }
-                      description={
-                        <div className="test-details">
-                          <div>
-                            <ClockCircleOutlined /> Ngày thực hiện:{" "}
-                            {moment(record.date || record.recordDate).format(
-                              "DD/MM/YYYY"
-                            )}
-                          </div>
-                          <div>
-                            <UserOutlined /> Bác sĩ:{" "}
-                            {record.doctor || record.doctorName || "---"}
-                          </div>
-                        </div>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
             </Card>
           </div>
         )}

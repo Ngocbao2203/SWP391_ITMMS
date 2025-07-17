@@ -1,5 +1,3 @@
-// Trang đăng nhập cho người dùng hệ thống
-// Sử dụng Ant Design cho UI, quản lý state bằng React hook
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Typography, Divider, Row, Col } from "antd";
 import { UserOutlined, LockOutlined, MedicineBoxOutlined, HomeOutlined } from "@ant-design/icons";
@@ -11,16 +9,11 @@ import { formatErrorMessage } from "../../services/authService";
 
 const { Title } = Typography;
 
-// Component chính trang đăng nhập
 const Login = () => {
-  // State loading cho nút đăng nhập
   const [loading, setLoading] = useState(false);
-  // Form instance của Ant Design
   const [form] = Form.useForm();
-  // Hook điều hướng
   const navigate = useNavigate();
 
-  // Kiểm tra nếu đã đăng nhập thì chuyển hướng về trang phù hợp
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
     if (authService.isAuthenticated() && currentUser?.token) {
@@ -42,10 +35,8 @@ const Login = () => {
       }
     }
 
-    // Reset lại form khi vào trang
     form.resetFields();
 
-    // Tắt autocomplete cho input (fix trình duyệt tự động điền)
     setTimeout(() => {
       const inputs = document.querySelectorAll(".medical-login-form input");
       inputs.forEach((input) => {
@@ -54,7 +45,6 @@ const Login = () => {
     }, 100);
   }, []);
 
-  // Xử lý khi submit form đăng nhập
   const onFinish = async (values) => {
     setLoading(true);
 
@@ -65,7 +55,6 @@ const Login = () => {
         toast.success(result.message || "Đăng nhập thành công!");
         const user = result.user;
 
-        // Điều hướng theo vai trò người dùng
         switch (user.role) {
           case "Admin":
             navigate("/admin/dashboard");
@@ -87,17 +76,22 @@ const Login = () => {
       }
     } catch (error) {
       const errorMessage = formatErrorMessage(error);
-      toast.error(errorMessage);
+      // Kiểm tra lỗi cụ thể
+      if (error.response?.status === 401) {
+        toast.error("Email hoặc mật khẩu không đúng!");
+      } else if (error.response?.status === 403) {
+        toast.error("Phiên đăng nhập đã hết hạn!");
+      } else {
+        toast.error(errorMessage || "Đã xảy ra lỗi, vui lòng thử lại!");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Render giao diện đăng nhập
   return (
     <div className="medical-login-container">
       <div className="medical-login-card">
-        {/* Banner bên trái */}
         <div className="medical-login-left">
           <div className="login-banner">
             <MedicineBoxOutlined className="medical-banner-icon" />
@@ -110,7 +104,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Form đăng nhập bên phải */}
         <div className="medical-login-right">
           <div className="home-icon-container">
             <Link to="/">
@@ -129,7 +122,6 @@ const Login = () => {
             className="medical-login-form"
             autoComplete="off"
           >
-            {/* Input email */}
             <Form.Item
               name="email"
               rules={[
@@ -146,7 +138,6 @@ const Login = () => {
               />
             </Form.Item>
 
-            {/* Input password */}
             <Form.Item
               name="password"
               rules={[
@@ -162,7 +153,6 @@ const Login = () => {
               />
             </Form.Item>
 
-            {/* Quên mật khẩu */}
             <Row justify="space-between" align="middle" className="login-options">
               <Col>
                 <Link to="/ReqPass" className="forgot-password">
@@ -171,7 +161,6 @@ const Login = () => {
               </Col>
             </Row>
 
-            {/* Nút đăng nhập */}
             <Form.Item>
               <Button
                 type="primary"
@@ -186,7 +175,6 @@ const Login = () => {
 
             <Divider plain>Hoặc</Divider>
 
-            {/* Đăng ký tài khoản */}
             <div className="register-prompt">
               <p>
                 Bạn chưa có tài khoản?{" "}
@@ -197,7 +185,6 @@ const Login = () => {
             </div>
           </Form>
 
-          {/* Footer bản quyền */}
           <div className="login-footer">
             <p>© 2025 Phần mềm quản lý và theo dõi điều trị hiếm muộn</p>
           </div>
@@ -208,4 +195,3 @@ const Login = () => {
 };
 
 export default Login;
-// Kết thúc file Login.jsx

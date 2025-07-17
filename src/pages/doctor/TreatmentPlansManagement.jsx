@@ -21,7 +21,6 @@ import {
   Statistic,
   Tabs,
   List,
-  Badge,
 } from "antd";
 import {
   PlusOutlined,
@@ -328,7 +327,7 @@ const TreatmentPlansManagement = () => {
       render: (_, record) => {
         const customer = record.customer || {};
         const patientName = customer.fullName || customer.name || "Chưa có tên";
-        const customerId = customer.id || "N/A";
+        // const customerId = customer.id || "N/A";
         const phone = customer.phone || "";
 
         return (
@@ -336,8 +335,8 @@ const TreatmentPlansManagement = () => {
             <Avatar icon={<UserOutlined />} />
             <div>
               <Text strong>{patientName}</Text>
-              <br />
-              <Text type="secondary">ID: {customerId}</Text>
+
+              {/* <Text type="secondary">ID: {customerId}</Text> */}
               {phone && (
                 <>
                   <br />
@@ -445,54 +444,41 @@ const TreatmentPlansManagement = () => {
       },
     },
     {
-      title: "Lịch hẹn hôm nay",
-      key: "todayAppointment",
-      render: (_, record) => {
-        const todayAppointment = record.todayAppointment;
-        const stats = record.stats || {};
-
-        return (
-          <div>
-            {todayAppointment ? (
-              <div>
-                <Badge status="processing" text="Có lịch hẹn" />
-                <br />
-                <Text type="secondary" style={{ fontSize: "12px" }}>
-                  {todayAppointment.timeSlot}
-                </Text>
-              </div>
-            ) : (
-              <Text type="secondary">Không có lịch hẹn</Text>
-            )}
-            {stats.hasTodayAppointment && (
-              <>
-                <br />
-                <Text type="secondary" style={{ fontSize: "12px" }}>
-                  <CalendarOutlined /> Hôm nay
-                </Text>
-              </>
-            )}
-          </div>
-        );
-      },
-    },
-    {
       title: "Thao tác",
       key: "actions",
       render: (_, record) => (
         <Space>
           <Button
-            size="small"
+            size="middle"
             icon={<EyeOutlined />}
             onClick={() => handleViewDetails(record)}
+            style={{
+              backgroundColor: "#f5f5f5",
+              color: "#1890ff",
+              borderColor: "#e8e8e8",
+              borderRadius: "20px",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              padding: "4px 16px",
+            }}
           >
             Chi tiết
           </Button>
           <Button
-            size="small"
+            size="middle"
             type="primary"
             icon={<EditOutlined />}
             onClick={() => handleUpdateProgress(record)}
+            style={{
+              backgroundColor: "#4cd964",
+              borderColor: "#4cd964",
+              borderRadius: "20px",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              padding: "4px 16px",
+            }}
           >
             Cập nhật
           </Button>

@@ -18,9 +18,9 @@ import {
   UserOutlined,
   TeamOutlined,
   CalendarOutlined,
+  StarOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layouts/MainLayout";
-import "../../styles/DoctorList.css";
 import guestService from "../../services/guestService";
 
 const { Title, Paragraph, Text } = Typography;
@@ -139,15 +139,15 @@ const DoctorList = () => {
   // Render giao diện danh sách bác sĩ
   return (
     <MainLayout>
-      <div className="doctor-list-page">
-        <div className="doctor-list-container">
+      <div style={styles.doctorListPage}>
+        <div style={styles.doctorListContainer}>
           {/* Header giới thiệu */}
-          <div className="doctor-list-header" data-aos="fade-up">
-            <Title level={1} className="doctor-list-title">
-              <TeamOutlined style={{ marginRight: "12px" }} />
+          <div style={styles.doctorListHeader} data-aos="fade-up">
+            <Title level={1} style={styles.doctorListTitle}>
+              <TeamOutlined style={{ marginRight: "12px", color: "#1890ff" }} />
               Đội Ngũ Bác Sĩ Chuyên Khoa
             </Title>
-            <Paragraph className="doctor-list-subtitle">
+            <Paragraph style={styles.doctorListSubtitle}>
               Gặp gỡ đội ngũ bác sĩ giàu kinh nghiệm và tận tâm của chúng tôi.
               Chúng tôi cam kết mang đến dịch vụ chăm sóc sức khỏe sinh sản tốt
               nhất cho bạn.
@@ -156,11 +156,11 @@ const DoctorList = () => {
 
           {/* Khu vực filter và tìm kiếm */}
           <div
-            className="search-filter-section"
+            style={styles.searchFilterSection}
             data-aos="fade-up"
             data-aos-delay="100"
           >
-            <Row gutter={[16, 16]} className="filter-row">
+            <Row gutter={[16, 16]} style={styles.filterRow}>
               <Col xs={24} sm={12} md={8}>
                 <Input
                   placeholder="Tìm kiếm bác sĩ theo tên hoặc chuyên khoa..."
@@ -168,6 +168,7 @@ const DoctorList = () => {
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
                   size="large"
+                  style={styles.searchInput}
                 />
               </Col>
               <Col xs={24} sm={12} md={6}>
@@ -176,7 +177,7 @@ const DoctorList = () => {
                   value={selectedSpecialty}
                   onChange={handleSpecialtyChange}
                   size="large"
-                  style={{ width: "100%" }}
+                  style={styles.selectInput}
                 >
                   {specialties.map((specialty) => (
                     <Option key={specialty} value={specialty}>
@@ -191,7 +192,7 @@ const DoctorList = () => {
                   value={sortBy}
                   onChange={handleSortChange}
                   size="large"
-                  style={{ width: "100%" }}
+                  style={styles.selectInput}
                 >
                   <Option value="doctorName">Tên A-Z</Option>
                   <Option value="rating">Đánh giá cao nhất</Option>
@@ -200,58 +201,69 @@ const DoctorList = () => {
                 </Select>
               </Col>
               <Col xs={24} sm={12} md={4}>
-                <Text strong style={{ color: "#1890ff" }}>
-                  Tìm thấy: {filteredDoctors.length} bác sĩ
-                </Text>
+                <div style={styles.resultCount}>
+                  <Text strong style={{ color: "#1890ff", fontSize: "16px" }}>
+                    Tìm thấy: {filteredDoctors.length} bác sĩ
+                  </Text>
+                </div>
               </Col>
             </Row>
           </div>
 
           {/* Danh sách bác sĩ dạng lưới */}
-          <Spin spinning={loading}>
+          <Spin spinning={loading} size="large">
             {filteredDoctors.length > 0 ? (
-              <Row gutter={[24, 24]} className="doctor-grid">
+              <Row gutter={[24, 24]} style={styles.doctorGrid}>
                 {filteredDoctors.map((doctor, index) => (
                   <Col xs={24} sm={12} lg={8} key={doctor.id}>
                     <Card
-                      className="doctor-card"
+                      style={styles.doctorCard}
                       data-aos="fade-up"
                       data-aos-delay={index * 100}
+                      hoverable
                     >
-                      <div className="doctor-photo-container">
+                      <div style={styles.doctorPhotoContainer}>
                         <img
                           src={doctor.photo}
                           alt={doctor.name}
-                          className="doctor-photo"
+                          style={styles.doctorPhoto}
                         />
-                        <div className="doctor-specialty-badge">
+                        <div style={styles.doctorSpecialtyBadge}>
                           {doctor.specialty}
                         </div>
                       </div>
 
-                      <div className="doctor-info">
-                        <Title level={4} className="doctor-name">
-                          {doctor.name}
+                      <div style={styles.doctorInfo}>
+                        <Title level={4} style={styles.doctorName}>
+                          {doctor.name || "Tên chưa có"}
                         </Title>
 
-                        <div className="doctor-specialty">
-                          <UserOutlined style={{ marginRight: "8px" }} />
+                        <div style={styles.doctorSpecialty}>
+                          <UserOutlined style={{ marginRight: "8px", color: "#1890ff" }} />
                           {doctor.specialty}
                         </div>
 
-                        <div className="doctor-experience">
-                          <CalendarOutlined style={{ marginRight: "8px" }} />
+                        <div style={styles.doctorExperience}>
+                          <CalendarOutlined style={{ marginRight: "8px", color: "#52c41a" }} />
                           {doctor.experience}
                         </div>
 
-                        <Paragraph className="doctor-description">
+                        <div style={styles.doctorRating}>
+                          <StarOutlined style={{ marginRight: "8px", color: "#faad14" }} />
+                          <Text strong>{doctor.rating.toFixed(1)}</Text>
+                          <Text style={{ color: "#666", marginLeft: "8px" }}>
+                            ({doctor.reviewCount} đánh giá)
+                          </Text>
+                        </div>
+
+                        <Paragraph style={styles.doctorDescription}>
                           {doctor.description}
                         </Paragraph>
 
-                        <div className="doctor-actions">
+                        <div style={styles.doctorActions}>
                           <Button
                             type="primary"
-                            className="view-profile-btn"
+                            style={styles.viewProfileBtn}
                             onClick={() => handleViewProfile(doctor.id)}
                             icon={<UserOutlined />}
                           >
@@ -265,19 +277,20 @@ const DoctorList = () => {
               </Row>
             ) : (
               // Trạng thái không có bác sĩ phù hợp
-              <div className="empty-state" data-aos="fade-up">
-                <div className="empty-icon">
+              <div style={styles.emptyState} data-aos="fade-up">
+                <div style={styles.emptyIcon}>
                   <TeamOutlined />
                 </div>
-                <Title level={3} className="empty-title">
+                <Title level={3} style={styles.emptyTitle}>
                   Không tìm thấy bác sĩ
                 </Title>
-                <Paragraph className="empty-description">
+                <Paragraph style={styles.emptyDescription}>
                   Không có bác sĩ nào phù hợp với tiêu chí tìm kiếm của bạn. Vui
                   lòng thử lại với từ khóa khác.
                 </Paragraph>
                 <Button
                   type="primary"
+                  style={styles.clearFilterBtn}
                   onClick={() => {
                     setSearchTerm("");
                     setSelectedSpecialty("Tất cả chuyên khoa");
@@ -291,11 +304,11 @@ const DoctorList = () => {
 
           {/* Nút xem thêm nếu có nhiều bác sĩ */}
           {filteredDoctors.length > 0 && filteredDoctors.length >= 6 && (
-            <div className="load-more-section" data-aos="fade-up">
+            <div style={styles.loadMoreSection} data-aos="fade-up">
               <Button
                 type="primary"
                 size="large"
-                className="load-more-btn"
+                style={styles.loadMoreBtn}
                 onClick={() =>
                   message.info(
                     "Tính năng tải thêm sẽ được phát triển trong phiên bản tiếp theo."
@@ -310,6 +323,214 @@ const DoctorList = () => {
       </div>
     </MainLayout>
   );
+};
+
+// Styles object
+const styles = {
+  doctorListPage: {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+    padding: "40px 0",
+  },
+  doctorListContainer: {
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "0 20px",
+  },
+  doctorListHeader: {
+    textAlign: "center",
+    marginBottom: "40px",
+    padding: "40px 20px",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    borderRadius: "16px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+    color: "white",
+  },
+  doctorListTitle: {
+    color: "white !important",
+    fontSize: "48px",
+    fontWeight: "700",
+    marginBottom: "20px",
+    textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+  },
+  doctorListSubtitle: {
+    color: "rgba(255,255,255,0.9) !important",
+    fontSize: "18px",
+    lineHeight: "1.6",
+    maxWidth: "600px",
+    margin: "0 auto",
+  },
+  searchFilterSection: {
+    backgroundColor: "white",
+    padding: "30px",
+    borderRadius: "16px",
+    boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+    marginBottom: "40px",
+    border: "1px solid #f0f0f0",
+  },
+  filterRow: {
+    alignItems: "center",
+  },
+  searchInput: {
+    borderRadius: "8px",
+    border: "2px solid #f0f0f0",
+    transition: "all 0.3s ease",
+  },
+  selectInput: {
+    width: "100%",
+    borderRadius: "8px",
+  },
+  resultCount: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "40px",
+    backgroundColor: "#f8f9fa",
+    borderRadius: "8px",
+    padding: "0 16px",
+  },
+  doctorGrid: {
+    marginTop: "20px",
+  },
+  doctorCard: {
+    borderRadius: "16px",
+    overflow: "hidden",
+    transition: "all 0.3s ease",
+    border: "1px solid #f0f0f0",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+    height: "100%",
+    background: "white",
+    cursor: "pointer",
+    position: "relative",
+  },
+  doctorPhotoContainer: {
+    position: "relative",
+    height: "200px",
+    overflow: "hidden",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  doctorPhoto: {
+    width: "120px",
+    height: "120px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    border: "4px solid white",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    transition: "transform 0.3s ease",
+  },
+  doctorSpecialtyBadge: {
+    position: "absolute",
+    bottom: "10px",
+    right: "10px",
+    backgroundColor: "rgba(255,255,255,0.95)",
+    color: "#1890ff",
+    padding: "4px 12px",
+    borderRadius: "12px",
+    fontSize: "12px",
+    fontWeight: "600",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+  },
+  doctorInfo: {
+    padding: "24px",
+  },
+  doctorName: {
+    color: "#1a1a1a",
+    marginBottom: "16px",
+    fontSize: "22px",
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  doctorSpecialty: {
+    display: "flex",
+    alignItems: "center",
+    color: "#1890ff",
+    marginBottom: "12px",
+    fontSize: "14px",
+    fontWeight: "500",
+  },
+  doctorExperience: {
+    display: "flex",
+    alignItems: "center",
+    color: "#52c41a",
+    marginBottom: "12px",
+    fontSize: "14px",
+    fontWeight: "500",
+  },
+  doctorRating: {
+    display: "flex",
+    alignItems: "center",
+    marginBottom: "16px",
+    fontSize: "14px",
+  },
+  doctorDescription: {
+    color: "#666",
+    fontSize: "14px",
+    lineHeight: "1.5",
+    marginBottom: "20px",
+    minHeight: "40px",
+  },
+  doctorActions: {
+    textAlign: "center",
+    paddingTop: "16px",
+    borderTop: "1px solid #f0f0f0",
+  },
+  viewProfileBtn: {
+    borderRadius: "8px",
+    height: "40px",
+    fontWeight: "600",
+    background: "linear-gradient(135deg, #1890ff 0%, #722ed1 100%)",
+    border: "none",
+    boxShadow: "0 4px 12px rgba(24, 144, 255, 0.3)",
+    transition: "all 0.3s ease",
+    width: "100%",
+  },
+  emptyState: {
+    textAlign: "center",
+    padding: "80px 20px",
+    backgroundColor: "white",
+    borderRadius: "16px",
+    boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+  },
+  emptyIcon: {
+    fontSize: "80px",
+    color: "#d9d9d9",
+    marginBottom: "24px",
+  },
+  emptyTitle: {
+    color: "#1a1a1a",
+    marginBottom: "16px",
+  },
+  emptyDescription: {
+    color: "#666",
+    fontSize: "16px",
+    marginBottom: "32px",
+    maxWidth: "400px",
+    margin: "0 auto 32px",
+  },
+  clearFilterBtn: {
+    borderRadius: "8px",
+    height: "40px",
+    fontWeight: "600",
+    background: "linear-gradient(135deg, #1890ff 0%, #722ed1 100%)",
+    border: "none",
+    boxShadow: "0 4px 12px rgba(24, 144, 255, 0.3)",
+  },
+  loadMoreSection: {
+    textAlign: "center",
+    marginTop: "40px",
+  },
+  loadMoreBtn: {
+    borderRadius: "8px",
+    height: "48px",
+    fontWeight: "600",
+    background: "linear-gradient(135deg, #1890ff 0%, #722ed1 100%)",
+    border: "none",
+    boxShadow: "0 4px 12px rgba(24, 144, 255, 0.3)",
+    padding: "0 40px",
+  },
 };
 
 export default DoctorList;
