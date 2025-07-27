@@ -16,19 +16,21 @@ import {
   Col,
   Statistic,
   Divider,
+  Upload,
 } from 'antd';
-import { 
-  EditOutlined, 
-  DeleteOutlined, 
+import {
+  EditOutlined,
+  DeleteOutlined,
   PlusOutlined,
   DollarOutlined,
   ClockCircleOutlined,
   PercentageOutlined,
-  FileTextOutlined
+  FileTextOutlined,
+  UploadOutlined, // Thêm icon Upload
 } from '@ant-design/icons';
 import treatmentService from '../../services/treatmentService';
-import { ToastContainer, toast } from 'react-toastify'; // Import react-toastify
-import 'react-toastify/dist/ReactToastify.css'; // Import CSS của react-toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const { Title, Text } = Typography;
 
@@ -40,38 +42,53 @@ const Services = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     fetchServices();
+    return () => {
+      isMounted = false;
+    };
+
+    async function fetchServices() {
+      setLoading(true);
+      try {
+        const response = await treatmentService.getAllTreatmentServices();
+        if (isMounted && response.data && Array.isArray(response.data)) {
+          const formattedServices = response.data.map((service, index) => ({
+            id: service.id || (index + 1).toString().padStart(2, '0'),
+            key: service.id ? service.id.toString() : (index + 1).toString(),
+            serviceName: service.serviceName || '',
+            serviceCode: service.serviceCode || '',
+            description: service.description || '',
+            basePrice: service.basePrice || 0,
+            procedures: service.procedures || '',
+            requirements: service.requirements || '',
+            durationDays: service.durationDays || 0,
+            successRate: service.successRate || 0,
+            imageUrl: service.imageUrl || '',
+            imageFile: service.imageFile || '',
+          }));
+          setServices(formattedServices);
+          safeToast('success', 'Tải danh sách dịch vụ thành công!');
+        } else if (isMounted) {
+          safeToast('error', 'Không có dữ liệu từ server!');
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Fetch Services Error:', error);
+          safeToast('error', 'Lỗi khi tải danh sách dịch vụ: ' + (error.message || 'Không xác định'));
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
   }, []);
 
-  const fetchServices = async () => {
-    setLoading(true);
-    try {
-      const response = await treatmentService.getAllTreatmentServices();
-      const formattedServices = response.data.map((service, index) => ({
-        id: service.id || (index + 1).toString().padStart(2, '0'),
-        key: service.id ? service.id.toString() : (index + 1).toString(),
-        serviceName: service.serviceName,
-        serviceCode: service.serviceCode,
-        description: service.description,
-        basePrice: service.basePrice,
-        procedures: service.procedures,
-        requirements: service.requirements,
-        durationDays: service.durationDays,
-        successRate: service.successRate,
-      }));
-      setServices(formattedServices);
-      toast.success('Tải danh sách dịch vụ thành công!', {
+  const safeToast = (type, message) => {
+    if (document.getElementById('toast-container')) {
+      toast[type](message, {
         position: 'top-right',
         autoClose: 3000,
       });
-    } catch (error) {
-      console.error('Fetch Services Error:', error);
-      toast.error('Lỗi khi tải danh sách dịch vụ: ' + error.message, {
-        position: 'top-right',
-        autoClose: 3000,
-      });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -87,6 +104,7 @@ const Services = () => {
         requirements: service.requirements,
         durationDays: service.durationDays,
         successRate: service.successRate,
+        imageUrl: service.imageUrl,
       });
     } else {
       form.resetFields();
@@ -95,106 +113,96 @@ const Services = () => {
   };
 
   const handleSubmit = async () => {
+    let isMounted = true;
     try {
       const values = await form.validateFields();
       setLoading(true);
 
-      const payload = {
-        serviceName: values.serviceName,
-        serviceCode: values.serviceCode,
-        description: values.description,
-        basePrice: values.basePrice,
-        procedures: values.procedures,
-        requirements: values.requirements,
-        durationDays: values.durationDays,
-        successRate: values.successRate,
-      };
+      const formData = new FormData();
+      formData.append('serviceName', values.serviceName);
+      formData.append('serviceCode', values.serviceCode);
+      formData.append('description', values.description);
+      formData.append('basePrice', values.basePrice);
+      formData.append('procedures', values.procedures);
+      formData.append('requirements', values.requirements);
+      formData.append('durationDays', values.durationDays);
+      formData.append('successRate', values.successRate);
+      formData.append('imageUrl', values.imageUrl || '');
+      if (values.imageFile && values.imageFile.originFileObj) {
+        formData.append('imageFile', values.imageFile.originFileObj);
+      }
 
       if (editingService) {
-        const response = await treatmentService.updateTreatmentService(editingService.id, payload);
-        if (response.success) {
+        const response = await treatmentService.updateTreatmentService(editingService.id, formData);
+        if (isMounted && response.success) {
           setServices((prev) =>
             prev.map((s) =>
-              s.key === editingService.key ? { ...s, ...payload } : s
+              s.key === editingService.key ? { ...s, ...values, imageUrl: values.imageUrl || '' } : s
             )
           );
-          toast.success(response.message || 'Cập nhật dịch vụ thành công!', {
-            position: 'top-right',
-            autoClose: 3000,
-          });
-        } else {
-          toast.error(response.message || 'Cập nhật dịch vụ thất bại!', {
-            position: 'top-right',
-            autoClose: 3000,
-          });
+          safeToast('success', response.message || 'Cập nhật dịch vụ thành công!');
+        } else if (isMounted) {
+          safeToast('error', response.message || 'Cập nhật dịch vụ thất bại!');
         }
       } else {
-        const response = await treatmentService.createTreatmentService(payload);
-        if (response.success && response.data) {
+        const response = await treatmentService.createTreatmentService(formData);
+        if (isMounted && response.success && response.data) {
           const newService = {
-            ...payload,
+            ...values,
             id: response.data.id ? response.data.id.toString().padStart(2, '0') : (services.length + 1).toString().padStart(2, '0'),
             key: response.data.id ? response.data.id.toString() : (services.length + 1).toString(),
+            imageUrl: values.imageUrl || '',
           };
           setServices([...services, newService]);
-          toast.success(response.message || 'Thêm dịch vụ thành công!', {
-            position: 'top-right',
-            autoClose: 3000,
-          });
-        } else {
-          toast.error(response.message || 'Tạo dịch vụ thất bại!', {
-            position: 'top-right',
-            autoClose: 3000,
-          });
+          safeToast('success', response.message || 'Thêm dịch vụ thành công!');
+        } else if (isMounted) {
+          safeToast('error', response.message || 'Tạo dịch vụ thất bại!');
         }
       }
 
-      setIsModalOpen(false);
-      form.resetFields();
-      setEditingService(null);
-      setLoading(false);
+      if (isMounted) {
+        setIsModalOpen(false);
+        form.resetFields();
+        setEditingService(null);
+        setLoading(false);
+      }
     } catch (error) {
-      toast.error('Lỗi khi lưu dịch vụ: ' + error.message, {
-        position: 'top-right',
-        autoClose: 3000,
-      });
-      console.error(error);
-      setLoading(false);
+      if (isMounted) {
+        safeToast('error', 'Lỗi khi lưu dịch vụ: ' + (error.message || 'Không xác định'));
+        console.error(error);
+        setLoading(false);
+      }
     }
   };
 
   const handleDeleteService = async (key) => {
+    let isMounted = true;
     const service = services.find((s) => s.key === key);
     try {
       setLoading(true);
       const response = await treatmentService.deleteTreatmentService(service.id);
-      if (response.success) {
+      if (isMounted && response.success) {
         setServices((prev) => prev.filter((s) => s.key !== key));
-        toast.success(response.message || 'Xóa dịch vụ thành công!', {
-          position: 'top-right',
-          autoClose: 3000,
-        });
-      } else {
-        toast.error(response.message || 'Xóa dịch vụ thất bại!', {
-          position: 'top-right',
-          autoClose: 3000,
-        });
+        safeToast('success', response.message || 'Xóa dịch vụ thành công!');
+      } else if (isMounted) {
+        safeToast('error', response.message || 'Xóa dịch vụ thất bại!');
       }
-      setLoading(false);
+      if (isMounted) setLoading(false);
     } catch (error) {
-      toast.error('Lỗi khi xóa dịch vụ: ' + error.message, {
-        position: 'top-right',
-        autoClose: 3000,
-      });
-      setLoading(false);
+      if (isMounted) {
+        safeToast('error', 'Lỗi khi xóa dịch vụ: ' + (error.message || 'Không xác định'));
+        setLoading(false);
+      }
     }
   };
 
   const totalServices = services.length;
-  const avgPrice = services.length > 0 ? 
-    Math.round(services.reduce((sum, s) => sum + s.basePrice, 0) / services.length) : 0;
-  const avgSuccessRate = services.length > 0 ? 
-    Math.round(services.reduce((sum, s) => sum + s.successRate, 0) / services.length) : 0;
+  const avgPrice = services.length > 0
+    ? Math.round(services.reduce((sum, s) => sum + s.basePrice, 0) / services.length)
+    : 0;
+  const avgSuccessRate = services.length > 0
+    ? Math.round(services.reduce((sum, s) => sum + s.successRate, 0) / services.length)
+    : 0;
 
   const columns = [
     {
@@ -208,6 +216,17 @@ const Services = () => {
         </Tag>
       ),
       responsive: ['md'],
+    },
+    {
+      title: 'Hình Ảnh',
+      key: 'imageUrl',
+      render: (_, record) => (
+        record.imageUrl && record.imageUrl.trim() ? (
+          <img src={record.imageUrl} alt={record.serviceName} style={{ width: '50px', height: '50px' }} onError={(e) => { e.target.style.display = 'none'; }} />
+        ) : (
+          <Text type="secondary">Chưa có hình ảnh</Text>
+        )
+      ),
     },
     {
       title: 'Tên Dịch Vụ',
@@ -273,7 +292,7 @@ const Services = () => {
               icon={<EditOutlined />}
               onClick={() => handleOpenModal(record)}
               disabled={loading}
-              style={{ 
+              style={{
                 borderRadius: '8px',
                 padding: '4px 12px',
                 fontSize: '12px',
@@ -282,13 +301,8 @@ const Services = () => {
                 borderColor: '#1890ff',
                 boxShadow: '0 2px 6px rgba(24, 144, 255, 0.3)',
                 transition: 'all 0.3s',
-                '&:hover': {
-                  background: '#40a9ff',
-                  boxShadow: '0 4px 8px rgba(24, 144, 255, 0.4)',
-                },
               }}
-            >
-            </Button>
+            />
           </Tooltip>
           <Popconfirm
             title="Xác nhận xóa"
@@ -304,7 +318,7 @@ const Services = () => {
                 size="small"
                 icon={<DeleteOutlined />}
                 disabled={loading}
-                style={{ 
+                style={{
                   borderRadius: '8px',
                   padding: '4px 12px',
                   fontSize: '12px',
@@ -313,13 +327,8 @@ const Services = () => {
                   borderColor: '#ff4d4f',
                   boxShadow: '0 2px 6px rgba(255, 77, 79, 0.3)',
                   transition: 'all 0.3s',
-                  '&:hover': {
-                    background: '#ff7875',
-                    boxShadow: '0 4px 8px rgba(255, 77, 79, 0.4)',
-                  },
                 }}
-              >
-              </Button>
+              />
             </Tooltip>
           </Popconfirm>
         </Space>
@@ -328,25 +337,12 @@ const Services = () => {
   ];
 
   return (
-    <div style={{ 
-      padding: '24px',
-      background: '#f5f5f5',
-      minHeight: '100vh'
-    }}>
-      <ToastContainer /> {/* Thêm ToastContainer để hiển thị toast */}
-      <Card 
-        style={{ 
-          marginBottom: '24px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-        }}
+    <div style={{ padding: '24px', background: '#f5f5f5', minHeight: '100vh' }}>
+      <ToastContainer />
+      <Card
+        style={{ marginBottom: '24px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
       >
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          marginBottom: '24px'
-        }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <div>
             <Title level={2} style={{ margin: 0, color: '#1890ff' }}>
               <FileTextOutlined style={{ marginRight: '12px' }} />
@@ -362,14 +358,14 @@ const Services = () => {
             onClick={() => handleOpenModal()}
             icon={<PlusOutlined />}
             disabled={loading}
-            style={{ 
+            style={{
               borderRadius: '8px',
               height: '48px',
               paddingLeft: '24px',
               paddingRight: '24px',
               fontSize: '16px',
               fontWeight: '500',
-              boxShadow: '0 4px 12px rgba(24,144,255,0.3)'
+              boxShadow: '0 4px 12px rgba(24,144,255,0.3)',
             }}
           >
             Thêm Dịch Vụ Mới
@@ -412,40 +408,29 @@ const Services = () => {
         </Row>
       </Card>
 
-      <Card 
-        style={{ 
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-        }}
+      <Card
+        style={{ borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
       >
         <Table
           columns={columns}
           dataSource={services}
-          pagination={{ 
+          pagination={{
             pageSize: 8,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => 
-              `${range[0]}-${range[1]} của ${total} dịch vụ`,
+            showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} dịch vụ`,
           }}
           rowKey="key"
           loading={loading}
           size="middle"
           style={{ borderRadius: '8px' }}
-          rowClassName={(record, index) => 
-            index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
-          }
+          rowClassName={(record, index) => (index % 2 === 0 ? 'table-row-light' : 'table-row-dark')}
         />
       </Card>
 
       <Modal
         title={
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            fontSize: '18px',
-            fontWeight: '600'
-          }}>
+          <div style={{ display: 'flex', alignItems: 'center', fontSize: '18px', fontWeight: '600' }}>
             <FileTextOutlined style={{ marginRight: '8px', color: '#1890ff' }} />
             {editingService ? 'Chỉnh Sửa Dịch Vụ' : 'Thêm Dịch Vụ Mới'}
           </div>
@@ -470,8 +455,8 @@ const Services = () => {
             paddingLeft: '24px',
             paddingRight: '24px',
             fontSize: '14px',
-            fontWeight: '500'
-          }
+            fontWeight: '500',
+          },
         }}
         cancelButtonProps={{
           style: {
@@ -479,8 +464,8 @@ const Services = () => {
             height: '40px',
             paddingLeft: '24px',
             paddingRight: '24px',
-            fontSize: '14px'
-          }
+            fontSize: '14px',
+          },
         }}
       >
         <Divider style={{ margin: '16px 0' }} />
@@ -492,7 +477,7 @@ const Services = () => {
                 label={<Text strong>Tên Dịch Vụ</Text>}
                 rules={[{ required: true, message: 'Vui lòng nhập tên dịch vụ!' }]}
               >
-                <Input 
+                <Input
                   placeholder="Nhập tên dịch vụ"
                   style={{ borderRadius: '6px', height: '40px' }}
                 />
@@ -504,7 +489,7 @@ const Services = () => {
                 label={<Text strong>Mã Dịch Vụ</Text>}
                 rules={[{ required: true, message: 'Vui lòng nhập mã dịch vụ!' }]}
               >
-                <Input 
+                <Input
                   placeholder="Nhập mã dịch vụ"
                   style={{ borderRadius: '6px', height: '40px' }}
                 />
@@ -517,8 +502,8 @@ const Services = () => {
             label={<Text strong>Mô Tả</Text>}
             rules={[{ required: true, message: 'Vui lòng nhập mô tả!' }]}
           >
-            <Input.TextArea 
-              rows={3} 
+            <Input.TextArea
+              rows={3}
               placeholder="Nhập mô tả chi tiết về dịch vụ"
               style={{ borderRadius: '6px' }}
             />
@@ -531,8 +516,8 @@ const Services = () => {
                 label={<Text strong>Giá Cơ Bản (VNĐ)</Text>}
                 rules={[{ required: true, message: 'Vui lòng nhập giá!' }]}
               >
-                <InputNumber 
-                  min={0} 
+                <InputNumber
+                  min={0}
                   style={{ width: '100%', borderRadius: '6px', height: '40px' }}
                   placeholder="0"
                   formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -546,8 +531,8 @@ const Services = () => {
                 label={<Text strong>Thời Gian (Ngày)</Text>}
                 rules={[{ required: true, message: 'Vui lòng nhập thời gian!' }]}
               >
-                <InputNumber 
-                  min={0} 
+                <InputNumber
+                  min={0}
                   style={{ width: '100%', borderRadius: '6px', height: '40px' }}
                   placeholder="0"
                 />
@@ -559,12 +544,51 @@ const Services = () => {
                 label={<Text strong>Tỷ Lệ Thành Công (%)</Text>}
                 rules={[{ required: true, message: 'Vui lòng nhập tỷ lệ thành công!' }]}
               >
-                <InputNumber 
-                  min={0} 
-                  max={100} 
+                <InputNumber
+                  min={0}
+                  max={100}
                   style={{ width: '100%', borderRadius: '6px', height: '40px' }}
                   placeholder="0"
                 />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="imageUrl"
+                label={<Text strong>URL Hình Ảnh</Text>}
+                rules={[{ required: false, message: 'Vui lòng nhập URL hình ảnh!' }]}
+              >
+                <Input
+                  placeholder="Nhập URL hình ảnh (tùy chọn)"
+                  style={{ borderRadius: '6px', height: '40px' }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="imageFile"
+                label={<Text strong>Tệp Hình Ảnh</Text>}
+                valuePropName="file"
+                getValueFromEvent={(e) => {
+                  // Kiểm tra và trả về file đầu tiên nếu có
+                  return e && e.fileList && e.fileList.length > 0 ? e.fileList[0] : null;
+                }}
+                rules={[{ required: false, message: 'Vui lòng tải lên tệp hình ảnh!' }]}
+              >
+                <Upload
+                  name="imageFile"
+                  beforeUpload={() => false} // Ngăn upload tự động
+                  maxCount={1} // Chỉ cho phép 1 file
+                  onChange={(info) => {
+                    if (info.file.status === 'removed') {
+                      form.setFieldsValue({ imageFile: null }); // Reset khi xóa file
+                    }
+                  }}
+                >
+                  <Button icon={<UploadOutlined />}>Chọn file ảnh</Button>
+                </Upload>
               </Form.Item>
             </Col>
           </Row>
@@ -574,8 +598,8 @@ const Services = () => {
             label={<Text strong>Quy Trình</Text>}
             rules={[{ required: true, message: 'Vui lòng nhập quy trình!' }]}
           >
-            <Input.TextArea 
-              rows={3} 
+            <Input.TextArea
+              rows={3}
               placeholder="Mô tả quy trình thực hiện dịch vụ"
               style={{ borderRadius: '6px' }}
             />
@@ -586,8 +610,8 @@ const Services = () => {
             label={<Text strong>Yêu Cầu</Text>}
             rules={[{ required: true, message: 'Vui lòng nhập yêu cầu!' }]}
           >
-            <Input.TextArea 
-              rows={3} 
+            <Input.TextArea
+              rows={3}
               placeholder="Các yêu cầu cần thiết trước khi thực hiện"
               style={{ borderRadius: '6px' }}
             />

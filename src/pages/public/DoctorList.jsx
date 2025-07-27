@@ -52,19 +52,38 @@ const DoctorList = () => {
       try {
         setLoading(true);
         const response = await guestService.getPublicDoctors();
-        // Định dạng lại dữ liệu bác sĩ để hiển thị
-        const validDoctors = (response.data || []).map((doctor) => ({
-          id: doctor.id,
-          name: doctor.doctorName, // Ánh xạ doctorName sang name
-          specialty: doctor.specialization, // Ánh xạ specialization sang specialty
-          experience: `${doctor.experienceYears} năm kinh nghiệm`, // Định dạng experience
-          rating: doctor.averageRating || 0, // Ánh xạ averageRating sang rating
-          reviewCount: doctor.totalFeedbacks || 0, // Ánh xạ totalFeedbacks sang reviewCount
-          photo: "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png", // Giả định ảnh mặc định
-          description: doctor.description || "",
-        }));
-        setDoctors(validDoctors);
-        setFilteredDoctors(validDoctors);
+        // Lấy thông tin profile cho từng bác sĩ
+        const doctorProfiles = await Promise.all(
+          (response.data || []).map(async (doctor) => {
+            try {
+              const profile = await guestService.getUserProfile(doctor.id); // Truyền id của bác sĩ
+              return {
+                id: doctor.id,
+                name: doctor.doctorName,
+                specialty: doctor.specialization,
+                experience: `${doctor.experienceYears} năm kinh nghiệm`,
+                rating: doctor.averageRating || 0,
+                reviewCount: doctor.totalFeedbacks || 0,
+                photo: profile?.avatarUrl || "https://res.cloudinary.com/dmg7mrhzq/image/upload/v1752740540/o9lihgms3ljhw0n4rpwv.jpg",
+                description: doctor.description || "",
+              };
+            } catch (profileError) {
+              console.error(`Lỗi lấy profile cho doctor ${doctor.id}:`, profileError);
+              return {
+                id: doctor.id,
+                name: doctor.doctorName,
+                specialty: doctor.specialization,
+                experience: `${doctor.experienceYears} năm kinh nghiệm`,
+                rating: doctor.averageRating || 0,
+                reviewCount: doctor.totalFeedbacks || 0,
+                photo: "https://res.cloudinary.com/dmg7mrhzq/image/upload/v1752740540/o9lihgms3ljhw0n4rpwv.jpg",
+                description: doctor.description || "",
+              };
+            }
+          })
+        );
+        setDoctors(doctorProfiles);
+        setFilteredDoctors(doctorProfiles);
       } catch (error) {
         message.error("Không thể tải danh sách bác sĩ");
       } finally {
@@ -223,6 +242,7 @@ const DoctorList = () => {
                       <div style={styles.doctorPhotoContainer}>
                         <img
                           src={doctor.photo}
+
                           alt={doctor.name}
                           style={styles.doctorPhoto}
                         />

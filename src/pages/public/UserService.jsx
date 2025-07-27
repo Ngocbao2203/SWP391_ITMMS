@@ -20,13 +20,6 @@ import {
 
 const { Panel } = Collapse;
 
-// Mảng ảnh cho dịch vụ (4 ảnh cố định, dịch vụ mới lấy ảnh dịch vụ 1)
-const serviceImages = [
-  "https://res.cloudinary.com/dqnq00784/image/upload/v1752731440/e6gdbumv3eodzly82zss.jpg",
-  "https://res.cloudinary.com/dqnq00784/image/upload/v1752738968/lkjvgwblx7suspabpzd6.jpg",
-  "https://res.cloudinary.com/dqnq00784/image/upload/v1752739793/eqkkcrbagtz4v6glxufd.jpg",
-  "https://res.cloudinary.com/dqnq00784/image/upload/v1752739813/fohzqnet8qajfwxraibt.jpg"
-];
 // Component chính hiển thị danh sách dịch vụ
 export default function UserService() {
   const navigate = useNavigate();
@@ -67,14 +60,14 @@ export default function UserService() {
 
   // Map dữ liệu từ API đến cấu trúc phù hợp với giao diện
   const mapServiceData = (apiServices) => {
-    return apiServices.map((service, index) => ({
+    return apiServices.map((service) => ({
       ...service,
       features: service.features
         ? typeof service.features === "string"
           ? service.features.split(",").map((feat) => feat.trim())
           : service.features
         : [],
-      image: serviceImages[index % 4] || serviceImages[0] // Gán ảnh cố định theo thứ tự, dịch vụ mới lấy ảnh 1
+      image: service.imageUrl || "" // Sử dụng imageUrl từ API, mặc định rỗng nếu không có
     }));
   };
 
@@ -216,11 +209,8 @@ export default function UserService() {
                 cover={
                   <div className="service-image">
                     <img
-                      src={
-                        service.image ||
-                        "https://res.cloudinary.com/dqnq00784/image/upload/v1752731440/e6gdbumv3eodzly82zss.jpg"
-                      }
-                      alt={service.name}
+                      src={service.image || ""}
+                      alt={service.serviceName}
                     />
                     <div className="service-overlay">
                       <div className="service-type-badge">

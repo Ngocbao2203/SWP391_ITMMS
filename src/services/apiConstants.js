@@ -129,7 +129,12 @@ export const API_ENDPOINTS = {
     BLOG_CATEGORIES: "/guest/blog/categories",
     SEARCH: "/guest/search",
   },
-
+  
+  USER: {
+    BASE: "/user",
+    GET_PROFILE: '/user/profile',
+    
+  },
   // Blog APIs
   BLOG: {
     BASE: "/blog",

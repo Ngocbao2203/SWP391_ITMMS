@@ -115,7 +115,7 @@ const Doctors = () => {
         fullName: values.fullName,
         email: values.email,
         password: values.password,
-        role: "Manager",
+        role: "Doctor",
         specialization: values.specialization,
         licenseNumber: values.licenseNumber,
         phone: values.phone,

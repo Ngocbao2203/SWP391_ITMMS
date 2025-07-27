@@ -40,7 +40,7 @@ class ApiService {
         try {
           this.activeRequests++;
           console.log(`Active requests: ${this.activeRequests}/${this.maxConcurrentRequests}`);
-          
+
           const result = await requestFn();
           resolve(result);
         } catch (error) {
@@ -83,23 +83,23 @@ class ApiService {
     console.log('Status:', response.status);
     console.log('Status Text:', response.statusText);
     console.log('Headers:', Object.fromEntries(response.headers.entries()));
-    
+
     const contentType = response.headers.get('content-type');
-    
+
     if (contentType && contentType.includes('application/json')) {
       const data = await response.json();
       // console.log('Response data:', data);
-      
+
       if (!response.ok) {
         // console.error('=== API ERROR DETAILS ===');
         // console.error('Status:', response.status);
         // console.error('Response data:', data);
         // console.error('Error message:', data.message || data.title || data.error);
         // console.error('Validation errors:', data.errors || data.validationErrors);
-        
+
         const error = new ApiError(data.message || data.title || 'API Error', response.status, data);
         console.error('Final API Error:', error);
-        
+
         if (error.isAuthError()) {
           // Clear invalid token and redirect to login
           localStorage.removeItem('currentUser');
@@ -107,10 +107,10 @@ class ApiService {
         }
         throw error;
       }
-      
+
       return data;
     }
-    
+
     if (!response.ok) {
       console.error('Non-JSON error response:', response);
       // Try to get response text for non-JSON errors
@@ -123,19 +123,18 @@ class ApiService {
         throw new ApiError(`Network Error: ${response.status} ${response.statusText}`, response.status);
       }
     }
-    
+
     return response;
   }
 
   // GET request
   async get(endpoint, options = {}) {
     try {
-      const user = authService.getCurrentUser(); // Lấy thông tin người dùng
-      const token = user?.token; // Giả định token nằm trong user object
+      const user = authService.getCurrentUser();
+      const token = user?.token;
       const headers = {
-        'Content-Type': 'application/json',
         'Accept': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}), // Thêm token nếu có
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
       };
 
@@ -151,31 +150,37 @@ class ApiService {
     }
   }
 
-  // POST request with retry mechanism and queue management
   async post(endpoint, data = null, options = {}) {
     const requestKey = options.allowDuplicates ? null : this.createRequestKey('POST', endpoint, data);
-    
+
     return this.queueRequest(async () => {
       const maxRetries = options.maxRetries || 3;
       const retryDelay = options.retryDelay || 1000;
-      
+
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           console.log(`=== POST REQUEST (Attempt ${attempt}/${maxRetries}) ===`);
           console.log('Endpoint:', endpoint);
           console.log('Full URL:', this.createUrl(endpoint));
           console.log('Data:', data);
-          console.log('Data JSON:', JSON.stringify(data, null, 2));
-          
+
           const user = authService.getCurrentUser();
           const token = user?.token;
           const headers = {
-            'Content-Type': 'application/json',
             'Accept': 'application/json',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
             ...options.headers,
           };
-          
+
+          // Phát hiện nếu data là FormData và điều chỉnh header/body
+          let body = data;
+          if (data instanceof FormData) {
+            delete headers['Content-Type']; // Để trình duyệt tự đặt multipart/form-data
+          } else if (data) {
+            headers['Content-Type'] = 'application/json';
+            body = JSON.stringify(data);
+          }
+
           console.log('=== REQUEST HEADERS ===');
           console.log('User:', user ? `${user.fullName} (${user.role})` : 'No user');
           console.log('Token exists:', !!token);
@@ -184,26 +189,24 @@ class ApiService {
           const response = await fetch(this.createUrl(endpoint), {
             method: 'POST',
             headers,
-            body: data ? JSON.stringify(data) : null,
+            body,
             ...options,
           });
 
           return await this.handleResponse(response);
         } catch (error) {
           console.error(`POST attempt ${attempt} failed:`, error);
-          
-          // Don't retry on authentication errors or client errors (4xx)
+
           if (error.status >= 400 && error.status < 500) {
             throw this.handleError(error);
           }
-          
-          // Retry on network errors or server errors (5xx)
+
           if (attempt < maxRetries) {
             console.log(`Retrying in ${retryDelay}ms...`);
             await new Promise(resolve => setTimeout(resolve, retryDelay));
             continue;
           }
-          
+
           throw this.handleError(error);
         }
       }
@@ -213,62 +216,71 @@ class ApiService {
   // PUT request with retry mechanism and queue management
   async put(endpoint, data = null, options = {}) {
     const requestKey = options.allowDuplicates ? null : this.createRequestKey('PUT', endpoint, data);
-    
+
     return this.queueRequest(async () => {
       const maxRetries = options.maxRetries || 3;
       const retryDelay = options.retryDelay || 1000;
-      
+
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           console.log(`=== PUT REQUEST (Attempt ${attempt}/${maxRetries}) ===`);
           console.log('Endpoint:', endpoint);
+          console.log('Full URL:', this.createUrl(endpoint));
           console.log('Data:', data);
-          
+
           const user = authService.getCurrentUser();
           const token = user?.token;
           const headers = {
-            'Content-Type': 'application/json',
             'Accept': 'application/json',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
             ...options.headers,
           };
 
+          let body = data;
+          if (data instanceof FormData) {
+            delete headers['Content-Type']; // Để trình duyệt tự đặt multipart/form-data
+          } else if (data) {
+            headers['Content-Type'] = 'application/json';
+            body = JSON.stringify(data);
+          }
+
+          console.log('=== REQUEST HEADERS ===');
+          console.log('User:', user ? `${user.fullName} (${user.role})` : 'No user');
+          console.log('Token exists:', !!token);
+          console.log('Headers:', headers);
+
           const response = await fetch(this.createUrl(endpoint), {
             method: 'PUT',
             headers,
-            body: data ? JSON.stringify(data) : null,
+            body,
             ...options,
           });
 
           return await this.handleResponse(response);
         } catch (error) {
           console.error(`PUT attempt ${attempt} failed:`, error);
-          
-          // Don't retry on authentication errors or client errors (4xx)
+
           if (error.status >= 400 && error.status < 500) {
             throw this.handleError(error);
           }
-          
-          // Retry on network errors or server errors (5xx)
+
           if (attempt < maxRetries) {
             console.log(`Retrying in ${retryDelay}ms...`);
             await new Promise(resolve => setTimeout(resolve, retryDelay));
             continue;
           }
-          
+
           throw this.handleError(error);
         }
       }
     }, requestKey);
   }
 
-  // DELETE request
   async delete(endpoint, options = {}) {
     try {
       const user = authService.getCurrentUser();
       const token = user?.token;
       const headers = {
-        'Content-Type': 'application/json',
         'Accept': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
@@ -310,12 +322,12 @@ class ApiService {
     if (error instanceof ApiError) {
       return error;
     }
-    
+
     // Network errors
     if (error.name === 'TypeError' && error.message.includes('fetch')) {
       return new ApiError('Không thể kết nối đến server. Vui lòng kiểm tra kết nối internet.', 0);
     }
-    
+
     return new ApiError(error.message || 'Đã có lỗi xảy ra', 500);
   }
 }

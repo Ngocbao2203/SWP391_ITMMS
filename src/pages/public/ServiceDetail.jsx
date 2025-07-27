@@ -143,26 +143,15 @@ const ServiceDetail = () => {
             <Col xs={24} md={10}>
               <div className="service-image">
                 <img
-                  src={
-                    service.image ||
-                    service.Image ||
-                    "https://res.cloudinary.com/dqnq00784/image/upload/v1746013282/udf9sd7mne0dalsnyjrq.png"
-                  }
-                  alt={
-                    service.serviceName ||
-                    service.ServiceName ||
-                    service.name ||
-                    "Dịch vụ"
-                  }
+                  src={service.imageUrl || ""}
+                  alt={service.serviceName || "Dịch vụ"}
                 />
               </div>
             </Col>
 
             <Col xs={24} md={14}>
               <div className="service-intro">
-                <Title level={2}>
-                  {service.serviceName || service.ServiceName || service.name}
-                </Title>
+                <Title level={2}>{service.serviceName}</Title>
 
                 {/* <div className="service-stats">
                   <div className="stat-item">
@@ -176,10 +165,7 @@ const ServiceDetail = () => {
                 </div> */}
 
                 <Paragraph className="service-description">
-                  {service.detailedDescription ||
-                    service.DetailedDescription ||
-                    service.description ||
-                    service.Description}
+                  {service.detailedDescription || service.description}
                 </Paragraph>
 
                 <div className="service-additional-info">

@@ -43,9 +43,9 @@ const ManagerSidebar = () => {
           <Menu.Item key="/manager/services" icon={<AppstoreOutlined />}>
             <Link to="/manager/services">Quản lí dịch Vụ</Link>
           </Menu.Item>
-          <Menu.Item key="/manager/blogs" icon={<FileTextOutlined />}>
+          {/* <Menu.Item key="/manager/blogs" icon={<FileTextOutlined />}>
             <Link to="/manager/blogs">Quản lý blog</Link>
-          </Menu.Item>
+          </Menu.Item> */}
           <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
             Đăng Xuất
           </Menu.Item>

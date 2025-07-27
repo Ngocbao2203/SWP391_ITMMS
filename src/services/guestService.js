@@ -13,7 +13,14 @@ class GuestService {
       throw error;
     }
   }
-
+  async getUserProfile() {
+    try {
+      const response = await apiService.get(API_ENDPOINTS.USER.GET_PROFILE);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
   /**
    * Lấy danh sách dịch vụ công khai
    * @param {Object} filters 
