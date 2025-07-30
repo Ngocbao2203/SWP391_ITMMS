@@ -175,3 +175,12 @@
 .logout-btn span {
   margin-left: 10px;
 }
+.doctor-avatar,
+.doctor-avatar-small {
+  transition: 0.3s ease;
+}
+.doctor-avatar:hover,
+.doctor-avatar-small:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+}

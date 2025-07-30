@@ -111,16 +111,16 @@ const DoctorDashboard = () => {
 
       try {
         // Lấy lịch hẹn của doctor từ API appointments (có customerId)
-        console.log("=== FETCHING DOCTOR APPOINTMENTS ===");
-        console.log("DoctorId:", doctorId);
-        console.log("Today:", today);
+        // console.log("=== FETCHING DOCTOR APPOINTMENTS ===");
+        // console.log("DoctorId:", doctorId);
+        // console.log("Today:", today);
 
         // Thử nhiều cách gọi API để lấy data
         let scheduleResponse = null;
 
         // Kiểm tra backend có chạy không
         try {
-          console.log("=== TESTING BACKEND CONNECTION ===");
+          // console.log("=== TESTING BACKEND CONNECTION ===");
           const testResponse = await fetch(
             `${
               process.env.REACT_APP_API_URL || "http://localhost:5037"
@@ -146,10 +146,10 @@ const DoctorDashboard = () => {
         } catch (error) {
           console.warn("Failed to get all appointments:", error);
         }
-        console.log("=== RAW API APPOINTMENTS RESPONSE ===");
-        console.log("Full response:", scheduleResponse);
-        console.log("Response type:", typeof scheduleResponse);
-        console.log("Response keys:", Object.keys(scheduleResponse || {}));
+        // console.log("=== RAW API APPOINTMENTS RESPONSE ===");
+        // console.log("Full response:", scheduleResponse);
+        // console.log("Response type:", typeof scheduleResponse);
+        // console.log("Response keys:", Object.keys(scheduleResponse || {}));
 
         // Extract appointments from response structure - theo chuẩn API mới
         let allAppointmentsData =
@@ -159,10 +159,10 @@ const DoctorDashboard = () => {
           scheduleResponse ||
           [];
 
-        console.log("=== ALL APPOINTMENTS ARRAY ===");
-        console.log("All appointments array:", allAppointmentsData);
-        console.log("Is array:", Array.isArray(allAppointmentsData));
-        console.log("Length:", allAppointmentsData.length);
+        // console.log("=== ALL APPOINTMENTS ARRAY ===");
+        // console.log("All appointments array:", allAppointmentsData);
+        // console.log("Is array:", Array.isArray(allAppointmentsData));
+        // console.log("Length:", allAppointmentsData.length);
 
         // Chuẩn hóa dữ liệu - đảm bảo là mảng
         if (!Array.isArray(allAppointmentsData)) {
@@ -172,9 +172,9 @@ const DoctorDashboard = () => {
             : [];
         }
 
-        console.log("=== APPOINTMENTS LOADED ===");
-        console.log("Selected date:", selectedDate.format("YYYY-MM-DD"));
-        console.log("All appointments count:", allAppointmentsData.length);
+        // console.log("=== APPOINTMENTS LOADED ===");
+        // console.log("Selected date:", selectedDate.format("YYYY-MM-DD"));
+        // console.log("All appointments count:", allAppointmentsData.length);
 
         // Log first appointment structure if exists
         if (allAppointmentsData.length > 0) {
@@ -187,7 +187,7 @@ const DoctorDashboard = () => {
         }
 
         // Xử lý dữ liệu từ API
-        console.log("=== PROCESSING API DATA ===");
+        // console.log("=== PROCESSING API DATA ===");
         if (
           Array.isArray(allAppointmentsData) &&
           allAppointmentsData.length > 0

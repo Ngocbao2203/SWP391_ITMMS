@@ -52,6 +52,7 @@ export const API_ENDPOINTS = {
     GET_SCHEDULE: (id) => `/doctors/${id}/schedule`,
     MY_SCHEDULE: "/doctors/my-schedule",
     TEST: "/doctors/test",
+    UPLOAD_AVATAR: (id) => `/doctors/${id}/avatar`,
   },
 
   // Treatment Services APIs

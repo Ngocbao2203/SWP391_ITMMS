@@ -41,6 +41,25 @@ class DoctorService {
       throw error;
     }
   }
+  async uploadDoctorAvatar(id, file) {
+    try {
+      const formData = new FormData();
+      formData.append("doctorId", id); // Thêm doctorId vào FormData
+      formData.append("file", file);
+
+      console.log("FormData entries in doctorService:", Array.from(formData.entries()));
+
+      const response = await apiService.post(
+        API_ENDPOINTS.DOCTORS.UPLOAD_AVATAR(id),
+        formData
+      );
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async updateManagementAvailability(managerId, isAvailable) {
     try {
       console.log("Starting updateManagementAvailability for managerId:", managerId, "with isAvailable:", isAvailable);

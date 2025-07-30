@@ -18,10 +18,9 @@ import {
   UserOutlined,
   TeamOutlined,
   CalendarOutlined,
-  StarOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layouts/MainLayout";
-import guestService from "../../services/guestService";
+import { doctorService } from "../../services";
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
@@ -43,7 +42,7 @@ const DoctorList = () => {
   const [loading, setLoading] = useState(true); // Đang tải dữ liệu
   const [searchTerm, setSearchTerm] = useState(""); // Từ khóa tìm kiếm
   const [selectedSpecialty, setSelectedSpecialty] = useState("Tất cả chuyên khoa"); // Chuyên khoa filter
-  const [sortBy, setSortBy] = useState("doctorName"); // Tiêu chí sắp xếp
+  const [sortBy, setSortBy] = useState("name"); // Tiêu chí sắp xếp
   const navigate = useNavigate();
 
   // Lấy danh sách bác sĩ từ API khi component mount
@@ -51,45 +50,48 @@ const DoctorList = () => {
     const fetchDoctors = async () => {
       try {
         setLoading(true);
-        const response = await guestService.getPublicDoctors();
-        // Lấy thông tin profile cho từng bác sĩ
-        const doctorProfiles = await Promise.all(
-          (response.data || []).map(async (doctor) => {
-            try {
-              const profile = await guestService.getUserProfile(doctor.id); // Truyền id của bác sĩ
-              return {
-                id: doctor.id,
-                name: doctor.doctorName,
-                specialty: doctor.specialization,
-                experience: `${doctor.experienceYears} năm kinh nghiệm`,
-                rating: doctor.averageRating || 0,
-                reviewCount: doctor.totalFeedbacks || 0,
-                photo: profile?.avatarUrl || "https://res.cloudinary.com/dmg7mrhzq/image/upload/v1752740540/o9lihgms3ljhw0n4rpwv.jpg",
-                description: doctor.description || "",
-              };
-            } catch (profileError) {
-              console.error(`Lỗi lấy profile cho doctor ${doctor.id}:`, profileError);
-              return {
-                id: doctor.id,
-                name: doctor.doctorName,
-                specialty: doctor.specialization,
-                experience: `${doctor.experienceYears} năm kinh nghiệm`,
-                rating: doctor.averageRating || 0,
-                reviewCount: doctor.totalFeedbacks || 0,
-                photo: "https://res.cloudinary.com/dmg7mrhzq/image/upload/v1752740540/o9lihgms3ljhw0n4rpwv.jpg",
-                description: doctor.description || "",
-              };
-            }
-          })
-        );
+        const response = await doctorService.getAllManagement();
+        console.log("Response from API:", response); // Debug: Xem toàn bộ response
+
+        // Xử lý linh hoạt cấu trúc API
+        let doctorsRaw = [];
+        if (response.doctors) {
+          doctorsRaw = response.doctors; // Lấy trực tiếp từ response
+        } else if (response.data?.doctors) {
+          doctorsRaw = response.data.doctors; // Nếu có data wrapper
+        } else if (Array.isArray(response.data)) {
+          doctorsRaw = response.data; // Nếu API trả mảng trực tiếp
+        } else if (response.data?.data) {
+          doctorsRaw = response.data.data;
+        } else if (response.data?.result) {
+          doctorsRaw = response.data.result;
+        }
+        console.log("Raw Doctors Data:", doctorsRaw); // Debug: Xem dữ liệu thô
+
+        const doctorProfiles = doctorsRaw.map((doctor) => ({
+          id: doctor.id,
+          name: doctor.fullName,
+          specialty: doctor.specialization,
+          experience: `${doctor.experienceYears} năm kinh nghiệm`,
+          rating: doctor.averageRating || 0,
+          reviewCount: doctor.totalAppointments || 0,
+          photo:
+            doctor.avatarUrl ||
+            "https://res.cloudinary.com/dmg7mrhzq/image/upload/v1752740540/o9lihgms3ljhw0n4rpwv.jpg",
+          description: doctor.description || "",
+        }));
+        console.log("Doctor Profiles:", doctorProfiles); // Debug: Xem dữ liệu đã map
+
         setDoctors(doctorProfiles);
         setFilteredDoctors(doctorProfiles);
       } catch (error) {
+        console.error("Lỗi khi tải danh sách bác sĩ:", error.response?.data || error.message);
         message.error("Không thể tải danh sách bác sĩ");
       } finally {
         setLoading(false);
       }
     };
+
     fetchDoctors();
   }, []);
 
@@ -213,7 +215,7 @@ const DoctorList = () => {
                   size="large"
                   style={styles.selectInput}
                 >
-                  <Option value="doctorName">Tên A-Z</Option>
+                  <Option value="name">Tên A-Z</Option>
                   <Option value="experience">Kinh nghiệm nhiều nhất</Option>
                 </Select>
               </Col>
@@ -242,7 +244,6 @@ const DoctorList = () => {
                       <div style={styles.doctorPhotoContainer}>
                         <img
                           src={doctor.photo}
-
                           alt={doctor.name}
                           style={styles.doctorPhoto}
                         />
@@ -468,12 +469,6 @@ const styles = {
     marginBottom: "12px",
     fontSize: "14px",
     fontWeight: "500",
-  },
-  doctorRating: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: "16px",
-    fontSize: "14px",
   },
   doctorDescription: {
     color: "#666",

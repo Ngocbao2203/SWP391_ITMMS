@@ -79,10 +79,10 @@ class ApiService {
 
   // Helper method để handle response
   async handleResponse(response) {
-    console.log('=== API RESPONSE DEBUG ===');
-    console.log('Status:', response.status);
-    console.log('Status Text:', response.statusText);
-    console.log('Headers:', Object.fromEntries(response.headers.entries()));
+    // console.log('=== API RESPONSE DEBUG ===');
+    // console.log('Status:', response.status);
+    // console.log('Status Text:', response.statusText);
+    // console.log('Headers:', Object.fromEntries(response.headers.entries()));
 
     const contentType = response.headers.get('content-type');
 
@@ -181,10 +181,10 @@ class ApiService {
             body = JSON.stringify(data);
           }
 
-          console.log('=== REQUEST HEADERS ===');
-          console.log('User:', user ? `${user.fullName} (${user.role})` : 'No user');
-          console.log('Token exists:', !!token);
-          console.log('Headers:', headers);
+          // console.log('=== REQUEST HEADERS ===');
+          // console.log('User:', user ? `${user.fullName} (${user.role})` : 'No user');
+          // console.log('Token exists:', !!token);
+          // console.log('Headers:', headers);
 
           const response = await fetch(this.createUrl(endpoint), {
             method: 'POST',
@@ -223,10 +223,10 @@ class ApiService {
 
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-          console.log(`=== PUT REQUEST (Attempt ${attempt}/${maxRetries}) ===`);
-          console.log('Endpoint:', endpoint);
-          console.log('Full URL:', this.createUrl(endpoint));
-          console.log('Data:', data);
+          // console.log(`=== PUT REQUEST (Attempt ${attempt}/${maxRetries}) ===`);
+          // console.log('Endpoint:', endpoint);
+          // console.log('Full URL:', this.createUrl(endpoint));
+          // console.log('Data:', data);
 
           const user = authService.getCurrentUser();
           const token = user?.token;
@@ -244,10 +244,10 @@ class ApiService {
             body = JSON.stringify(data);
           }
 
-          console.log('=== REQUEST HEADERS ===');
-          console.log('User:', user ? `${user.fullName} (${user.role})` : 'No user');
-          console.log('Token exists:', !!token);
-          console.log('Headers:', headers);
+          // console.log('=== REQUEST HEADERS ===');
+          // console.log('User:', user ? `${user.fullName} (${user.role})` : 'No user');
+          // console.log('Token exists:', !!token);
+          // console.log('Headers:', headers);
 
           const response = await fetch(this.createUrl(endpoint), {
             method: 'PUT',

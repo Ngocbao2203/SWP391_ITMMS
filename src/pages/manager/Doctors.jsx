@@ -146,7 +146,7 @@ const Doctors = () => {
       width: "30%",
       render: (_, record) => (
         <Space>
-          <Avatar size={64} src={record.photo} icon={<UserOutlined />} />
+          <Avatar size={64} src={record.avatarUrl} icon={<UserOutlined />} />
           <div>
             <Typography.Text strong style={{ fontSize: "16px" }}>
               {record.fullName}
