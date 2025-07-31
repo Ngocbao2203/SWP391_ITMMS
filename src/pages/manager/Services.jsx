@@ -64,8 +64,6 @@ const Services = () => {
             requirements: service.requirements || '',
             durationDays: service.durationDays || 0,
             successRate: service.successRate || 0,
-            imageUrl: service.imageUrl || '',
-            imageFile: service.imageFile || '',
           }));
           setServices(formattedServices);
           safeToast('success', 'Tải danh sách dịch vụ thành công!');
@@ -104,7 +102,6 @@ const Services = () => {
         requirements: service.requirements,
         durationDays: service.durationDays,
         successRate: service.successRate,
-        imageUrl: service.imageUrl,
       });
     } else {
       form.resetFields();
@@ -127,17 +124,13 @@ const Services = () => {
       formData.append('requirements', values.requirements);
       formData.append('durationDays', values.durationDays);
       formData.append('successRate', values.successRate);
-      formData.append('imageUrl', values.imageUrl || '');
-      if (values.imageFile && values.imageFile.originFileObj) {
-        formData.append('imageFile', values.imageFile.originFileObj);
-      }
 
       if (editingService) {
         const response = await treatmentService.updateTreatmentService(editingService.id, formData);
         if (isMounted && response.success) {
           setServices((prev) =>
             prev.map((s) =>
-              s.key === editingService.key ? { ...s, ...values, imageUrl: values.imageUrl || '' } : s
+              s.key === editingService.key ? { ...s, ...values } : s
             )
           );
           safeToast('success', response.message || 'Cập nhật dịch vụ thành công!');
@@ -151,7 +144,6 @@ const Services = () => {
             ...values,
             id: response.data.id ? response.data.id.toString().padStart(2, '0') : (services.length + 1).toString().padStart(2, '0'),
             key: response.data.id ? response.data.id.toString() : (services.length + 1).toString(),
-            imageUrl: values.imageUrl || '',
           };
           setServices([...services, newService]);
           safeToast('success', response.message || 'Thêm dịch vụ thành công!');
@@ -216,17 +208,6 @@ const Services = () => {
         </Tag>
       ),
       responsive: ['md'],
-    },
-    {
-      title: 'Hình Ảnh',
-      key: 'imageUrl',
-      render: (_, record) => (
-        record.imageUrl && record.imageUrl.trim() ? (
-          <img src={record.imageUrl} alt={record.serviceName} style={{ width: '50px', height: '50px' }} onError={(e) => { e.target.style.display = 'none'; }} />
-        ) : (
-          <Text type="secondary">Chưa có hình ảnh</Text>
-        )
-      ),
     },
     {
       title: 'Tên Dịch Vụ',
@@ -550,45 +531,6 @@ const Services = () => {
                   style={{ width: '100%', borderRadius: '6px', height: '40px' }}
                   placeholder="0"
                 />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="imageUrl"
-                label={<Text strong>URL Hình Ảnh</Text>}
-                rules={[{ required: false, message: 'Vui lòng nhập URL hình ảnh!' }]}
-              >
-                <Input
-                  placeholder="Nhập URL hình ảnh (tùy chọn)"
-                  style={{ borderRadius: '6px', height: '40px' }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="imageFile"
-                label={<Text strong>Tệp Hình Ảnh</Text>}
-                valuePropName="file"
-                getValueFromEvent={(e) => {
-                  // Kiểm tra và trả về file đầu tiên nếu có
-                  return e && e.fileList && e.fileList.length > 0 ? e.fileList[0] : null;
-                }}
-                rules={[{ required: false, message: 'Vui lòng tải lên tệp hình ảnh!' }]}
-              >
-                <Upload
-                  name="imageFile"
-                  beforeUpload={() => false} // Ngăn upload tự động
-                  maxCount={1} // Chỉ cho phép 1 file
-                  onChange={(info) => {
-                    if (info.file.status === 'removed') {
-                      form.setFieldsValue({ imageFile: null }); // Reset khi xóa file
-                    }
-                  }}
-                >
-                  <Button icon={<UploadOutlined />}>Chọn file ảnh</Button>
-                </Upload>
               </Form.Item>
             </Col>
           </Row>

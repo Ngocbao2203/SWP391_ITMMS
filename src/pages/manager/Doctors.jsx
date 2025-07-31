@@ -117,7 +117,6 @@ const Doctors = () => {
         password: values.password,
         role: "Doctor",
         specialization: values.specialization,
-        licenseNumber: values.licenseNumber,
         phone: values.phone,
         address: values.address,
         username: values.username,
@@ -155,7 +154,7 @@ const Doctors = () => {
               <Tag color="blue">{record.specialization}</Tag>
             </div>
             <div style={{ fontSize: "13px", color: "#666" }}>
-              <MedicineBoxOutlined /> {record.licenseNumber}
+              <MedicineBoxOutlined /> Chuyên gia {record.specialization}
             </div>
           </div>
         </Space>
@@ -251,7 +250,7 @@ const Doctors = () => {
           onClick={() => setIsRegisterModalVisible(true)}
           style={{ marginLeft: 16 }}
         >
-          Tạo tài khoản quản lý
+          Tạo tài khoản Bác Sĩ
         </Button>
       </div>
 
@@ -315,12 +314,6 @@ const Doctors = () => {
               <Option value="Nội tiết sinh sản">Nội tiết sinh sản</Option>
             </Select>
           </Form.Item>
-
-          <Form.Item name="licenseNumber" label="Số giấy phép hành nghề">
-            <Input prefix={<MedicineBoxOutlined />} />
-          </Form.Item>
-
-          <Divider />
 
           <Form.Item name="email" label="Email">
             <Input prefix={<MailOutlined />} disabled />
@@ -440,14 +433,6 @@ const Doctors = () => {
               <Option value="Hiếm muộn - IVF">Hiếm muộn - IVF</Option>
               <Option value="Nội tiết sinh sản">Nội tiết sinh sản</Option>
             </Select>
-          </Form.Item>
-
-          <Form.Item
-            name="licenseNumber"
-            label="Số giấy phép hành nghề"
-            rules={[{ required: true, message: "Vui lòng nhập số giấy phép!" }]}
-          >
-            <Input prefix={<MedicineBoxOutlined />} />
           </Form.Item>
         </Form>
       </Modal>
