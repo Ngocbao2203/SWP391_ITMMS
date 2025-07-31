@@ -39,16 +39,16 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
       }
 
       setIsLoadingAvatar(true);
-      
+
       try {
         console.log("Fetching user profile...");
         const response = await guestService.getUserProfile();
         console.log("Full response from getUserProfile:", response);
-        
+
         // Dựa vào API response structure: avatarUrl nằm trực tiếp trong response
         // Kiểm tra nhiều cấu trúc có thể có
         let newAvatarUrl = null;
-        
+
         if (response.avatarUrl) {
           // Trường hợp avatarUrl nằm trực tiếp trong response
           newAvatarUrl = response.avatarUrl;
@@ -60,10 +60,14 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
           newAvatarUrl = response.data.doctor.avatarUrl;
         }
 
-        if (newAvatarUrl && newAvatarUrl !== "null" && newAvatarUrl.trim() !== "") {
+        if (
+          newAvatarUrl &&
+          newAvatarUrl !== "null" &&
+          newAvatarUrl.trim() !== ""
+        ) {
           console.log("Received avatarUrl from API:", newAvatarUrl);
           setAvatarUrl(newAvatarUrl);
-          
+
           // Cập nhật localStorage với avatarUrl từ server
           const updatedUser = {
             ...currentUser,
@@ -71,7 +75,9 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
           };
           localStorage.setItem("user", JSON.stringify(updatedUser));
         } else {
-          console.warn("avatarUrl not found or empty in response, using localStorage fallback");
+          console.warn(
+            "avatarUrl not found or empty in response, using localStorage fallback"
+          );
           const localAvatar = currentUser.doctor?.avatarUrl;
           if (localAvatar && localAvatar !== "null") {
             setAvatarUrl(localAvatar);
@@ -80,7 +86,7 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
         }
       } catch (error) {
         console.error("Lỗi khi lấy thông tin profile:", error);
-        
+
         // Fallback đến avatar từ localStorage nếu API thất bại
         const localAvatar = currentUser.doctor?.avatarUrl;
         if (localAvatar && localAvatar !== "null") {
@@ -100,7 +106,12 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const validImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
     if (!validImageTypes.includes(file.type)) {
       alert("Vui lòng chọn file ảnh (JPEG, PNG, GIF hoặc WebP).");
       return;
@@ -122,7 +133,7 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
 
       console.log("Uploading file:", file);
       setIsLoadingAvatar(true);
-      
+
       const response = await doctorService.uploadDoctorAvatar(doctorId, file);
       console.log("Upload response:", response);
 
@@ -137,7 +148,7 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
       if (newAvatarUrl) {
         console.log("Upload response avatarUrl:", newAvatarUrl);
         setAvatarUrl(newAvatarUrl);
-        
+
         // Cập nhật localStorage với avatarUrl từ server
         const updatedUser = {
           ...currentUser,
@@ -145,14 +156,16 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
         };
         localStorage.setItem("user", JSON.stringify(updatedUser));
       } else {
-        console.warn("No avatarUrl in upload response, retrying with getUserProfile");
-        
+        console.warn(
+          "No avatarUrl in upload response, retrying with getUserProfile"
+        );
+
         // Đồng bộ lại dữ liệu từ server sau upload
         setTimeout(async () => {
           try {
             const profileResponse = await guestService.getUserProfile();
             let updatedAvatarUrl = null;
-            
+
             if (profileResponse.avatarUrl) {
               updatedAvatarUrl = profileResponse.avatarUrl;
             } else if (profileResponse.data?.avatarUrl) {
@@ -160,9 +173,12 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
             } else if (profileResponse.data?.doctor?.avatarUrl) {
               updatedAvatarUrl = profileResponse.data.doctor.avatarUrl;
             }
-            
+
             if (updatedAvatarUrl) {
-              console.log("Updated avatarUrl from getUserProfile:", updatedAvatarUrl);
+              console.log(
+                "Updated avatarUrl from getUserProfile:",
+                updatedAvatarUrl
+              );
               setAvatarUrl(updatedAvatarUrl);
               const updatedUser = {
                 ...currentUser,
@@ -179,7 +195,7 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
       alert("Cập nhật ảnh đại diện thành công!");
     } catch (error) {
       console.error("Lỗi khi upload avatar:", error);
-      const errorMessage = 
+      const errorMessage =
         error.response?.data?.message ||
         error.response?.data?.errors?.["file"]?.[0] ||
         error.message ||
@@ -220,29 +236,36 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
             <img
               src={avatarUrl}
               alt="Doctor"
-              className={`doctor-avatar doctor-avatar-glow ${isLoadingAvatar ? 'loading' : ''}`}
-              style={{ 
+              className={`doctor-avatar doctor-avatar-glow ${
+                isLoadingAvatar ? "loading" : ""
+              }`}
+              style={{
                 cursor: "pointer",
                 opacity: isLoadingAvatar ? 0.7 : 1,
-                transition: "opacity 0.3s ease"
+                transition: "opacity 0.3s ease",
               }}
               title="Click để cập nhật ảnh"
               onError={(e) => {
-                console.error("Image load failed, falling back to default. URL:", e.target.src);
+                console.error(
+                  "Image load failed, falling back to default. URL:",
+                  e.target.src
+                );
                 if (e.target.src !== "/default-avatar.png") {
                   e.target.src = "/default-avatar.png";
                 }
               }}
             />
             {isLoadingAvatar && (
-              <div style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                fontSize: "12px",
-                color: "#666"
-              }}>
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  fontSize: "12px",
+                  color: "#666",
+                }}
+              >
                 Loading...
               </div>
             )}
@@ -252,15 +275,20 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
             <img
               src={avatarUrl}
               alt="Doctor"
-              className={`doctor-avatar-small ${isLoadingAvatar ? 'loading' : ''}`}
-              style={{ 
+              className={`doctor-avatar-small ${
+                isLoadingAvatar ? "loading" : ""
+              }`}
+              style={{
                 cursor: "pointer",
                 opacity: isLoadingAvatar ? 0.7 : 1,
-                transition: "opacity 0.3s ease"
+                transition: "opacity 0.3s ease",
               }}
               title="Click để cập nhật ảnh"
               onError={(e) => {
-                console.error("Image load failed, falling back to default. URL:", e.target.src);
+                console.error(
+                  "Image load failed, falling back to default. URL:",
+                  e.target.src
+                );
                 if (e.target.src !== "/default-avatar.png") {
                   e.target.src = "/default-avatar.png";
                 }

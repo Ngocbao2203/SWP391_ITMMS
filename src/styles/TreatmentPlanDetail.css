@@ -533,3 +533,127 @@
     flex-direction: column;
   }
 }
+
+/* Nâng cấp hiển thị thông tin kế hoạch điều trị */
+.info-box {
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-left: 5px solid #3498db;
+  background-color: #f8fafc;
+}
+
+.info-box-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.info-box-title i {
+  margin-right: 10px;
+  color: #3498db;
+}
+
+.info-box-content {
+  color: #34495e;
+  line-height: 1.6;
+}
+
+.info-item {
+  display: flex;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+/* Cải thiện hiển thị badge trạng thái */
+.badge-pill.bg-primary {
+  background-color: #3182ce !important;
+  color: white;
+}
+
+.badge-pill.bg-success {
+  background-color: #38a169 !important;
+  color: white;
+}
+
+.badge-pill.bg-warning {
+  background-color: #ecc94b !important;
+  color: #744210 !important;
+}
+
+.badge-pill.bg-danger {
+  background-color: #e53e3e !important;
+  color: white;
+}
+
+/* Cải thiện hiển thị thông tin chi tiết */
+.card.plan-overview {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.card.plan-overview .card-header {
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  padding: 16px 20px;
+}
+
+.card.plan-overview .card-body {
+  padding: 20px;
+}
+
+/* Cải thiện ListGroup */
+.list-group-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.list-group-item strong {
+  color: #2d3748;
+}
+
+.list-group-item i {
+  color: #4a5568;
+  width: 20px;
+  text-align: center;
+  margin-right: 8px;
+}
+
+/* Cải thiện phần mô tả kế hoạch */
+.mt-4 h6 {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.mt-4 h6 i {
+  margin-right: 8px;
+  color: #4299e1;
+}
+
+.mt-4 p {
+  background-color: #f8fafc;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  color: #4a5568;
+  line-height: 1.6;
+}

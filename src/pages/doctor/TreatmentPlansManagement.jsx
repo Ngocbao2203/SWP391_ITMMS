@@ -419,7 +419,6 @@ const TreatmentPlansManagement = () => {
       render: (_, record) => {
         const plan = record.treatmentPlan || record;
         const status = plan.status || "Active";
-        const paymentStatus = plan.paymentStatus || "Pending";
 
         return (
           <div>
@@ -431,13 +430,6 @@ const TreatmentPlansManagement = () => {
                 : status === "On-Hold"
                 ? "Tạm dừng"
                 : "Đã hủy"}
-            </Tag>
-            <br />
-            <Tag
-              color={paymentStatus === "Paid" ? "green" : "orange"}
-              style={{ marginTop: 4 }}
-            >
-              {paymentStatus === "Paid" ? "Đã thanh toán" : "Chưa thanh toán"}
             </Tag>
           </div>
         );

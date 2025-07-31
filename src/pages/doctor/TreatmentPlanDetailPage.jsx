@@ -457,56 +457,67 @@ const TreatmentPlanDetailPage = () => {
                   </Badge>
                 </Card.Header>
                 <Card.Body>
-                  <Row>
-                    <Col md={6}>
-                      <ListGroup variant="flush">
-                        <ListGroup.Item>
-                          <strong>
-                            <i className="fas fa-tag me-1"></i> Loại điều trị:
-                          </strong>{" "}
-                          {selectedPlan.treatmentType || "N/A"}
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                          <strong>
-                            <i className="fas fa-stethoscope me-1"></i> Dịch vụ:
-                          </strong>{" "}
-                          {selectedPlan.treatmentService?.serviceName || "N/A"}
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                          <strong>
-                            <i className="fas fa-user-md me-1"></i> Bác sĩ phụ
-                            trách:
-                          </strong>{" "}
-                          {selectedPlan.doctor?.name || "N/A"}
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                          <strong>
-                            <i className="fas fa-calendar-day me-1"></i> Ngày
-                            bắt đầu:
-                          </strong>{" "}
-                          {formatDate(selectedPlan.startDate)}
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                          <strong>
-                            <i className="fas fa-calendar-check me-1"></i> Lần
-                            khám tiếp theo:
-                          </strong>{" "}
-                          {formatDate(selectedPlan.nextVisitDate)}
-                        </ListGroup.Item>
-                      </ListGroup>
-                    </Col>
-                    <Col md={6}>
-                      <ListGroup variant="flush">
-                        <ListGroup.Item>
-                          <strong>
-                            <i className="fas fa-step-forward me-1"></i> Giai
-                            đoạn hiện tại:
-                          </strong>{" "}
-                          {selectedPlan.currentPhase || "N/A"}
-                        </ListGroup.Item>
-                      </ListGroup>
-                    </Col>
-                  </Row>
+                  <div className="info-box">
+                    <div className="info-box-title">
+                      <i className="fas fa-clipboard-list"></i> Chi tiết kế
+                      hoạch điều trị
+                    </div>
+                    <div className="info-box-content">
+                      <Row>
+                        <Col md={6}>
+                          <ListGroup variant="flush">
+                            <ListGroup.Item>
+                              <strong>
+                                <i className="fas fa-tag me-1"></i> Loại điều
+                                trị:
+                              </strong>{" "}
+                              {selectedPlan.treatmentType || "N/A"}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                              <strong>
+                                <i className="fas fa-stethoscope me-1"></i> Dịch
+                                vụ:
+                              </strong>{" "}
+                              {selectedPlan.treatmentService?.serviceName ||
+                                "N/A"}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                              <strong>
+                                <i className="fas fa-user-md me-1"></i> Bác sĩ
+                                phụ trách:
+                              </strong>{" "}
+                              {selectedPlan.doctor?.name || "N/A"}
+                            </ListGroup.Item>
+                          </ListGroup>
+                        </Col>
+                        <Col md={6}>
+                          <ListGroup variant="flush">
+                            <ListGroup.Item>
+                              <strong>
+                                <i className="fas fa-calendar-day me-1"></i>{" "}
+                                Ngày bắt đầu:
+                              </strong>{" "}
+                              {formatDate(selectedPlan.startDate)}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                              <strong>
+                                <i className="fas fa-calendar-check me-1"></i>{" "}
+                                Lần khám tiếp theo:
+                              </strong>{" "}
+                              {formatDate(selectedPlan.nextVisitDate)}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                              <strong>
+                                <i className="fas fa-step-forward me-1"></i>{" "}
+                                Giai đoạn hiện tại:
+                              </strong>{" "}
+                              {selectedPlan.currentPhase || "N/A"}
+                            </ListGroup.Item>
+                          </ListGroup>
+                        </Col>
+                      </Row>
+                    </div>
+                  </div>
 
                   <div className="mt-4">
                     <h6>
@@ -518,6 +529,7 @@ const TreatmentPlanDetailPage = () => {
               </Card>
 
               {/* Nút thao tác */}
+              {/* Comment tạm thời nút thêm kế hoạch điều trị
               <div className="d-flex justify-content-center mb-5">
                 <Button
                   variant="primary"
@@ -528,6 +540,7 @@ const TreatmentPlanDetailPage = () => {
                   trị
                 </Button>
               </div>
+              */}
             </div>
           )}
 
