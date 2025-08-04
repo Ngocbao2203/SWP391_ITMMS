@@ -34,16 +34,16 @@ export default function UserService() {
       try {
         setLoading(true);
         const response = await treatmentService.getAllTreatmentServices();
-        console.log("API Response:", response); // Log toàn bộ response từ API
+        // console.log("API Response:", response);
         if (response && (response.success || Array.isArray(response))) {
           // Xử lý trường hợp API trả về mảng trực tiếp hoặc nằm trong property data
           const serviceData = Array.isArray(response)
             ? response
             : response.data || [];
-          console.log("Service Data:", serviceData); // Log dữ liệu trước khi map
+          // console.log("Service Data:", serviceData); 
           const mappedServices = mapServiceData(serviceData);
           setServices(mappedServices);
-          console.log("Mapped Services:", mappedServices); // Log dữ liệu sau khi map
+          // console.log("Mapped Services:", mappedServices);
         } else {
           message.error("Không thể tải dữ liệu dịch vụ điều trị");
         }

@@ -52,7 +52,7 @@ const BookAppointment = () => {
           console.log("Service data from API:", serviceData); // Debug
           setSelectedService(serviceData);
         } catch (error) {
-          console.error("Error loading service data:", error);
+          // console.error("Error loading service data:", error);
           message.error(formatErrorMessage(error));
           // Fallback to state if API fails
           if (location.state && location.state.service) {

@@ -34,7 +34,7 @@ const TreatmentProgressPage = () => {
 
       // Gọi API getMySchedule
       const response = await appointmentService.getMySchedule();
-      console.log("API response:", response);
+      // console.log("API response:", response);
 
       if (response && response.data) {
         // Nếu data là mảng, sử dụng trực tiếp

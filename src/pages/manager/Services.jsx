@@ -26,7 +26,7 @@ import {
   ClockCircleOutlined,
   PercentageOutlined,
   FileTextOutlined,
-  UploadOutlined, // Thêm icon Upload
+  UploadOutlined,
 } from '@ant-design/icons';
 import treatmentService from '../../services/treatmentService';
 import { ToastContainer, toast } from 'react-toastify';
@@ -42,46 +42,40 @@ const Services = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
     fetchServices();
-    return () => {
-      isMounted = false;
-    };
-
-    async function fetchServices() {
-      setLoading(true);
-      try {
-        const response = await treatmentService.getAllTreatmentServices();
-        if (isMounted && response.data && Array.isArray(response.data)) {
-          const formattedServices = response.data.map((service, index) => ({
-            id: service.id || (index + 1).toString().padStart(2, '0'),
-            key: service.id ? service.id.toString() : (index + 1).toString(),
-            serviceName: service.serviceName || '',
-            serviceCode: service.serviceCode || '',
-            description: service.description || '',
-            basePrice: service.basePrice || 0,
-            procedures: service.procedures || '',
-            requirements: service.requirements || '',
-            durationDays: service.durationDays || 0,
-            successRate: service.successRate || 0,
-            imageUrl: service.imageUrl || '',
-            imageFile: service.imageFile || '',
-          }));
-          setServices(formattedServices);
-          safeToast('success', 'Tải danh sách dịch vụ thành công!');
-        } else if (isMounted) {
-          safeToast('error', 'Không có dữ liệu từ server!');
-        }
-      } catch (error) {
-        if (isMounted) {
-          console.error('Fetch Services Error:', error);
-          safeToast('error', 'Lỗi khi tải danh sách dịch vụ: ' + (error.message || 'Không xác định'));
-        }
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    }
   }, []);
+
+  async function fetchServices() {
+    setLoading(true);
+    try {
+      const response = await treatmentService.getAllTreatmentServices();
+      if (response.data && Array.isArray(response.data)) {
+        const formattedServices = response.data.map((service, index) => ({
+          id: service.id || (index + 1).toString().padStart(2, '0'),
+          key: service.id ? service.id.toString() : (index + 1).toString(),
+          serviceName: service.serviceName || '',
+          serviceCode: service.serviceCode || '',
+          description: service.description || '',
+          basePrice: service.basePrice || 0,
+          procedures: service.procedures || '',
+          requirements: service.requirements || '',
+          durationDays: service.durationDays || 0,
+          successRate: service.successRate || 0,
+          imageUrl: service.imageUrl || '', // Đảm bảo imageUrl được lấy từ API
+          imageFile: service.imageFile || '',
+        }));
+        setServices(formattedServices);
+        safeToast('success', 'Tải danh sách dịch vụ thành công!');
+      } else {
+        safeToast('error', 'Không có dữ liệu từ server!');
+      }
+    } catch (error) {
+      console.error('Fetch Services Error:', error);
+      safeToast('error', 'Lỗi khi tải danh sách dịch vụ: ' + (error.message || 'Không xác định'));
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const safeToast = (type, message) => {
     if (document.getElementById('toast-container')) {
@@ -113,7 +107,6 @@ const Services = () => {
   };
 
   const handleSubmit = async () => {
-    let isMounted = true;
     try {
       const values = await form.validateFields();
       setLoading(true);
@@ -134,65 +127,50 @@ const Services = () => {
 
       if (editingService) {
         const response = await treatmentService.updateTreatmentService(editingService.id, formData);
-        if (isMounted && response.success) {
-          setServices((prev) =>
-            prev.map((s) =>
-              s.key === editingService.key ? { ...s, ...values, imageUrl: values.imageUrl || '' } : s
-            )
-          );
+        if (response.success) {
+          // Gọi lại fetchServices để đồng bộ dữ liệu từ server
+          await fetchServices();
           safeToast('success', response.message || 'Cập nhật dịch vụ thành công!');
-        } else if (isMounted) {
+        } else {
           safeToast('error', response.message || 'Cập nhật dịch vụ thất bại!');
         }
       } else {
         const response = await treatmentService.createTreatmentService(formData);
-        if (isMounted && response.success && response.data) {
-          const newService = {
-            ...values,
-            id: response.data.id ? response.data.id.toString().padStart(2, '0') : (services.length + 1).toString().padStart(2, '0'),
-            key: response.data.id ? response.data.id.toString() : (services.length + 1).toString(),
-            imageUrl: values.imageUrl || '',
-          };
-          setServices([...services, newService]);
+        if (response.success && response.data) {
+          // Gọi lại fetchServices để đồng bộ dữ liệu từ server
+          await fetchServices();
           safeToast('success', response.message || 'Thêm dịch vụ thành công!');
-        } else if (isMounted) {
+        } else {
           safeToast('error', response.message || 'Tạo dịch vụ thất bại!');
         }
       }
 
-      if (isMounted) {
-        setIsModalOpen(false);
-        form.resetFields();
-        setEditingService(null);
-        setLoading(false);
-      }
+      setIsModalOpen(false);
+      form.resetFields();
+      setEditingService(null);
+      setLoading(false);
     } catch (error) {
-      if (isMounted) {
-        safeToast('error', 'Lỗi khi lưu dịch vụ: ' + (error.message || 'Không xác định'));
-        console.error(error);
-        setLoading(false);
-      }
+      safeToast('error', 'Lỗi khi lưu dịch vụ: ' + (error.message || 'Không xác định'));
+      console.error(error);
+      setLoading(false);
     }
   };
 
   const handleDeleteService = async (key) => {
-    let isMounted = true;
     const service = services.find((s) => s.key === key);
     try {
       setLoading(true);
       const response = await treatmentService.deleteTreatmentService(service.id);
-      if (isMounted && response.success) {
+      if (response.success) {
         setServices((prev) => prev.filter((s) => s.key !== key));
         safeToast('success', response.message || 'Xóa dịch vụ thành công!');
-      } else if (isMounted) {
+      } else {
         safeToast('error', response.message || 'Xóa dịch vụ thất bại!');
       }
-      if (isMounted) setLoading(false);
+      setLoading(false);
     } catch (error) {
-      if (isMounted) {
-        safeToast('error', 'Lỗi khi xóa dịch vụ: ' + (error.message || 'Không xác định'));
-        setLoading(false);
-      }
+      safeToast('error', 'Lỗi khi xóa dịch vụ: ' + (error.message || 'Không xác định'));
+      setLoading(false);
     }
   };
 
@@ -222,7 +200,7 @@ const Services = () => {
       key: 'imageUrl',
       render: (_, record) => (
         record.imageUrl && record.imageUrl.trim() ? (
-          <img src={record.imageUrl} alt={record.serviceName} style={{ width: '50px', height: '50px' }} onError={(e) => { e.target.style.display = 'none'; }} />
+          <img src={record.imageUrl} alt={record.serviceName} style={{ width: '50px', height: '50px' }} onError={(e) => { e.target.style.display = 'none'; console.log('Image load failed for:', record.imageUrl); }} />
         ) : (
           <Text type="secondary">Chưa có hình ảnh</Text>
         )
@@ -572,7 +550,6 @@ const Services = () => {
                 label={<Text strong>Tệp Hình Ảnh</Text>}
                 valuePropName="file"
                 getValueFromEvent={(e) => {
-                  // Kiểm tra và trả về file đầu tiên nếu có
                   return e && e.fileList && e.fileList.length > 0 ? e.fileList[0] : null;
                 }}
                 rules={[{ required: false, message: 'Vui lòng tải lên tệp hình ảnh!' }]}

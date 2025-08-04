@@ -23,7 +23,7 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
     },
   ];
 
-  const [avatarUrl, setAvatarUrl] = useState("/default-avatar.png"); // Default avatar
+  const [avatarUrl, setAvatarUrl] = useState("http://res.cloudinary.com/dqnq00784/image/upload/v1753944009/znzqi0q6hn3wbanz0cie.jpg"); // Default avatar
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(true);
   const currentUser = authService.getCurrentUser();
   const doctor = currentUser?.doctor;
@@ -229,8 +229,8 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
               title="Click để cập nhật ảnh"
               onError={(e) => {
                 console.error("Image load failed, falling back to default. URL:", e.target.src);
-                if (e.target.src !== "/default-avatar.png") {
-                  e.target.src = "/default-avatar.png";
+                if (e.target.src !== "http://res.cloudinary.com/dqnq00784/image/upload/v1753944009/znzqi0q6hn3wbanz0cie.jpg") {
+                  e.target.src = "http://res.cloudinary.com/dqnq00784/image/upload/v1753944009/znzqi0q6hn3wbanz0cie.jpg";
                 }
               }}
             />
@@ -261,8 +261,8 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
               title="Click để cập nhật ảnh"
               onError={(e) => {
                 console.error("Image load failed, falling back to default. URL:", e.target.src);
-                if (e.target.src !== "/default-avatar.png") {
-                  e.target.src = "/default-avatar.png";
+                if (e.target.src !== "http://res.cloudinary.com/dqnq00784/image/upload/v1753944009/znzqi0q6hn3wbanz0cie.jpg") {
+                  e.target.src = "http://res.cloudinary.com/dqnq00784/image/upload/v1753944009/znzqi0q6hn3wbanz0cie.jpg";
                 }
               }}
             />

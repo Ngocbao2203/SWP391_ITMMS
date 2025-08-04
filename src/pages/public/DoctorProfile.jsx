@@ -27,7 +27,7 @@ const DoctorProfile = () => {
       try {
         setLoading(true);
         const response = await guestService.getPublicDoctorDetails(id);
-        console.log("API Response:", response);
+        // console.log("API Response:", response);
         // Định dạng lại dữ liệu bác sĩ để hiển thị
         const doctorData = response.data || {};
         const mappedDoctor = {

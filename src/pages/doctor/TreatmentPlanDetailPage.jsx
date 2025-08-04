@@ -518,7 +518,7 @@ const TreatmentPlanDetailPage = () => {
               </Card>
 
               {/* Nút thao tác */}
-              <div className="d-flex justify-content-center mb-5">
+              {/* <div className="d-flex justify-content-center mb-5">
                 <Button
                   variant="primary"
                   className="add-treatment-plan-btn"
@@ -527,7 +527,7 @@ const TreatmentPlanDetailPage = () => {
                   <i className="fas fa-plus-circle me-2"></i> Thêm kế hoạch điều
                   trị
                 </Button>
-              </div>
+              </div> */}
             </div>
           )}
 

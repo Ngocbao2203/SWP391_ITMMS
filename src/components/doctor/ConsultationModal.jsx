@@ -98,7 +98,7 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
       // Lấy danh sách treatment services từ API
       const response = await treatmentService.getAllTreatmentServices();
 
-      console.log("Treatment services API response:", response);
+      // console.log("Treatment services API response:", response);
 
       // Handle different API response structures
       if (response && response.success && response.data) {
@@ -111,7 +111,7 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
         // Direct array response
         setTreatmentServices(response);
       } else {
-        console.warn("Unexpected services API response:", response);
+        // console.warn("Unexpected services API response:", response);
         setTreatmentServices([]);
       }
     } catch (error) {

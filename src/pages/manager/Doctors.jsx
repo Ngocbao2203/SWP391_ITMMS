@@ -316,11 +316,11 @@ const Doctors = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item name="licenseNumber" label="Số giấy phép hành nghề">
+          {/* <Form.Item name="licenseNumber" label="Số giấy phép hành nghề">
             <Input prefix={<MedicineBoxOutlined />} />
-          </Form.Item>
+          </Form.Item> */}
 
-          <Divider />
+          {/* <Divider /> */}
 
           <Form.Item name="email" label="Email">
             <Input prefix={<MailOutlined />} disabled />
@@ -442,13 +442,13 @@ const Doctors = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             name="licenseNumber"
             label="Số giấy phép hành nghề"
             rules={[{ required: true, message: "Vui lòng nhập số giấy phép!" }]}
           >
             <Input prefix={<MedicineBoxOutlined />} />
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </Modal>
 

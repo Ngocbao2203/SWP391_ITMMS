@@ -110,46 +110,15 @@ const DoctorDashboard = () => {
       const today = dayjs().format("YYYY-MM-DD");
 
       try {
-        // Lấy lịch hẹn của doctor từ API appointments (có customerId)
-        // console.log("=== FETCHING DOCTOR APPOINTMENTS ===");
-        // console.log("DoctorId:", doctorId);
-        // console.log("Today:", today);
-
         // Thử nhiều cách gọi API để lấy data
         let scheduleResponse = null;
 
-        // Kiểm tra backend có chạy không
-        try {
-          // console.log("=== TESTING BACKEND CONNECTION ===");
-          const testResponse = await fetch(
-            `${
-              process.env.REACT_APP_API_URL || "http://localhost:5037"
-            }/api/appointments/test`
-          );
-          console.log("Backend test response status:", testResponse.status);
-          if (!testResponse.ok) {
-            console.warn(
-              "Backend test failed with status:",
-              testResponse.status
-            );
-          }
-        } catch (backendError) {
-          console.error("Backend connection failed:", backendError);
-          console.error("Make sure backend is running on port 5037");
-        }
-
         // Lấy tất cả appointments của doctor đang đăng nhập
         try {
-          console.log("Getting all my appointments...");
           scheduleResponse = await appointmentService.getMyAppointments();
-          console.log("All appointments result:", scheduleResponse);
         } catch (error) {
           console.warn("Failed to get all appointments:", error);
         }
-        // console.log("=== RAW API APPOINTMENTS RESPONSE ===");
-        // console.log("Full response:", scheduleResponse);
-        // console.log("Response type:", typeof scheduleResponse);
-        // console.log("Response keys:", Object.keys(scheduleResponse || {}));
 
         // Extract appointments from response structure - theo chuẩn API mới
         let allAppointmentsData =
@@ -159,11 +128,6 @@ const DoctorDashboard = () => {
           scheduleResponse ||
           [];
 
-        // console.log("=== ALL APPOINTMENTS ARRAY ===");
-        // console.log("All appointments array:", allAppointmentsData);
-        // console.log("Is array:", Array.isArray(allAppointmentsData));
-        // console.log("Length:", allAppointmentsData.length);
-
         // Chuẩn hóa dữ liệu - đảm bảo là mảng
         if (!Array.isArray(allAppointmentsData)) {
           console.warn("API response is not an array, converting to array");
@@ -172,30 +136,12 @@ const DoctorDashboard = () => {
             : [];
         }
 
-        // console.log("=== APPOINTMENTS LOADED ===");
-        // console.log("Selected date:", selectedDate.format("YYYY-MM-DD"));
-        // console.log("All appointments count:", allAppointmentsData.length);
-
-        // Log first appointment structure if exists
-        if (allAppointmentsData.length > 0) {
-          console.log("=== FIRST APPOINTMENT DEBUG ===");
-          console.log("First appointment:", allAppointmentsData[0]);
-          console.log(
-            "First appointment keys:",
-            Object.keys(allAppointmentsData[0] || {})
-          );
-        }
-
-        // Xử lý dữ liệu từ API
-        // console.log("=== PROCESSING API DATA ===");
         if (
           Array.isArray(allAppointmentsData) &&
           allAppointmentsData.length > 0
         ) {
           allAppointmentsData = allAppointmentsData.map(
             (appointment, index) => {
-              console.log(`Processing appointment ${index}:`, appointment);
-
               // Xác định ID cuộc hẹn
               const appointmentId = appointment.id || index;
 
@@ -222,19 +168,6 @@ const DoctorDashboard = () => {
                 treatmentPlan: appointment.treatmentPlan,
               };
 
-              // Log kết quả đã xử lý
-              console.log(`Processed appointment ${index}:`, {
-                id: processedAppointment.id,
-                customerId: processedAppointment.customerId,
-                customerName: processedAppointment.customerName,
-                customerPhone: processedAppointment.customerPhone,
-                appointmentDate: processedAppointment.appointmentDate,
-                timeSlot: processedAppointment.timeSlot,
-                status: processedAppointment.status,
-                type: processedAppointment.type,
-                notes: processedAppointment.notes,
-              });
-
               return processedAppointment;
             }
           );
@@ -249,18 +182,6 @@ const DoctorDashboard = () => {
           selectedDate
         );
 
-        console.log("=== FINAL PROCESSED DATA ===");
-        console.log("All appointments from API:", allAppointmentsData);
-        console.log("All appointments count:", allAppointmentsData.length);
-        console.log(
-          "Filtered appointments for selected date:",
-          filteredAppointments
-        );
-        console.log(
-          "Filtered appointments count:",
-          filteredAppointments.length
-        );
-
         // Nếu không có appointments từ API, hiển thị thông báo
         if (
           !Array.isArray(allAppointmentsData) ||
@@ -272,11 +193,6 @@ const DoctorDashboard = () => {
           console.warn("2. Không có appointments cho doctor này");
           console.warn("3. API endpoint/parameters không đúng");
           console.warn("4. Database không có data");
-        }
-
-        // Debug log appointment structure
-        if (allAppointmentsData.length > 0) {
-          console.log("Sample appointment structure:", allAppointmentsData[0]);
         }
 
         // Tính thống kê dựa trên appointments của ngày được chọn

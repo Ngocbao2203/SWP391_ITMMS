@@ -9,9 +9,9 @@ class DoctorService {
   async getAllDoctors(filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ?
-        `${API_ENDPOINTS.DOCTORS.GET_ALL}?${queryParams}` :
-        API_ENDPOINTS.DOCTORS.GET_ALL;
+      const endpoint = queryParams
+        ? `${API_ENDPOINTS.DOCTORS.GET_ALL}?${queryParams}`
+        : API_ENDPOINTS.DOCTORS.GET_ALL;
 
       const response = await apiService.get(endpoint);
       return response;
@@ -21,7 +21,9 @@ class DoctorService {
   }
   async getAllManagement() {
     try {
-      const response = await apiService.get(API_ENDPOINTS.DOCTORS.GET_ALL_MANAGEMENT);
+      const response = await apiService.get(
+        API_ENDPOINTS.DOCTORS.GET_ALL_MANAGEMENT
+      );
       return response;
     } catch (error) {
       throw error;
@@ -30,7 +32,7 @@ class DoctorService {
 
   /**
    * Lấy thông tin bác sĩ quản lý theo ID
-   * @param {number|string} id 
+   * @param {number|string} id
    */
   async getManagementById(id) {
     try {
@@ -47,7 +49,10 @@ class DoctorService {
       formData.append("doctorId", id); // Thêm doctorId vào FormData
       formData.append("file", file);
 
-      console.log("FormData entries in doctorService:", Array.from(formData.entries()));
+      console.log(
+        "FormData entries in doctorService:",
+        Array.from(formData.entries())
+      );
 
       const response = await apiService.post(
         API_ENDPOINTS.DOCTORS.UPLOAD_AVATAR(id),
@@ -62,7 +67,12 @@ class DoctorService {
 
   async updateManagementAvailability(managerId, isAvailable) {
     try {
-      console.log("Starting updateManagementAvailability for managerId:", managerId, "with isAvailable:", isAvailable);
+      console.log(
+        "Starting updateManagementAvailability for managerId:",
+        managerId,
+        "with isAvailable:",
+        isAvailable
+      );
       const response = await apiService.put(
         API_ENDPOINTS.DOCTORS.UPDATE_MANAGEMENT_TOGGLE_AVAILABILITY(managerId),
         { isAvailable }
@@ -70,15 +80,15 @@ class DoctorService {
       console.log("Response from API:", response);
       return {
         success: true,
-        message: 'Cập nhật trạng thái quản lý thành công',
-        data: response
+        message: "Cập nhật trạng thái quản lý thành công",
+        data: response,
       };
     } catch (error) {
       console.error("Error caught in updateManagementAvailability:", error);
       return {
         success: false,
-        message: error.message || 'Cập nhật trạng thái quản lý thất bại',
-        errors: error.response?.data?.errors || []
+        message: error.message || "Cập nhật trạng thái quản lý thất bại",
+        errors: error.response?.data?.errors || [],
       };
     }
   }
@@ -128,24 +138,27 @@ class DoctorService {
    */
   async updateDoctor(doctorId, updateData) {
     try {
-      const response = await apiService.put(API_ENDPOINTS.DOCTORS.UPDATE(doctorId), updateData);
+      const response = await apiService.put(
+        API_ENDPOINTS.DOCTORS.UPDATE(doctorId),
+        updateData
+      );
       return {
         success: true,
-        message: 'Cập nhật profile bác sĩ thành công',
-        data: response
+        message: "Cập nhật profile bác sĩ thành công",
+        data: response,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Cập nhật profile bác sĩ thất bại',
-        errors: error.getValidationErrors()
+        message: error.message || "Cập nhật profile bác sĩ thất bại",
+        errors: error.getValidationErrors(),
       };
     }
   }
   /**
    * Cập nhật trạng thái isAvailable cho bác sĩ
-   * @param {number} doctorId 
-   * @param {boolean} isAvailable 
+   * @param {number} doctorId
+   * @param {boolean} isAvailable
    */
   async updateDoctorAvailability(doctorId, isAvailable) {
     try {
@@ -156,14 +169,14 @@ class DoctorService {
       );
       return {
         success: true,
-        message: 'Cập nhật trạng thái thành công',
-        data: response
+        message: "Cập nhật trạng thái thành công",
+        data: response,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Cập nhật trạng thái thất bại',
-        errors: error.getValidationErrors?.()
+        message: error.message || "Cập nhật trạng thái thất bại",
+        errors: error.getValidationErrors?.(),
       };
     }
   }
@@ -190,9 +203,9 @@ class DoctorService {
   async getAvailableDoctors(filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ?
-        `${API_ENDPOINTS.DOCTORS.GET_AVAILABLE}?${queryParams}` :
-        API_ENDPOINTS.DOCTORS.GET_AVAILABLE;
+      const endpoint = queryParams
+        ? `${API_ENDPOINTS.DOCTORS.GET_AVAILABLE}?${queryParams}`
+        : API_ENDPOINTS.DOCTORS.GET_AVAILABLE;
 
       const response = await apiService.get(endpoint);
       return response;
@@ -209,9 +222,9 @@ class DoctorService {
   async getDoctorFeedback(doctorId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ?
-        `${API_ENDPOINTS.DOCTORS.GET_FEEDBACK(doctorId)}?${queryParams}` :
-        API_ENDPOINTS.DOCTORS.GET_FEEDBACK(doctorId);
+      const endpoint = queryParams
+        ? `${API_ENDPOINTS.DOCTORS.GET_FEEDBACK(doctorId)}?${queryParams}`
+        : API_ENDPOINTS.DOCTORS.GET_FEEDBACK(doctorId);
 
       const response = await apiService.get(endpoint);
       return response;
@@ -228,9 +241,9 @@ class DoctorService {
   async getDoctorAppointments(doctorId, filters = {}) {
     try {
       const queryParams = new URLSearchParams(filters).toString();
-      const endpoint = queryParams ?
-        `${API_ENDPOINTS.DOCTORS.GET_APPOINTMENTS(doctorId)}?${queryParams}` :
-        API_ENDPOINTS.DOCTORS.GET_APPOINTMENTS(doctorId);
+      const endpoint = queryParams
+        ? `${API_ENDPOINTS.DOCTORS.GET_APPOINTMENTS(doctorId)}?${queryParams}`
+        : API_ENDPOINTS.DOCTORS.GET_APPOINTMENTS(doctorId);
 
       const response = await apiService.get(endpoint);
       return response;
@@ -262,7 +275,6 @@ class DoctorService {
         order: "desc",
         limit: limit,
       };
-
 
       return await this.getAllDoctors(filters);
     } catch (error) {
@@ -310,7 +322,6 @@ class DoctorService {
         endpoint += `?date=${date}`;
       }
 
-      console.log(`Calling doctor schedule API: ${endpoint}`);
       const response = await apiService.get(endpoint);
       return response;
     } catch (error) {
@@ -348,10 +359,8 @@ class DoctorService {
       // Lấy tất cả appointments
       const appointments = await this.getDoctorAppointments(doctorId, filters);
 
-
       // Lấy feedback
       const feedback = await this.getDoctorFeedback(doctorId);
-
 
       // Tính toán statistics
       const stats = {
@@ -395,29 +404,33 @@ class DoctorService {
         status: "Scheduled,Confirmed",
       });
 
-      const bookedSlots = appointments.appointments?.map(apt => apt.timeSlot) || [];
+      const bookedSlots =
+        appointments.appointments?.map((apt) => apt.timeSlot) || [];
 
       // Tạo tất cả time slots trong working hours
-      const [startHour, startMinute] = workingHours[0].split(':').map(Number);
-      const [endHour, endMinute] = workingHours[1].split(':').map(Number);
+      const [startHour, startMinute] = workingHours[0].split(":").map(Number);
+      const [endHour, endMinute] = workingHours[1].split(":").map(Number);
 
       const startTime = startHour * 60 + startMinute;
       const endTime = endHour * 60 + endMinute;
 
-
       const availableSlots = [];
-
 
       for (let time = startTime; time < endTime; time += slotDuration) {
         const hours = Math.floor(time / 60);
         const minutes = time % 60;
-        const timeSlot = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}-${Math.floor((time + slotDuration) / 60).toString().padStart(2, '0')}:${((time + slotDuration) % 60).toString().padStart(2, '0')}`;
+        const timeSlot = `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}-${Math.floor((time + slotDuration) / 60)
+          .toString()
+          .padStart(2, "0")}:${((time + slotDuration) % 60)
+          .toString()
+          .padStart(2, "0")}`;
 
         if (!bookedSlots.includes(timeSlot)) {
           availableSlots.push(timeSlot);
         }
       }
-
 
       return availableSlots;
     } catch (error) {

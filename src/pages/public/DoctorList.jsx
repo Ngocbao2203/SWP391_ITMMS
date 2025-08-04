@@ -51,7 +51,7 @@ const DoctorList = () => {
       try {
         setLoading(true);
         const response = await doctorService.getAllManagement();
-        console.log("Response from API:", response); // Debug: Xem toàn bộ response
+        // console.log("Response from API:", response); 
 
         // Xử lý linh hoạt cấu trúc API
         let doctorsRaw = [];
@@ -66,7 +66,7 @@ const DoctorList = () => {
         } else if (response.data?.result) {
           doctorsRaw = response.data.result;
         }
-        console.log("Raw Doctors Data:", doctorsRaw); // Debug: Xem dữ liệu thô
+        // console.log("Raw Doctors Data:", doctorsRaw);
 
         const doctorProfiles = doctorsRaw.map((doctor) => ({
           id: doctor.id,
@@ -77,7 +77,7 @@ const DoctorList = () => {
           reviewCount: doctor.totalAppointments || 0,
           photo:
             doctor.avatarUrl ||
-            "https://res.cloudinary.com/dmg7mrhzq/image/upload/v1752740540/o9lihgms3ljhw0n4rpwv.jpg",
+            "http://res.cloudinary.com/dqnq00784/image/upload/v1753944009/znzqi0q6hn3wbanz0cie.jpg",
           description: doctor.description || "",
         }));
         console.log("Doctor Profiles:", doctorProfiles); // Debug: Xem dữ liệu đã map

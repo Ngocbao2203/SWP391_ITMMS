@@ -46,25 +46,24 @@ const IvfAppointmentForm = ({
 }) => {
   // Khởi tạo form và các biến theo dõi giá trị form
   const [form] = Form.useForm();
-  // Theo dõi các trường form để kiểm tra điều kiện nút submit
   const watchedService = Form.useWatch("treatmentServiceId", form);
   const watchedDate = Form.useWatch("appointmentDate", form);
   const watchedTime = Form.useWatch("timeSlot", form);
   const watchedPlan = Form.useWatch("treatmentPlanId", form);
 
   // State quản lý dữ liệu và trạng thái UI
-  const [loading, setLoading] = useState(false); // Đang gửi form
-  const [selectedDoctor, setSelectedDoctor] = useState(null); // Bác sĩ được chọn
-  const [isSuccess, setIsSuccess] = useState(false); // Đặt lịch thành công
-  const [services, setServices] = useState([]); // Danh sách dịch vụ
-  const [doctors, setDoctors] = useState([]); // Danh sách bác sĩ
-  const [availableTimeSlots, setAvailableTimeSlots] = useState([]); // Khung giờ khả dụng
-  const [selectedDate, setSelectedDate] = useState(null); // Ngày được chọn
-  const [loadingTimeSlots, setLoadingTimeSlots] = useState(false); // Đang tải khung giờ
-  const [isLoadingServices, setIsLoadingServices] = useState(false); // Đang tải dịch vụ
-  const [isLoadingDoctors, setIsLoadingDoctors] = useState(false); // Đang tải bác sĩ
-  const [hasTreatmentPlan, setHasTreatmentPlan] = useState(null); // Đã từng khám chưa
-  const [treatmentPlansList, setTreatmentPlansList] = useState([]); // Danh sách kế hoạch điều trị
+  const [loading, setLoading] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [services, setServices] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [loadingTimeSlots, setLoadingTimeSlots] = useState(false);
+  const [isLoadingServices, setIsLoadingServices] = useState(false);
+  const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
+  const [hasTreatmentPlan, setHasTreatmentPlan] = useState(null);
+  const [treatmentPlansList, setTreatmentPlansList] = useState([]);
 
   const navigate = useNavigate();
 
@@ -74,7 +73,6 @@ const IvfAppointmentForm = ({
       try {
         setIsLoadingServices(true);
         setIsLoadingDoctors(true);
-        // Gọi API lấy danh sách dịch vụ và bác sĩ
         const [servicesData, doctorsData] = await Promise.all([
           treatmentService.getAllTreatmentServices(),
           doctorService.getAllDoctors(),
@@ -106,12 +104,8 @@ const IvfAppointmentForm = ({
       if (hasTreatmentPlan === true) {
         try {
           const user = authService.getCurrentUser();
-          // Gọi API lấy kế hoạch điều trị của khách hàng
-          const planResult = await treatmentPlans.getByCustomer(
-            user.customer.id
-          );
+          const planResult = await treatmentPlans.getByCustomer(user.customer.id);
           if (planResult.success && Array.isArray(planResult.data)) {
-            // Lọc các kế hoạch đang hoạt động
             const activePlans = planResult.data.filter(
               (plan) => (plan.status || "").toLowerCase() === "active"
             );
@@ -132,20 +126,17 @@ const IvfAppointmentForm = ({
     loadTreatmentPlans();
   }, [hasTreatmentPlan]);
 
-  // Nếu có dịch vụ truyền vào, set giá trị mặc định cho form
   useEffect(() => {
     if (service?.id) {
-      console.log("Setting form value for service:", service); // Debug
       form.setFieldsValue({
         serviceId: service.id,
         treatmentServiceId: service.id,
       });
     } else {
-      form.resetFields(["treatmentServiceId"]); // Reset nếu không có service
+      form.resetFields(["treatmentServiceId"]);
     }
   }, [service, form]);
 
-  // Xử lý chọn/bỏ chọn bác sĩ
   const handleDoctorSelect = (doctorId) => {
     if (selectedDoctor === doctorId) {
       setSelectedDoctor(null);
@@ -158,12 +149,10 @@ const IvfAppointmentForm = ({
     }
   };
 
-  // Vô hiệu hóa ngày đã qua
   const disabledDate = (current) => {
     return current && current < dayjs().startOf("day");
   };
 
-  // Tải khung giờ khả dụng khi chọn ngày
   const handleDateChange = useCallback(
     async (date) => {
       setSelectedDate(date);
@@ -172,7 +161,6 @@ const IvfAppointmentForm = ({
       if (date && selectedDoctor) {
         setLoadingTimeSlots(true);
         try {
-          // Gọi API lấy khung giờ trống của bác sĩ theo ngày
           const appointmentDate = date.format("YYYY-MM-DD");
           const response = await appointmentService.getAvailableSlots(
             selectedDoctor,
@@ -196,8 +184,6 @@ const IvfAppointmentForm = ({
     [selectedDoctor, form]
   );
 
-  // Validate và format dữ liệu trước khi gửi
-  // Trả về object dữ liệu gửi lên API
   const validateAndFormatData = (values) => {
     const user = authService.getCurrentUser();
     if (!user) throw new Error("Vui lòng đăng nhập để đặt lịch hẹn");
@@ -211,7 +197,6 @@ const IvfAppointmentForm = ({
     const timeSlot = values.timeSlot;
     const [startTime] = timeSlot.split("-");
     const [hours, minutes] = startTime.split(":");
-    // Format lại ngày giờ gửi lên API
     const appointmentDateTime = dayjs(date)
       .set("hour", parseInt(hours))
       .set("minute", parseInt(minutes))
@@ -233,21 +218,18 @@ const IvfAppointmentForm = ({
     return appointmentData;
   };
 
-  // Xử lý gửi form đặt lịch
   const handleSubmit = async (values) => {
     if (onSubmitting) onSubmitting();
     setLoading(true);
     try {
-      // Kiểm tra đăng nhập
       const user = authService.getCurrentUser();
       if (!user) {
         toast.error("Vui lòng đăng nhập để đặt lịch hẹn");
-        navigate("/login"); // Sử dụng navigate từ scope component
+        navigate("/login");
         return;
       }
 
       const appointmentData = validateAndFormatData(values);
-      console.log("Dữ liệu gửi đi:", appointmentData);
       const result = await appointmentService.bookAppointment(appointmentData);
       if (result.success) {
         setIsSuccess(true);
@@ -264,7 +246,6 @@ const IvfAppointmentForm = ({
     }
   };
 
-  // Tải lại danh sách dịch vụ
   const reloadServices = async () => {
     try {
       setIsLoadingServices(true);
@@ -283,7 +264,6 @@ const IvfAppointmentForm = ({
     }
   };
 
-  // Tải lại danh sách bác sĩ
   const reloadDoctors = async () => {
     try {
       setIsLoadingDoctors(true);
@@ -302,7 +282,6 @@ const IvfAppointmentForm = ({
     }
   };
 
-  // Nếu đặt lịch thành công, hiển thị màn hình xác nhận
   if (isSuccess) {
     return (
       <div className="ivf-appointment-form">
@@ -325,7 +304,6 @@ const IvfAppointmentForm = ({
     );
   }
 
-  // Render form đặt lịch
   return (
     <div className="ivf-appointment-form">
       <div className="ivf-form-header">
@@ -341,7 +319,6 @@ const IvfAppointmentForm = ({
         >
           <Row gutter={[16, 16]}>
             <Col xs={24}>
-              {/* Bước 1: Chọn dịch vụ */}
               <div className="ivf-form-section">
                 <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">1</div>
@@ -360,10 +337,10 @@ const IvfAppointmentForm = ({
                     <Select
                       placeholder="Chọn dịch vụ điều trị"
                       className="ivf-service-select"
-                      disabled={isLoadingServices || (service && service.id ? true : false)} // Vô hiệu hóa nếu service có id
+                      disabled={isLoadingServices || (service && service.id ? true : false)}
                       showSearch
                       loading={isLoadingServices}
-                      value={service && service.id ? service.id : undefined} // Set giá trị từ service
+                      value={service && service.id ? service.id : undefined}
                       onChange={(value) => {
                         const selected = services.find((s) => s.id === value || s.serviceId === value);
                         if (selected) {
@@ -421,7 +398,6 @@ const IvfAppointmentForm = ({
             </Col>
 
             <Col xs={24}>
-              {/* Bước 1.5: Đã từng khám hay chưa */}
               <div className="ivf-form-section">
                 <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">1.5</div>
@@ -505,7 +481,6 @@ const IvfAppointmentForm = ({
             </Col>
 
             <Col xs={24}>
-              {/* Bước 2: Chọn bác sĩ */}
               <div className="ivf-form-section">
                 <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">2</div>
@@ -540,12 +515,8 @@ const IvfAppointmentForm = ({
                           >
                             <div className="ivf-doctor-avatar">
                               <img
-                                src={
-                                  doctor.photo ||
-                                  doctor.avatar ||
-                                  DEFAULT_AVATAR
-                                }
-                                alt={doctor.name || doctor.fullName}
+                                src={doctor.avatarUrl || DEFAULT_AVATAR} // Sử dụng avatarUrl từ API
+                                alt={doctor.fullName}
                                 onError={(e) => {
                                   e.target.src = DEFAULT_AVATAR;
                                 }}
@@ -558,18 +529,13 @@ const IvfAppointmentForm = ({
                                 )}
                             </div>
                             <h4 className="ivf-doctor-name">
-                              {doctor.name || doctor.fullName}
+                              {doctor.fullName}
                             </h4>
                             <p className="ivf-doctor-specialty">
-                              {doctor.specialization ||
-                                doctor.specialty ||
-                                "Bác sĩ chuyên khoa"}
+                              {doctor.specialization}
                             </p>
                             <div className="ivf-doctor-experience">
-                              {doctor.experienceYears ||
-                                doctor.experience ||
-                                "5+"}{" "}
-                              năm kinh nghiệm
+                              {doctor.experienceYears} năm kinh nghiệm
                             </div>
                           </div>
                         ))}
@@ -580,10 +546,7 @@ const IvfAppointmentForm = ({
                             Đã chọn bác sĩ:{" "}
                             {doctors.find(
                               (d) => (d.id || d.doctorId) === selectedDoctor
-                            )?.name ||
-                              doctors.find(
-                                (d) => (d.id || d.doctorId) === selectedDoctor
-                              )?.fullName}
+                            )?.fullName}
                             <Button
                               type="link"
                               className="ivf-clear-selection"
@@ -614,7 +577,6 @@ const IvfAppointmentForm = ({
             </Col>
 
             <Col xs={24} md={12}>
-              {/* Bước 3: Chọn ngày */}
               <div className="ivf-form-section">
                 <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">3</div>
@@ -643,7 +605,6 @@ const IvfAppointmentForm = ({
             </Col>
 
             <Col xs={24} md={12}>
-              {/* Bước 4: Chọn giờ */}
               <div className="ivf-form-section">
                 <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">4</div>
@@ -688,7 +649,6 @@ const IvfAppointmentForm = ({
             </Col>
 
             <Col xs={24}>
-              {/* Bước 5: Ghi chú */}
               <div className="ivf-form-section">
                 <div className="ivf-form-step-header">
                   <div className="ivf-form-step-number">5</div>
@@ -709,7 +669,6 @@ const IvfAppointmentForm = ({
             </Col>
           </Row>
 
-          {/* Nút gửi */}
           <Button
             type="primary"
             htmlType="submit"
@@ -738,4 +697,3 @@ const IvfAppointmentForm = ({
 };
 
 export default IvfAppointmentForm;
-// Kết thúc file IvfAppointmentForm.jsx

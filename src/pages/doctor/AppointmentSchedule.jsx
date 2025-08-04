@@ -76,21 +76,13 @@ const AppointmentSchedule = () => {
       const authService = require("../../services/authService").default;
       const currentUser = authService.getCurrentUser();
       if (currentUser) {
-        console.log("Doctor fetching appointments - User info:", {
-          id: currentUser.id,
-          role: currentUser.role,
-          doctorId: currentUser.doctor?.id || "Not available",
-        });
-
         // Check if doctor info exists
         if (!currentUser.doctor || !currentUser.doctor.id) {
-          console.error("Missing doctor information in user object");
           setError("Không thể tải lịch khám bệnh: Thiếu thông tin bác sĩ");
           setLoading(false);
           return;
         }
       } else {
-        console.error("No user is currently logged in");
         setError("Vui lòng đăng nhập để xem lịch khám bệnh");
         setLoading(false);
         return;
@@ -102,24 +94,20 @@ const AppointmentSchedule = () => {
 
         // Lấy doctorId từ thông tin người dùng
         const doctorId = currentUser.doctor.id;
-        console.log("Fetching schedule for doctorId:", doctorId);
 
         // Chuẩn bị tham số ngày (format: YYYY-MM-DD)
         const dateParam = selectedDate
           ? selectedDate.format("YYYY-MM-DD")
           : null;
-        console.log("Fetching appointments for date:", dateParam);
 
         // Gọi API lịch hẹn sử dụng getDoctorSchedule từ doctorService với tham số ngày
         const response = await doctorService.getDoctorSchedule(
           doctorId,
           dateParam
         );
-        console.log("API response:", response);
 
         // Kiểm tra cấu trúc phản hồi và truy cập đúng dữ liệu
         const appointmentsData = response.appointments || [];
-        console.log("Dữ liệu cuộc hẹn:", appointmentsData);
 
         // Chuyển đổi dữ liệu từ API sang định dạng mà giao diện hiểu được
         const formattedAppointments = appointmentsData.map((appointment) => ({
@@ -142,9 +130,7 @@ const AppointmentSchedule = () => {
 
         setAppointments(formattedAppointments);
         setError(null);
-        console.log("Đã tải xong dữ liệu lịch hẹn", formattedAppointments);
       } catch (error) {
-        console.error("Error fetching doctor schedule:", error);
         message.error("Không thể tải lịch khám bệnh");
         setError("Không thể tải lịch khám bệnh");
       } finally {
@@ -211,28 +197,23 @@ const AppointmentSchedule = () => {
       // Lấy thông tin người dùng hiện tại
       const currentUser = authService.getCurrentUser();
       if (!currentUser || !currentUser.doctor || !currentUser.doctor.id) {
-        console.error("Missing doctor information");
         throw new Error("Missing doctor information");
       }
 
       // Lấy doctorId từ thông tin người dùng
       const doctorId = currentUser.doctor.id;
-      console.log("Reloading schedule for doctorId:", doctorId);
 
       // Chuẩn bị tham số ngày (format: YYYY-MM-DD)
       const dateParam = selectedDate ? selectedDate.format("YYYY-MM-DD") : null;
-      console.log("Reloading appointments for date:", dateParam);
 
       // Gọi API lịch hẹn sử dụng getDoctorSchedule từ doctorService với tham số ngày
       const response = await doctorService.getDoctorSchedule(
         doctorId,
         dateParam
       );
-      console.log("API response:", response);
 
       // Kiểm tra cấu trúc phản hồi và truy cập đúng dữ liệu
       const appointmentsData = response.appointments || [];
-      console.log("Dữ liệu cuộc hẹn:", appointmentsData);
 
       // Chuyển đổi dữ liệu từ API sang định dạng mà giao diện hiểu được
       const formattedAppointments = appointmentsData.map((appointment) => ({
@@ -257,9 +238,7 @@ const AppointmentSchedule = () => {
       setAppointments(formattedAppointments);
       setError(null);
       message.success("Đã tải lịch khám thành công");
-      console.log("Đã tải lại lịch khám thành công");
     } catch (error) {
-      console.error("Error refreshing appointments:", error);
       setError("Không thể tải lịch khám bệnh");
       message.error("Không thể tải lịch khám bệnh");
     } finally {
@@ -336,12 +315,11 @@ const AppointmentSchedule = () => {
             );
           }
         } catch (error) {
-          console.error("Lỗi khi cập nhật trạng thái:", error);
           message.error("Không thể cập nhật trạng thái lịch hẹn");
         }
       })
       .catch((info) => {
-        console.log("Validation Failed:", info);
+        message.error("Vui lòng kiểm tra thông tin đã nhập");
       });
   };
   const getDailyAppointments = useCallback(() => {
