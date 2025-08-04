@@ -41,9 +41,7 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
       setIsLoadingAvatar(true);
 
       try {
-        console.log("Fetching user profile...");
         const response = await guestService.getUserProfile();
-        console.log("Full response from getUserProfile:", response);
 
         // Dựa vào API response structure: avatarUrl nằm trực tiếp trong response
         // Kiểm tra nhiều cấu trúc có thể có
@@ -65,7 +63,6 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
           newAvatarUrl !== "null" &&
           newAvatarUrl.trim() !== ""
         ) {
-          console.log("Received avatarUrl from API:", newAvatarUrl);
           setAvatarUrl(newAvatarUrl);
 
           // Cập nhật localStorage với avatarUrl từ server
@@ -90,7 +87,6 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
         // Fallback đến avatar từ localStorage nếu API thất bại
         const localAvatar = currentUser.doctor?.avatarUrl;
         if (localAvatar && localAvatar !== "null") {
-          console.log("Falling back to localStorage avatar:", localAvatar);
           setAvatarUrl(localAvatar);
         }
         // Nếu không có local avatar, giữ nguyên default avatar
@@ -131,11 +127,9 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
         return;
       }
 
-      console.log("Uploading file:", file);
       setIsLoadingAvatar(true);
 
       const response = await doctorService.uploadDoctorAvatar(doctorId, file);
-      console.log("Upload response:", response);
 
       // Lấy avatarUrl từ response của server
       let newAvatarUrl = null;
@@ -146,7 +140,6 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
       }
 
       if (newAvatarUrl) {
-        console.log("Upload response avatarUrl:", newAvatarUrl);
         setAvatarUrl(newAvatarUrl);
 
         // Cập nhật localStorage với avatarUrl từ server
@@ -175,10 +168,6 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
             }
 
             if (updatedAvatarUrl) {
-              console.log(
-                "Updated avatarUrl from getUserProfile:",
-                updatedAvatarUrl
-              );
               setAvatarUrl(updatedAvatarUrl);
               const updatedUser = {
                 ...currentUser,
@@ -246,10 +235,6 @@ const DoctorSidebar = ({ isCollapsed, onToggle }) => {
               }}
               title="Click để cập nhật ảnh"
               onError={(e) => {
-                console.error(
-                  "Image load failed, falling back to default. URL:",
-                  e.target.src
-                );
                 if (e.target.src !== "/default-avatar.png") {
                   e.target.src = "/default-avatar.png";
                 }

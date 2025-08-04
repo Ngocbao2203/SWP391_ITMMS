@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -23,7 +23,6 @@ import {
   List,
 } from "antd";
 import {
-  PlusOutlined,
   SearchOutlined,
   EditOutlined,
   EyeOutlined,
@@ -53,7 +52,6 @@ const TreatmentPlansManagement = () => {
   const [filteredPlans, setFilteredPlans] = useState([]);
   const [filters, setFilters] = useState({
     status: "all",
-    phase: "all",
     search: "",
   });
   const [detailModalVisible, setDetailModalVisible] = useState(false);
@@ -76,12 +74,9 @@ const TreatmentPlansManagement = () => {
       }
 
       const doctorId = currentUser.doctor.id;
-      console.log("Fetching treatment plans for doctorId:", doctorId);
 
       // Gọi API thực để lấy treatment plans của doctor
       const response = await treatmentService.getDoctorTreatmentPlans(doctorId);
-
-      console.log("Treatment plans API response:", response);
 
       // Handle the new API response structure
       if (
@@ -96,11 +91,9 @@ const TreatmentPlansManagement = () => {
       } else if (Array.isArray(response)) {
         setTreatmentPlans(response);
       } else {
-        console.warn("Unexpected API response structure:", response);
         setTreatmentPlans([]);
       }
     } catch (error) {
-      console.error("Error fetching treatment plans:", error);
       message.error(
         "Không thể tải danh sách kế hoạch điều trị: " +
           (error.message || "Unknown error")
@@ -122,14 +115,7 @@ const TreatmentPlansManagement = () => {
       });
     }
 
-    // Filter by phase
-    if (filters.phase !== "all") {
-      filtered = filtered.filter((item) => {
-        const plan = item.treatmentPlan || item;
-        const currentPhase = plan.currentPhase || plan.phase || 1;
-        return currentPhase === parseInt(filters.phase);
-      });
-    }
+    // Phase filter removed as requested
 
     // Filter by search term
     if (filters.search) {
@@ -254,11 +240,6 @@ const TreatmentPlansManagement = () => {
         status: values.status,
       };
 
-      console.log("=== UPDATING TREATMENT PLAN ===");
-      console.log("Plan ID:", plan.id);
-      console.log("Update data:", updateData);
-      console.log("API URL: PUT /api/TreatmentPlans/" + plan.id + "/progress");
-
       // Add loading state
       const loadingMessage = message.loading(
         "Đang cập nhật tiến trình điều trị...",
@@ -271,12 +252,6 @@ const TreatmentPlansManagement = () => {
           updateData
         );
 
-        console.log("=== UPDATE RESULT ===");
-        console.log("Success:", result.success);
-        console.log("Message:", result.message);
-        console.log("Data:", result.data);
-        console.log("Errors:", result.errors);
-
         if (result.success) {
           message.success(result.message || "Cập nhật tiến trình thành công!");
           setUpdateModalVisible(false);
@@ -285,7 +260,6 @@ const TreatmentPlansManagement = () => {
           // Refresh data without full reload
           await fetchTreatmentPlans();
         } else {
-          console.error("Update failed:", result);
           message.error(
             result.message || "Có lỗi xảy ra khi cập nhật tiến trình"
           );
@@ -299,8 +273,6 @@ const TreatmentPlansManagement = () => {
         loadingMessage();
       }
     } catch (error) {
-      console.error("Error updating treatment plan:", error);
-
       // More specific error messages
       if (error.status === 404) {
         message.error("Không tìm thấy kế hoạch điều trị");
@@ -515,21 +487,7 @@ const TreatmentPlansManagement = () => {
               <Option value="Cancelled">Đã hủy</Option>
             </Select>
           </Col>
-          <Col xs={12} sm={8} md={6}>
-            <Select
-              placeholder="Giai đoạn"
-              value={filters.phase}
-              onChange={(value) => handleFilterChange("phase", value)}
-              style={{ width: "100%" }}
-            >
-              <Option value="all">Tất cả giai đoạn</Option>
-              <Option value="1">Giai đoạn 1</Option>
-              <Option value="2">Giai đoạn 2</Option>
-              <Option value="3">Giai đoạn 3</Option>
-              <Option value="4">Giai đoạn 4</Option>
-              <Option value="5">Giai đoạn 5</Option>
-            </Select>
-          </Col>
+          {/* Phase filter removed as requested */}
         </Row>
       </Card>
 
@@ -897,6 +855,9 @@ const TreatmentPlansManagement = () => {
               <Option value={3}>Giai đoạn 3</Option>
               <Option value={4}>Giai đoạn 4</Option>
               <Option value={5}>Giai đoạn 5</Option>
+              <Option value={6}>Giai đoạn 6</Option>
+              <Option value={7}>Giai đoạn 7</Option>
+              <Option value={8}>Giai đoạn 8</Option>
             </Select>
           </Form.Item>
 

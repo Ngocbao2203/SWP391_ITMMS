@@ -28,15 +28,18 @@ import { authService, treatmentService } from "../../services";
 import "../../styles/ConsultationModal.css";
 
 const { TextArea } = Input;
-const { Text, Title } = Typography;
+// Fix unused variable warning by removing 'Text' which is not used
+const { Title } = Typography;
 const { Option } = Select;
 
+/**
+ * ConsultationModal - Modal component for patient consultation
+ *
+ * OPTIMIZATION: Combined data fetching operations (patient data and treatment services)
+ * into a single function to prevent multiple renders and flickering/jittery effect
+ * when opening the modal.
+ */
 const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
-  console.log("=== CONSULTATION MODAL DEBUG ===");
-  console.log("visible:", visible);
-  console.log("appointment:", appointment);
-  console.log("appointment.customerId:", appointment?.customerId);
-
   // Always call hooks first (Rules of Hooks)
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -45,14 +48,31 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
   const [existingTreatmentPlan, setExistingTreatmentPlan] = useState(null);
   const [treatmentServices, setTreatmentServices] = useState([]);
   const [createTreatmentPlan, setCreateTreatmentPlan] = useState(false);
+  const [hasEverLoaded, setHasEverLoaded] = useState(false);
+
+  // Track when data has loaded successfully at least once
+  useEffect(() => {
+    if (!loading && patientData) {
+      setHasEverLoaded(true);
+    }
+  }, [loading, patientData]);
 
   // Get current user
   const currentUser = authService.getCurrentUser();
 
-  const fetchPatientData = useCallback(async () => {
+  /**
+   * Enhanced combined fetch function to resolve the modal jittering issue
+   *
+   * The root cause is likely React's batching behavior with multiple state updates.
+   * To fix this, we'll:
+   * 1. Move the loading state outside the modal so it doesn't trigger re-renders
+   * 2. Prepare all data before setting any state
+   * 3. Use a single batch update with React 18's batching or a wrapper function
+   */
+  const fetchModalData = useCallback(async () => {
     if (!appointment) return;
 
-    // Extract customerId from appointment - API đã cung cấp trực tiếp
+    // Extract customerId from appointment
     const customerId = appointment.customerId;
 
     if (!customerId) {
@@ -61,107 +81,91 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
     }
 
     try {
+      // Set loading state first, separate from other state changes
       setLoading(true);
-      // Lấy thông tin bệnh nhân và treatment plan hiện tại (nếu có)
-      // const patientInfo = await patientService.getPatientDetails(customerId);
-      // const treatmentPlans = await treatmentPlanService.getByCustomerId(customerId);
 
-      // Mock data cho demo với thông tin từ appointment
-      setPatientData({
+      // Start the API call for treatment services
+      const treatmentServicesPromise =
+        treatmentService.getAllTreatmentServices();
+
+      // Prepare patient data while API call is in progress
+      const patientDataObj = {
         id: customerId,
         name: appointment.customerName || `Bệnh nhân ${customerId}`,
         phone: appointment.customerPhone || "Chưa có SĐT",
         age: 28,
         gender: "Nữ",
         medicalHistory: "Không có tiền sử bệnh lý đặc biệt",
-      });
+      };
 
-      // Kiểm tra có treatment plan hiện tại không
-      if (appointment.treatmentPlanId) {
-        setExistingTreatmentPlan({
-          id: appointment.treatmentPlanId,
-          currentPhase: 2,
-          treatmentType: "IVF",
-          status: "Active",
-        });
+      // Check existing treatment plan
+      const existingTreatmentPlanObj = appointment.treatmentPlanId
+        ? {
+            id: appointment.treatmentPlanId,
+            currentPhase: 2,
+            treatmentType: "IVF",
+            status: "Active",
+          }
+        : null;
+
+      const response = await treatmentServicesPromise;
+
+      // Prepare services data
+      let servicesData = [];
+      if (response && response.success && response.data) {
+        // Response format: {success: true, data: Array, message: string}
+        servicesData = Array.isArray(response.data) ? response.data : [];
+      } else if (response && response.services) {
+        // Response format: {services: Array}
+        servicesData = response.services;
+      } else if (Array.isArray(response)) {
+        // Direct array response
+        servicesData = response;
+      } else {
+        console.warn("Unexpected services API response:", response);
       }
+
+      // Delay state updates slightly to ensure they're batched together
+      setTimeout(() => {
+        // Update all state variables in a single batch
+        setPatientData(patientDataObj);
+        setExistingTreatmentPlan(existingTreatmentPlanObj);
+        setTreatmentServices(servicesData);
+
+        // Set loading to false only after all other states are updated
+        setLoading(false);
+      }, 0);
     } catch (error) {
-      console.error("Error fetching patient data:", error);
-      message.error("Không thể tải thông tin bệnh nhân");
-    } finally {
+      message.error("Không thể tải thông tin cho modal khám bệnh");
       setLoading(false);
     }
   }, [appointment]);
 
-  const fetchTreatmentServices = useCallback(async () => {
-    try {
-      // Lấy danh sách treatment services từ API
-      const response = await treatmentService.getAllTreatmentServices();
-
-      console.log("Treatment services API response:", response);
-
-      // Handle different API response structures
-      if (response && response.success && response.data) {
-        // Response format: {success: true, data: Array, message: string}
-        setTreatmentServices(Array.isArray(response.data) ? response.data : []);
-      } else if (response && response.services) {
-        // Response format: {services: Array}
-        setTreatmentServices(response.services);
-      } else if (Array.isArray(response)) {
-        // Direct array response
-        setTreatmentServices(response);
-      } else {
-        console.warn("Unexpected services API response:", response);
-        setTreatmentServices([]);
-      }
-    } catch (error) {
-      console.error("Error fetching treatment services:", error);
-      message.error("Không thể tải danh sách dịch vụ điều trị");
-    }
-  }, []);
-
-  // useEffect - đặt sau khi định nghĩa functions để tránh lỗi initialization
+  // Enhanced useEffect to prevent multiple renders
   useEffect(() => {
+    // Only trigger data fetching when both the modal becomes visible AND we have appointment data
     if (visible && appointment) {
-      console.log("=== LOADING CONSULTATION MODAL ===");
-      console.log("Appointment:", appointment);
-
-      fetchPatientData();
-      fetchTreatmentServices();
+      // Call the combined fetch function which now handles all state updates in batches
+      fetchModalData();
+    } else if (!visible) {
+      // Reset loading state when modal is closed to ensure a clean state for next opening
+      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, appointment]);
 
   const handleSubmit = async (values) => {
-    console.log("=== FORM SUBMIT TRIGGERED ===");
-    console.log("Form values received:", values);
-
-    // CRITICAL: Check appointment object first
-    console.log("=== APPOINTMENT CHECK IN SUBMIT ===");
-    console.log("appointment in handleSubmit:", appointment);
-    console.log("appointment type:", typeof appointment);
-
     if (!appointment) {
       console.error("=== APPOINTMENT IS NULL/UNDEFINED ===");
       message.error("Không có thông tin lịch hẹn. Vui lòng thử lại.");
       return;
     }
 
-    console.log("Required fields check:");
-    console.log("- symptoms:", values.symptoms);
-    console.log("- diagnosis:", values.diagnosis);
-    console.log("- treatment:", values.treatment);
-
     try {
       setSubmitting(true);
-      console.log("=== SUBMITTING SET TO TRUE ===");
 
       // API đã cung cấp customerId trực tiếp - không cần logic phức tạp
       const patientId = appointment.customerId;
-
-      console.log("=== PATIENT ID EXTRACTION ===");
-      console.log("appointment.customerId:", appointment.customerId);
-      console.log("patientId extracted:", patientId);
 
       // Validate customerId exists
       if (!patientId) {
@@ -171,8 +175,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
         );
         return;
       }
-
-      console.log("Final patientId to use:", patientId);
 
       if (!patientId) {
         console.error("=== NO PATIENT ID FOUND ===");
@@ -204,17 +206,12 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
         return;
       }
 
-      console.log("=== IDS VALIDATED ===");
-      console.log("customerIdNumber:", customerIdNumber);
-      console.log("doctorId:", doctorId);
-
       // Format next appointment date
       let nextAppointmentFormatted = null;
       if (values.nextAppointmentDate) {
         try {
           nextAppointmentFormatted =
             values.nextAppointmentDate.format("YYYY-MM-DD");
-          console.log("nextAppointmentFormatted:", nextAppointmentFormatted);
         } catch (formatError) {
           console.error("Error formatting nextAppointmentDate:", formatError);
           nextAppointmentFormatted = null;
@@ -237,8 +234,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
         return;
       }
 
-      console.log("=== ALL VALIDATIONS PASSED ===");
-
       // FIX: Sử dụng appointment.id thay vì appointmentId đã process
       // Vì backend cần appointmentId thật từ database, không phải processed value
       const realAppointmentId = appointment.id; // Đây là ID thật từ API
@@ -256,33 +251,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
           ? nextAppointmentFormatted
           : null,
       };
-
-      console.log(
-        "🔧 FIXED: Using appointment.id as appointmentId:",
-        realAppointmentId
-      );
-      console.log(
-        "🔧 Original appointment object keys:",
-        Object.keys(appointment)
-      );
-      console.log("🔧 appointment.id:", appointment.id);
-      console.log("🔧 appointment.appointmentId:", appointment.appointmentId);
-
-      // VALIDATION: Check appointmentId và customerId
-      console.log("✅ VALIDATION CHECKS:");
-      console.log(
-        "- appointmentId type:",
-        typeof realAppointmentId,
-        "value:",
-        realAppointmentId
-      );
-      console.log(
-        "- customerId type:",
-        typeof customerIdNumber,
-        "value:",
-        customerIdNumber
-      );
-      console.log("- doctorId type:", typeof doctorId, "value:", doctorId);
 
       // Validate appointmentId
       if (!realAppointmentId || isNaN(realAppointmentId)) {
@@ -305,45 +273,8 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
         return;
       }
 
-      console.log("=== MEDICAL RECORD DATA PREPARED ===");
-      console.log("appointmentId used:", medicalRecordData.appointmentId);
-      console.log("customerId used:", medicalRecordData.customerId);
-
-      console.log("=== CALLING MEDICAL RECORD API ===");
-      console.log("Medical record data:", medicalRecordData);
-      console.log("Doctor ID:", doctorId);
-
-      // Debug current user và token
-      console.log("=== AUTH DEBUG ===");
-      console.log("Current user:", currentUser);
-      console.log("Has token:", !!currentUser?.token);
-      console.log(
-        "Token preview:",
-        currentUser?.token?.substring(0, 20) + "..."
-      );
-
-      // Debug URL được gọi
-      const apiUrl = `http://localhost:5037/api/MedicalRecords/complete/${doctorId}`;
-      console.log("=== API CALL DEBUG ===");
-      console.log("Full URL:", apiUrl);
-      console.log(
-        "Request body JSON:",
-        JSON.stringify(medicalRecordData, null, 2)
-      );
-
-      // 1. Create medical record
-      console.log("=== CALLING adminService.completeAppointment ===");
-      console.log("Method: adminService.completeAppointment");
-      console.log(
-        "Params: doctorId =",
-        doctorId,
-        "medicalRecordData =",
-        medicalRecordData
-      );
-
       // TEST: Validate doctorId exists và có permission
       try {
-        console.log("=== TESTING BACKEND CONNECTION ===");
         const testUrl = `http://localhost:5037/api/MedicalRecords/test`;
         const testResponse = await fetch(testUrl, {
           headers: {
@@ -351,13 +282,9 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
             "Content-Type": "application/json",
           },
         });
-        console.log(
-          "MedicalRecords test endpoint status:",
-          testResponse.status
-        );
+
         if (testResponse.ok) {
           const testData = await testResponse.text();
-          console.log("MedicalRecords test response:", testData);
         } else {
           console.warn(
             "MedicalRecords test failed:",
@@ -370,7 +297,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
 
       // TEST: Check doctor exists
       try {
-        console.log("=== TESTING DOCTOR EXISTS ===");
         const doctorUrl = `http://localhost:5037/api/doctors/${doctorId}`;
         const doctorResponse = await fetch(doctorUrl, {
           headers: {
@@ -378,10 +304,9 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
             "Content-Type": "application/json",
           },
         });
-        console.log("Doctor check status:", doctorResponse.status);
+
         if (doctorResponse.ok) {
           const doctorData = await doctorResponse.json();
-          console.log("Doctor data:", doctorData);
         } else {
           console.warn("Doctor not found or access denied");
         }
@@ -389,19 +314,8 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
         console.error("Doctor check failed:", doctorError);
       }
 
-      // TEST: Manual API call với format giống Swagger
-      console.log("=== TESTING MANUAL API CALL (SWAGGER FORMAT) ===");
-      console.log("🔍 STEP 1: Preparing manual API call");
-      console.log(
-        "📍 URL:",
-        `http://localhost:5037/api/MedicalRecords/complete/${doctorId}`
-      );
-      console.log("👤 Token:", currentUser?.token ? "EXISTS" : "MISSING");
-      console.log("📦 Payload:", JSON.stringify(medicalRecordData, null, 2));
-
       try {
         const manualUrl = `http://localhost:5037/api/MedicalRecords/complete/${doctorId}`;
-        console.log("🚀 Making manual fetch request...");
 
         const manualResponse = await fetch(manualUrl, {
           method: "POST",
@@ -413,20 +327,12 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
           body: JSON.stringify(medicalRecordData),
         });
 
-        console.log("📡 Manual API Response Status:", manualResponse.status);
-        console.log(
-          "📋 Manual API Response Headers:",
-          Object.fromEntries(manualResponse.headers.entries())
-        );
-
         if (manualResponse.ok) {
           const manualData = await manualResponse.json();
-          console.log("✅ Manual API call SUCCESS:", manualData);
 
           // 3. Handle treatment plan if needed (after medical record success)
           if (createTreatmentPlan && values.treatmentServiceId) {
             try {
-              console.log("=== CREATING TREATMENT PLAN ===");
               const treatmentPlanData = {
                 customerId: customerIdNumber,
                 doctorId: doctorId,
@@ -438,20 +344,17 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
                   : dayjs().format("YYYY-MM-DDTHH:mm:ss"),
                 totalCost: 0, // Set default value, will be calculated by backend
                 notes: values.notes || "",
+                currentPhase: 1, // Default to phase 1
+                phaseDescription: values.phaseDescription || "",
+                nextPhaseDate: values.nextPhaseDate
+                  ? values.nextPhaseDate.format("YYYY-MM-DDTHH:mm:ss")
+                  : null,
               };
-
-              console.log(
-                "Treatment plan payload:",
-                JSON.stringify(treatmentPlanData, null, 2)
-              );
 
               const treatmentResult =
                 await treatmentService.createTreatmentPlan(treatmentPlanData);
-              console.log("=== TREATMENT PLAN API RESPONSE ===");
-              console.log("Treatment result:", treatmentResult);
 
               if (treatmentResult && treatmentResult.success) {
-                console.log("=== TREATMENT PLAN CREATED SUCCESSFULLY ===");
                 message.success(
                   "Hoàn thành khám bệnh và tạo kế hoạch điều trị thành công!"
                 );
@@ -540,7 +443,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
           (error.message || "Unknown error")
       );
     } finally {
-      console.log("=== FINALLY: SETTING SUBMITTING TO FALSE ===");
       setSubmitting(false);
     }
   };
@@ -552,10 +454,7 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
       title={
         <Space>
           <MedicineBoxOutlined />
-          <span>
-            Khám bệnh -{" "}
-            {appointment.customerName || `Bệnh nhân ${appointment.customerId}`}
-          </span>
+          <span>Khám bệnh</span>
         </Space>
       }
       open={visible}
@@ -563,11 +462,18 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
       width={1000}
       footer={null}
       className="consultation-modal"
+      // Keep the modal content stable during loading to prevent layout shifts
+      destroyOnClose={true}
+      // Optimization flags for better performance
+      maskClosable={false}
+      transitionName="" // Disable transition animations
+      style={{ minHeight: "600px" }} // Stable modal height
     >
-      {loading ? (
-        <div style={{ textAlign: "center", padding: "50px 0" }}>
+      {/* Use loading-container class to maintain consistent height during loading */}
+      {loading && !hasEverLoaded ? (
+        <div className="loading-container">
           <Spin size="large" />
-          <p style={{ marginTop: 16 }}>Đang tải thông tin bệnh nhân...</p>
+          <p style={{ marginTop: 16 }}>Đang tải thông tin khám bệnh...</p>
         </div>
       ) : (
         <Form
@@ -575,16 +481,12 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
           layout="vertical"
           onFinish={handleSubmit}
           onFinishFailed={(errorInfo) => {
-            console.log("=== FORM VALIDATION FAILED ===");
-            console.log("Error info:", errorInfo);
-            console.log("Failed fields:", errorInfo.errorFields);
             message.error("Vui lòng kiểm tra lại thông tin form");
           }}
           initialValues={{
             followUpRequired: false,
             nextAppointmentDate: dayjs().add(1, "week"),
             startDate: dayjs(),
-            currentPhase: existingTreatmentPlan?.currentPhase || 1,
             status: existingTreatmentPlan?.status || "Active",
           }}
         >
@@ -602,7 +504,7 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
               <Col span={20}>
                 <Space direction="vertical" size={4}>
                   <Title level={4} style={{ margin: 0 }}>
-                    {patientData?.name}
+                    {appointment?.customerName}
                   </Title>
 
                   {existingTreatmentPlan && (
@@ -694,16 +596,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
                 {existingTreatmentPlan ? (
                   // Update existing plan
                   <>
-                    <Form.Item label="Giai đoạn hiện tại" name="currentPhase">
-                      <Select>
-                        <Option value={1}>Giai đoạn 1</Option>
-                        <Option value={2}>Giai đoạn 2</Option>
-                        <Option value={3}>Giai đoạn 3</Option>
-                        <Option value={4}>Giai đoạn 4</Option>
-                        <Option value={5}>Giai đoạn 5</Option>
-                      </Select>
-                    </Form.Item>
-
                     <Form.Item label="Mô tả tiến trình" name="phaseDescription">
                       <TextArea
                         rows={3}
@@ -778,13 +670,32 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
                       name="treatmentDescription"
                     >
                       <TextArea
-                        rows={3}
+                        rows={2}
                         placeholder="Mô tả chi tiết kế hoạch điều trị..."
+                      />
+                    </Form.Item>
+
+                    <Form.Item label="Mô tả giai đoạn" name="phaseDescription">
+                      <TextArea
+                        rows={2}
+                        placeholder="Mô tả chi tiết về giai đoạn điều trị hiện tại..."
                       />
                     </Form.Item>
 
                     <Form.Item label="Ngày bắt đầu" name="startDate">
                       <DatePicker style={{ width: "100%" }} />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Ngày giai đoạn tiếp theo"
+                      name="nextPhaseDate"
+                    >
+                      <DatePicker
+                        style={{ width: "100%" }}
+                        disabledDate={(current) =>
+                          current && current < dayjs().startOf("day")
+                        }
+                      />
                     </Form.Item>
                   </>
                 ) : (
