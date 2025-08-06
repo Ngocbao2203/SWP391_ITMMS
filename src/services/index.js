@@ -1,41 +1,41 @@
 // Export all API services for easy importing
-export { default as apiService } from './api';
-export { default as authService } from './authService';
-export { default as appointmentService } from './appointmentService';
-export { default as doctorService } from './doctorService';
-export { default as patientService } from './patientService';
-export { default as treatmentService } from './treatmentService';
-export { default as guestService } from './guestService';
-export { default as adminService } from './adminService';
-export { default as treatmentPlans } from './treatmentPlans'; // Thêm export cho treatmentPlans
-export { default as blogService } from './blogService'; // Thêm export cho blogService
-
+export { default as apiService } from "./api";
+export { default as authService } from "./authService";
+export { default as appointmentService } from "./appointmentService";
+export { default as doctorService } from "./doctorService";
+export { default as patientService } from "./patientService";
+export { default as treatmentService } from "./treatmentService";
+export { default as guestService } from "./guestService";
+export { default as adminService } from "./adminService";
+export { default as treatmentPlans } from "./treatmentPlans"; // Thêm export cho treatmentPlans
+export { default as blogService } from "./blogService"; // Thêm export cho blogService
+export { default as treatmentFlowService } from "./treatmentFlowService"; // Thêm export cho treatmentFlowService
 // Export constants
-export * from './apiConstants';
+export * from "./apiConstants";
 
 // Export API utilities
-export { ApiError } from './api';
+export { ApiError } from "./api";
 
 // ========== SERVICE FACADE ==========
 // Simplified interface for common operations
 
 class ApiServiceFacade {
   constructor() {
-    this.auth = require('./authService').default;
-    this.appointments = require('./appointmentService').default;
-    this.doctors = require('./doctorService').default;
-    this.patients = require('./patientService').default;
-    this.treatments = require('./treatmentService').default;
-    this.guest = require('./guestService').default;
-    this.admin = require('./adminService').default;
-    this.plans = require('./treatmentPlans').default; // Thêm vào facade
-    this.blogs = require('./blogService').default; // Thêm vào facade
+    this.auth = require("./authService").default;
+    this.appointments = require("./appointmentService").default;
+    this.doctors = require("./doctorService").default;
+    this.patients = require("./patientService").default;
+    this.treatments = require("./treatmentService").default;
+    this.guest = require("./guestService").default;
+    this.admin = require("./adminService").default;
+    this.plans = require("./treatmentPlans").default; // Thêm vào facade
+    this.blogs = require("./blogService").default; // Thêm vào facade
   }
 
   /**
    * Quick login method
-   * @param {string} email 
-   * @param {string} password 
+   * @param {string} email
+   * @param {string} password
    */
   async login(email, password) {
     return await this.auth.login({ email, password });
@@ -43,7 +43,7 @@ class ApiServiceFacade {
 
   /**
    * Quick register method
-   * @param {Object} userData 
+   * @param {Object} userData
    */
   async register(userData) {
     return await this.auth.register(userData);
@@ -65,7 +65,7 @@ class ApiServiceFacade {
 
   /**
    * Book appointment quickly
-   * @param {Object} appointmentData 
+   * @param {Object} appointmentData
    */
   async bookAppointment(appointmentData) {
     return await this.appointments.bookAppointment(appointmentData);
@@ -73,7 +73,7 @@ class ApiServiceFacade {
 
   /**
    * Get patient dashboard data
-   * @param {number} customerId 
+   * @param {number} customerId
    */
   async getPatientDashboard(customerId) {
     return await this.patients.getPatientDashboard(customerId);
@@ -88,10 +88,10 @@ class ApiServiceFacade {
 
   /**
    * Search globally
-   * @param {string} query 
-   * @param {string} type 
+   * @param {string} query
+   * @param {string} type
    */
-  async search(query, type = 'all') {
+  async search(query, type = "all") {
     return await this.guest.globalSearch({ query, type });
   }
 
@@ -111,7 +111,7 @@ class ApiServiceFacade {
 
   /**
    * Check user role
-   * @param {string|Array} roles 
+   * @param {string|Array} roles
    */
   hasRole(roles) {
     return this.auth.hasRole(roles);
@@ -119,7 +119,7 @@ class ApiServiceFacade {
 
   /**
    * Create treatment plan quickly
-   * @param {Object} planData 
+   * @param {Object} planData
    */
   async createTreatmentPlan(planData) {
     return await this.plans.createTreatmentPlan(planData);
@@ -127,7 +127,7 @@ class ApiServiceFacade {
 
   /**
    * Get active treatment plan for customer
-   * @param {number} customerId 
+   * @param {number} customerId
    */
   async getActiveTreatmentPlan(customerId) {
     return await this.plans.getActiveByCustomer(customerId);
@@ -141,95 +141,99 @@ export const apiServiceFacade = new ApiServiceFacade();
 
 /**
  * Format error messages for display
- * @param {Error|ApiError} error 
+ * @param {Error|ApiError} error
  */
 export const formatErrorMessage = (error) => {
   if (error.isValidationError && error.isValidationError()) {
     const validationErrors = error.getValidationErrors();
     const messages = Object.values(validationErrors).flat();
-    return messages.join(', ');
+    return messages.join(", ");
   }
-  
-  return error.message || 'Đã có lỗi xảy ra';
+
+  return error.message || "Đã có lỗi xảy ra";
 };
 
 /**
  * Handle API response consistently
- * @param {Promise} apiCall 
- * @param {Object} options 
+ * @param {Promise} apiCall
+ * @param {Object} options
  */
 export const handleApiCall = async (apiCall, options = {}) => {
-  const { showSuccess = false, showError = true, defaultMessage = '' } = options;
-  
+  const {
+    showSuccess = false,
+    showError = true,
+    defaultMessage = "",
+  } = options;
+
   try {
     const response = await apiCall;
-    
+
     if (showSuccess && response.success !== false) {
-      console.log('Success:', response.message || defaultMessage);
+      console.log("Success:", response.message || defaultMessage);
     }
-    
+
     return response;
   } catch (error) {
     if (showError) {
-      console.error('Error:', formatErrorMessage(error));
+      console.error("Error:", formatErrorMessage(error));
     }
-    
+
     throw error;
   }
 };
 
 /**
  * Create query parameters string
- * @param {Object} params 
+ * @param {Object} params
  */
 export const createQueryParams = (params = {}) => {
-  const filtered = Object.entries(params).filter(([_, value]) => 
-    value !== null && value !== undefined && value !== ''
+  const filtered = Object.entries(params).filter(
+    ([_, value]) => value !== null && value !== undefined && value !== ""
   );
-  
+
   return new URLSearchParams(filtered).toString();
 };
 
 /**
  * Format date for API
- * @param {Date|string} date 
+ * @param {Date|string} date
  */
 export const formatDateForApi = (date) => {
   if (!date) return null;
-  
+
   const dateObj = date instanceof Date ? date : new Date(date);
   return dateObj.toISOString();
 };
 
 /**
  * Format date for display
- * @param {Date|string} date 
- * @param {string} locale 
+ * @param {Date|string} date
+ * @param {string} locale
  */
-export const formatDateForDisplay = (date, locale = 'vi-VN') => {
-  if (!date) return '';
-  
+export const formatDateForDisplay = (date, locale = "vi-VN") => {
+  if (!date) return "";
+
   const dateObj = date instanceof Date ? date : new Date(date);
   return dateObj.toLocaleDateString(locale);
 };
 
 /**
  * Format currency for display
- * @param {number} amount 
- * @param {string} currency 
+ * @param {number} amount
+ * @param {string} currency
  */
-export const formatCurrency = (amount, currency = 'VND') => {
-  if (!amount && amount !== 0) return '';
-  
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: currency
+export const formatCurrency = (amount, currency = "VND") => {
+  if (!amount && amount !== 0) return "";
+
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: currency,
   }).format(amount);
 };
 
 /**
  * Validate email format
- * @param {string} email 
+ * @param {string} email
  */
 export const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -238,7 +242,7 @@ export const isValidEmail = (email) => {
 
 /**
  * Validate phone format (Vietnam)
- * @param {string} phone 
+ * @param {string} phone
  */
 export const isValidPhone = (phone) => {
   const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
@@ -247,8 +251,8 @@ export const isValidPhone = (phone) => {
 
 /**
  * Debounce function for search
- * @param {Function} func 
- * @param {number} delay 
+ * @param {Function} func
+ * @param {number} delay
  */
 export const debounce = (func, delay) => {
   let timeoutId;
@@ -262,20 +266,20 @@ export const debounce = (func, delay) => {
 
 /**
  * Global error handler
- * @param {Error} error 
- * @param {Object} context 
+ * @param {Error} error
+ * @param {Object} context
  */
 export const globalErrorHandler = (error, context = {}) => {
-  console.error('Global API Error:', error, context);
+  console.error("Global API Error:", error, context);
 };
 
 /**
  * Set global error handler
- * @param {Function} handler 
+ * @param {Function} handler
  */
 export const setGlobalErrorHandler = (handler) => {
-  window.addEventListener('unhandledrejection', (event) => {
-    if (event.reason && event.reason.name === 'ApiError') {
+  window.addEventListener("unhandledrejection", (event) => {
+    if (event.reason && event.reason.name === "ApiError") {
       handler(event.reason);
     }
   });

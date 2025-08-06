@@ -48,7 +48,8 @@ export const API_ENDPOINTS = {
     GET_APPOINTMENTS: (id) => `/doctors/${id}/appointments`,
     GET_AVAILABLE: "/doctors/available",
     UPDATE_AVAILABILITY: (id) => `/doctors/${id}/availability`,
-    UPDATE_MANAGEMENT_TOGGLE_AVAILABILITY: (id) => `/doctors/management/${id}/toggle-availability`,
+    UPDATE_MANAGEMENT_TOGGLE_AVAILABILITY: (id) =>
+      `/doctors/management/${id}/toggle-availability`,
     GET_SCHEDULE: (id) => `/doctors/${id}/schedule`,
     MY_SCHEDULE: "/doctors/my-schedule",
     TEST: "/doctors/test",
@@ -130,11 +131,10 @@ export const API_ENDPOINTS = {
     BLOG_CATEGORIES: "/guest/blog/categories",
     SEARCH: "/guest/search",
   },
-  
+
   USER: {
     BASE: "/user",
-    GET_PROFILE: '/user/profile',
-    
+    GET_PROFILE: "/user/profile",
   },
   // Blog APIs
   BLOG: {
@@ -155,6 +155,11 @@ export const API_ENDPOINTS = {
     RECENT_APPOINTMENTS: "/dashboard/recent-appointments",
     FEEDBACK_STATS: "/dashboard/feedback-stats",
     REAL_TIME_STATS: "/dashboard/real-time-stats",
+  },
+
+  TREATMENT_FLOW: {
+    BASE: "/TreatmentFlow",
+    GET_BY_CUSTOMER: (customerId) => `/TreatmentFlow/patient/${customerId}`,
   },
 };
 

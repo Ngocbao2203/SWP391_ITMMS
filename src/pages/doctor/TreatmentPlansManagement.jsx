@@ -178,8 +178,10 @@ const TreatmentPlansManagement = () => {
     }
   };
 
-  const getPhaseProgress = (currentPhase) => {
-    return (currentPhase / 5) * 100;
+  const getPhaseProgress = (currentPhase, treatmentType) => {
+    // Xác định số giai đoạn tối đa dựa theo loại điều trị
+    const maxPhases = treatmentType?.toUpperCase().includes("IVF") ? 7 : 5;
+    return (currentPhase / maxPhases) * 100;
   };
 
   const handleViewDetails = (plan) => {
@@ -360,13 +362,15 @@ const TreatmentPlansManagement = () => {
       render: (_, record) => {
         const plan = record.treatmentPlan || record;
         const currentPhase = plan.currentPhase || plan.phase || 1;
-        const maxPhase = plan.maxPhase || 5;
+        const treatmentType = plan.treatmentType || "";
+        // Xác định số giai đoạn tối đa dựa theo loại điều trị
+        const maxPhase = treatmentType?.toUpperCase().includes("IVF") ? 7 : 5;
         const stats = record.stats || {};
 
         return (
           <div>
             <Progress
-              percent={getPhaseProgress(currentPhase)}
+              percent={getPhaseProgress(currentPhase, treatmentType)}
               showInfo={false}
               strokeColor="#1976d2"
             />
@@ -595,7 +599,12 @@ const TreatmentPlansManagement = () => {
                   <Timeline.Item color="blue" dot={<ClockCircleOutlined />}>
                     <Text strong>
                       Giai đoạn hiện tại:{" "}
-                      {selectedPlan.treatmentPlan?.currentPhase || 1}/5
+                      {selectedPlan.treatmentPlan?.currentPhase || 1}/
+                      {selectedPlan.treatmentPlan?.treatmentType
+                        ?.toUpperCase()
+                        .includes("IVF")
+                        ? 7
+                        : 5}
                     </Text>
                     <br />
                     <Text>
