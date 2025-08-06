@@ -13,6 +13,7 @@ import {
   Space,
   Typography,
   message,
+  notification,
   Avatar,
   Tag,
   Spin,
@@ -363,10 +364,52 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
               } else {
                 console.error("=== TREATMENT PLAN CREATION FAILED ===");
                 console.error("Treatment error response:", treatmentResult);
-                message.warning(
-                  "Medical record đã tạo thành công, nhưng có lỗi khi tạo kế hoạch điều trị: " +
-                    (treatmentResult?.message || "Unknown error")
-                );
+
+                // Kiểm tra nếu lỗi là do bệnh nhân đã có kế hoạch điều trị
+                if (
+                  treatmentResult &&
+                  treatmentResult.message &&
+                  treatmentResult.message.includes(
+                    "Bệnh nhân đang có kế hoạch điều trị chưa kết thúc"
+                  )
+                ) {
+                  // Hiển thị thông báo lỗi bằng toast - sử dụng key để tránh trùng lặp
+                  setTimeout(() => {
+                    notification.destroy(); // Xóa thông báo hiện tại nếu có
+                    notification.open({
+                      key: "treatment_exists_error",
+                      message: "Không thể tạo kế hoạch điều trị mới",
+                      description:
+                        "Bệnh nhân này đang có kế hoạch điều trị chưa hoàn thành. Vui lòng hoàn thành hoặc hủy kế hoạch hiện tại trước khi tạo kế hoạch mới.",
+                      duration: 10,
+                      placement: "topRight",
+                      style: {
+                        backgroundColor: "#fff2f0",
+                        borderLeft: "4px solid #ff4d4f",
+                        fontWeight: "bold",
+                        marginTop: "50px",
+                        width: "450px",
+                      },
+                      btn: (
+                        <Button type="primary" danger>
+                          Đã hiểu
+                        </Button>
+                      ),
+                      icon: (
+                        <i
+                          className="fas fa-exclamation-circle"
+                          style={{ color: "#ff4d4f", fontSize: "20px" }}
+                        />
+                      ),
+                    });
+                  }, 100);
+                } else {
+                  // Hiển thị thông báo lỗi thông thường
+                  message.warning(
+                    "Medical record đã tạo thành công, nhưng có lỗi khi tạo kế hoạch điều trị: " +
+                      (treatmentResult?.message || "Unknown error")
+                  );
+                }
               }
             } catch (treatmentError) {
               console.error("=== TREATMENT PLAN EXCEPTION ===");
@@ -375,10 +418,51 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
                 message: treatmentError.message,
                 stack: treatmentError.stack,
               });
-              message.warning(
-                "Medical record đã tạo thành công, nhưng có lỗi khi tạo kế hoạch điều trị: " +
-                  treatmentError.message
-              );
+
+              // Kiểm tra nếu exception là do bệnh nhân đã có kế hoạch điều trị
+              if (
+                treatmentError.message &&
+                treatmentError.message.includes(
+                  "Bệnh nhân đang có kế hoạch điều trị chưa kết thúc"
+                )
+              ) {
+                // Hiển thị thông báo lỗi bằng toast - sử dụng key để tránh trùng lặp
+                setTimeout(() => {
+                  notification.destroy(); // Xóa thông báo hiện tại nếu có
+                  notification.open({
+                    key: "treatment_exists_error",
+                    message: "Không thể tạo kế hoạch điều trị mới",
+                    description:
+                      "Bệnh nhân này đang có kế hoạch điều trị chưa hoàn thành. Vui lòng hoàn thành hoặc hủy kế hoạch hiện tại trước khi tạo kế hoạch mới.",
+                    duration: 10,
+                    placement: "topRight",
+                    style: {
+                      backgroundColor: "#fff2f0",
+                      borderLeft: "4px solid #ff4d4f",
+                      fontWeight: "bold",
+                      marginTop: "50px",
+                      width: "450px",
+                    },
+                    btn: (
+                      <Button type="primary" danger>
+                        Đã hiểu
+                      </Button>
+                    ),
+                    icon: (
+                      <i
+                        className="fas fa-exclamation-circle"
+                        style={{ color: "#ff4d4f", fontSize: "20px" }}
+                      />
+                    ),
+                  });
+                }, 100);
+              } else {
+                // Hiển thị thông báo lỗi thông thường
+                message.warning(
+                  "Medical record đã tạo thành công, nhưng có lỗi khi tạo kế hoạch điều trị: " +
+                    treatmentError.message
+                );
+              }
             }
           } else {
             message.success("Hoàn thành khám bệnh thành công!");
@@ -436,10 +520,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
         return; // Exit early
       }
     } catch (error) {
-      console.error("=== ERROR IN HANDLE SUBMIT ===");
-      console.error("Error type:", typeof error);
-      console.error("Error message:", error.message);
-      console.error("Error stack:", error.stack);
       message.error(
         "Có lỗi xảy ra khi hoàn thành khám bệnh: " +
           (error.message || "Unknown error")

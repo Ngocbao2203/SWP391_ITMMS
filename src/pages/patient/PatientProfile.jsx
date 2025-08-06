@@ -36,12 +36,16 @@ import {
   ScheduleOutlined,
   ExclamationCircleOutlined,
   UserSwitchOutlined,
+  PercentageOutlined,
+  DollarOutlined,
+  CreditCardOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import authService from "../../services/authService";
 import treatmentService from "../../services/treatmentService";
 import guestService from "../../services/guestService";
 import patientService from "../../services/patientService";
+import treatmentFlowService from "../../services/treatmentFlowService";
 import "../../styles/PatientProfile.css";
 import "moment/locale/vi";
 
@@ -107,10 +111,295 @@ const PatientProfile = () => {
         ...storedUser.customer,
       });
 
-      treatmentService
-        .getCustomerTreatmentPlans(customerId)
-        .then((data) => setTreatments(Array.isArray(data) ? data : []))
-        .catch(() => setTreatments([]));
+      // Lấy dữ liệu kế hoạch điều trị sử dụng API mới TreatmentFlow
+      treatmentFlowService
+        .getPatientTreatmentFlow(customerId)
+        .then((response) => {
+          console.log("Treatment Flow API response:", response);
+          console.log("Treatment Flow API response type:", typeof response);
+          console.log(
+            "Treatment Flow API response keys:",
+            response ? Object.keys(response) : "No response"
+          );
+
+          if (!response) {
+            console.log("No treatment flow data found");
+            setTreatments([]);
+            return;
+          }
+
+          // Kiểm tra xem response có phải là array không
+          if (Array.isArray(response)) {
+            console.log("Response is an array with length:", response.length);
+
+            if (response.length === 0) {
+              setTreatments([]);
+              return;
+            }
+
+            // Hiển thị dữ liệu sống để phân tích
+            console.log(
+              "First item in array:",
+              JSON.stringify(response[0], null, 2)
+            );
+
+            // Hiển thị cấu trúc chi tiết của response để phân tích
+            if (response.length > 0) {
+              console.log(
+                "Full detailed first item:",
+                JSON.stringify(response[0], null, 2)
+              );
+            }
+
+            // Trực tiếp sử dụng mảng từ response
+            const formattedTreatments = response.map((item) => {
+              // In ra toàn bộ đối tượng để phân tích
+              console.log(
+                "Treatment item from API:",
+                JSON.stringify(item, null, 2)
+              );
+
+              // Tìm tên bác sĩ từ các vị trí có thể
+              let doctorName = "---";
+              let serviceName = "---";
+
+              // 1. Kiểm tra trường doctorName trong item
+              if (item.doctorName) {
+                doctorName = item.doctorName;
+                console.log("Found doctorName in item:", doctorName);
+              }
+
+              // 2. Kiểm tra trường doctor
+              else if (item.doctor) {
+                if (typeof item.doctor === "string") {
+                  doctorName = item.doctor;
+                } else if (typeof item.doctor === "object") {
+                  doctorName =
+                    item.doctor.name ||
+                    item.doctor.fullName ||
+                    (item.doctor.firstName && item.doctor.lastName
+                      ? `${item.doctor.firstName} ${item.doctor.lastName}`
+                      : item.doctor.firstName || item.doctor.lastName);
+                }
+                console.log("Found doctor info:", doctorName);
+              }
+
+              // 3. Kiểm tra trong medicalHistory nếu có
+              else if (
+                item.medicalHistory &&
+                Array.isArray(item.medicalHistory) &&
+                item.medicalHistory.length > 0
+              ) {
+                const lastMedicalRecord =
+                  item.medicalHistory[item.medicalHistory.length - 1];
+                if (lastMedicalRecord && lastMedicalRecord.doctorName) {
+                  doctorName = lastMedicalRecord.doctorName;
+                  console.log(
+                    "Found doctorName in medicalHistory:",
+                    doctorName
+                  );
+                }
+              }
+
+              // 4. Tìm trường có thể chứa tên dịch vụ
+              // Kiểm tra trong đối tượng treatmentService nếu có
+              if (item.treatmentService) {
+                if (typeof item.treatmentService === "object") {
+                  serviceName =
+                    item.treatmentService.serviceName ||
+                    item.treatmentService.name ||
+                    "---";
+                  console.log(
+                    "Found serviceName in treatmentService object:",
+                    serviceName
+                  );
+                } else if (typeof item.treatmentService === "string") {
+                  serviceName = item.treatmentService;
+                  console.log(
+                    "Found serviceName in treatmentService string:",
+                    serviceName
+                  );
+                }
+              }
+              // Kiểm tra trong trường treatmentPlan.treatmentService
+              else if (
+                item.treatmentPlan &&
+                item.treatmentPlan.treatmentService
+              ) {
+                if (typeof item.treatmentPlan.treatmentService === "object") {
+                  serviceName =
+                    item.treatmentPlan.treatmentService.serviceName ||
+                    item.treatmentPlan.treatmentService.name ||
+                    "---";
+                  console.log(
+                    "Found serviceName in treatmentPlan.treatmentService:",
+                    serviceName
+                  );
+                } else if (
+                  typeof item.treatmentPlan.treatmentService === "string"
+                ) {
+                  serviceName = item.treatmentPlan.treatmentService;
+                  console.log(
+                    "Found serviceName in treatmentPlan.treatmentService string:",
+                    serviceName
+                  );
+                }
+              }
+              // Kiểm tra các trường khác
+              else if (item.serviceName) {
+                serviceName = item.serviceName;
+                console.log("Found serviceName directly in item:", serviceName);
+              } else if (item.service) {
+                serviceName =
+                  typeof item.service === "string"
+                    ? item.service
+                    : item.service && typeof item.service === "object"
+                    ? item.service.name || item.service.serviceName
+                    : "---";
+                console.log("Found service info in item.service:", serviceName);
+              }
+
+              // Kiểm tra thêm trong cấu trúc API console
+              if (
+                (item.treatmentPlan &&
+                  item.treatmentPlan.doctor &&
+                  !doctorName) ||
+                doctorName === "---"
+              ) {
+                // Nếu có thông tin bác sĩ trong treatmentPlan
+                if (typeof item.treatmentPlan.doctor === "object") {
+                  doctorName = item.treatmentPlan.doctor.name || "---";
+                  console.log("Found doctor in treatmentPlan:", doctorName);
+                }
+              }
+
+              // Tạo đối tượng mới với thông tin đã tìm thấy
+              return {
+                id: item.id || Math.random(),
+                doctorName: doctorName,
+                serviceName: serviceName,
+                // Chỉ giữ lại status và ngày bắt đầu, loại bỏ các thông tin không cần thiết
+                status: item.status || "Active",
+                startDate: item.startDate || item.createdAt,
+
+                // Thông tin giai đoạn hiện tại
+                currentPhase: item.currentPhase || "1",
+                phaseDescription:
+                  item.phaseDescription || "Giai đoạn khởi đầu điều trị",
+
+                // Lấy và chuẩn hóa thông tin giai đoạn từ API
+                phases: (() => {
+                  // Kiểm tra các nguồn dữ liệu giai đoạn khác nhau
+                  if (
+                    item.phases &&
+                    Array.isArray(item.phases) &&
+                    item.phases.length > 0
+                  ) {
+                    console.log("Using phases from item.phases:", item.phases);
+                    return item.phases;
+                  }
+
+                  if (
+                    item.flow &&
+                    Array.isArray(item.flow) &&
+                    item.flow.length > 0
+                  ) {
+                    console.log("Using phases from item.flow:", item.flow);
+                    return item.flow;
+                  }
+
+                  // Nếu không có thông tin giai đoạn, tạo mặc định từ thông tin hiện có
+                  console.log("Creating default phase from item info");
+                  return [
+                    {
+                      phaseNumber: item.currentPhase || "1",
+                      description:
+                        item.phaseDescription || "Giai đoạn điều trị hiện tại",
+                      active: true,
+                      completed: false,
+                      startDate: item.startDate || new Date(),
+                      estimatedDate: item.nextPhaseDate || item.nextVisitDate,
+                    },
+                  ];
+                })(),
+              };
+            });
+
+            console.log("Formatted Treatment Plans:", formattedTreatments);
+            setTreatments(formattedTreatments);
+            return;
+          }
+
+          // Xử lý cấu trúc object
+          // Chuyển đổi dữ liệu từ API mới để phù hợp với cấu trúc hiển thị
+          const treatmentPlan = response.treatmentPlan;
+
+          if (treatmentPlan) {
+            const formattedTreatmentPlan = {
+              id: treatmentPlan.id || 1,
+              doctor: treatmentPlan.doctor || { name: "---" },
+              treatmentService: treatmentPlan.treatmentService || {
+                serviceName: "---",
+              },
+              treatmentType: treatmentPlan.treatmentType || "---",
+              description: treatmentPlan.description || "---",
+              status: treatmentPlan.status || "Active",
+              startDate: treatmentPlan.startDate,
+              currentPhase: response.currentPhase?.phaseNumber || "1",
+              phaseDescription:
+                response.currentPhase?.description ||
+                "Giai đoạn khởi đầu điều trị",
+              nextVisitDate: treatmentPlan.nextVisitDate,
+              totalCost: treatmentPlan.totalCost,
+              paymentStatus: treatmentPlan.paymentStatus || "Pending",
+              // Thêm thông tin về dòng điều trị
+              flow: response.phases || [],
+              currentPhaseDetails: response.currentPhase,
+            };
+
+            console.log("Formatted Treatment Plan:", formattedTreatmentPlan);
+            setTreatments([formattedTreatmentPlan]);
+          } else if (
+            response &&
+            Array.isArray(response) &&
+            response.length > 0
+          ) {
+            // API trả về mảng trực tiếp (cấu trúc khác với mong đợi)
+            console.log(
+              "Response appears to be a direct array - attempting to use this format"
+            );
+
+            // Tạo danh sách các kế hoạch điều trị từ dữ liệu trả về
+            const treatmentPlans = response.map((item) => ({
+              id: item.id || Math.random(),
+              doctor: { name: item.doctor?.name || item.doctorName || "---" },
+              treatmentService: {
+                serviceName: item.service || item.serviceName || "---",
+              },
+              treatmentType: item.treatmentType || "---",
+              description: item.description || "---",
+              status: item.status || "Active",
+              startDate: item.startDate || item.createdAt,
+              currentPhase: item.currentPhase || "1",
+              phaseDescription: item.phaseDescription || "Giai đoạn điều trị",
+              nextVisitDate: item.nextVisitDate || item.nextPhaseDate,
+              totalCost: item.totalCost,
+              paymentStatus: item.paymentStatus || "Pending",
+              // Thông tin về các giai đoạn (nếu có)
+              flow: Array.isArray(item.phases) ? item.phases : [],
+            }));
+
+            console.log("Mapped treatment plans:", treatmentPlans);
+            setTreatments(treatmentPlans);
+          } else {
+            console.log("No valid treatment plan data found in the response");
+            setTreatments([]);
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch treatment flow:", error);
+          setTreatments([]);
+        });
 
       // Trong useEffect cho appointments
       guestService
@@ -130,18 +419,7 @@ const PatientProfile = () => {
           setAppointments([]);
         });
 
-      patientService
-        .getPatientMedicalHistory(customerId)
-        .then((response) => {
-          const records = response?.data?.medicalRecords || response || [];
-          console.log("Medical history loaded:", records);
-          setMedicalHistory(Array.isArray(records) ? records : []);
-        })
-        .catch((error) => {
-          console.error("Failed to fetch medical history:", error);
-          setMedicalHistory([]);
-        })
-        .finally(() => setLoading(false));
+      setLoading(false);
     } else {
       setLoading(false);
     }
@@ -382,104 +660,104 @@ const PatientProfile = () => {
       </div>
 
       <div className="profile-content">
-      {activeTab === "overview" && (
-  <Row gutter={[24, 24]} className="overview-content">
-    <Col xs={24} lg={24}>
-      <Card title="Thông tin cá nhân" className="info-card">
-        <Descriptions
-          bordered
-          column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
-          labelStyle={{ fontWeight: "500" }}
-        >
-          <Descriptions.Item label="Họ và tên">
-            {editMode ? (
-              <Input
-                value={editableData.fullName}
-                onChange={(e) =>
-                  handleInputChange("fullName", e.target.value)
-                }
-              />
-            ) : (
-              userData.fullName
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label="Tên đăng nhập">
-            {editMode ? (
-              <Input
-                value={editableData.username}
-                onChange={(e) =>
-                  handleInputChange("username", e.target.value)
-                }
-                disabled
-              />
-            ) : (
-              userData.username
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label="Email">
-            {editMode ? (
-              <Input
-                value={editableData.email}
-                onChange={(e) =>
-                  handleInputChange("email", e.target.value)
-                }
-              />
-            ) : (
-              userData.email
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label="Số điện thoại">
-            {editMode ? (
-              <Input
-                value={editableData.phone}
-                onChange={(e) =>
-                  handleInputChange("phone", e.target.value)
-                }
-              />
-            ) : (
-              userData.phone
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label="Địa chỉ liên hệ">
-            {editMode ? (
-              <Input
-                value={editableData.address}
-                onChange={(e) =>
-                  handleInputChange("address", e.target.value)
-                }
-              />
-            ) : (
-              userData.address
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label="Ngày sinh">
-            {editMode ? (
-              <DatePicker
-                value={
-                  editableData.birthDate
-                    ? moment(editableData.birthDate, [
-                        "YYYY-MM-DD",
-                        "DD/MM/YYYY",
-                      ])
-                    : null
-                }
-                onChange={(date) =>
-                  handleInputChange(
-                    "birthDate",
-                    date ? date.format("YYYY-MM-DD") : null
-                  )
-                }
-                format="DD/MM/YYYY"
-              />
-            ) : (
-              displayBirthDate
-            )}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
-    </Col>
-  </Row>
-)}
+        {activeTab === "overview" && (
+          <Row gutter={[24, 24]} className="overview-content">
+            <Col xs={24} lg={24}>
+              <Card title="Thông tin cá nhân" className="info-card">
+                <Descriptions
+                  bordered
+                  column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
+                  labelStyle={{ fontWeight: "500" }}
+                >
+                  <Descriptions.Item label="Họ và tên">
+                    {editMode ? (
+                      <Input
+                        value={editableData.fullName}
+                        onChange={(e) =>
+                          handleInputChange("fullName", e.target.value)
+                        }
+                      />
+                    ) : (
+                      userData.fullName
+                    )}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Tên đăng nhập">
+                    {editMode ? (
+                      <Input
+                        value={editableData.username}
+                        onChange={(e) =>
+                          handleInputChange("username", e.target.value)
+                        }
+                        disabled
+                      />
+                    ) : (
+                      userData.username
+                    )}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Email">
+                    {editMode ? (
+                      <Input
+                        value={editableData.email}
+                        onChange={(e) =>
+                          handleInputChange("email", e.target.value)
+                        }
+                      />
+                    ) : (
+                      userData.email
+                    )}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Số điện thoại">
+                    {editMode ? (
+                      <Input
+                        value={editableData.phone}
+                        onChange={(e) =>
+                          handleInputChange("phone", e.target.value)
+                        }
+                      />
+                    ) : (
+                      userData.phone
+                    )}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Địa chỉ liên hệ">
+                    {editMode ? (
+                      <Input
+                        value={editableData.address}
+                        onChange={(e) =>
+                          handleInputChange("address", e.target.value)
+                        }
+                      />
+                    ) : (
+                      userData.address
+                    )}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Ngày sinh">
+                    {editMode ? (
+                      <DatePicker
+                        value={
+                          editableData.birthDate
+                            ? moment(editableData.birthDate, [
+                                "YYYY-MM-DD",
+                                "DD/MM/YYYY",
+                              ])
+                            : null
+                        }
+                        onChange={(date) =>
+                          handleInputChange(
+                            "birthDate",
+                            date ? date.format("YYYY-MM-DD") : null
+                          )
+                        }
+                        format="DD/MM/YYYY"
+                      />
+                    ) : (
+                      displayBirthDate
+                    )}
+                  </Descriptions.Item>
+                </Descriptions>
+              </Card>
+            </Col>
+          </Row>
+        )}
 
         {activeTab === "treatments" && (
           <div className="treatments-content">
@@ -490,15 +768,16 @@ const PatientProfile = () => {
                   style={{ display: "flex", alignItems: "center", gap: "8px" }}
                 >
                   <MedicineBoxOutlined style={{ color: "#1890ff" }} />
-                  <span>Lịch sử điều trị</span>
+                  <span>Kế Hoạch Điều Trị</span>
                 </div>
               }
             >
-              {medicalHistory.length === 0 ? (
-                <Empty description="Chưa có quá trình điều trị nào." />
+              {treatments.length === 0 ? (
+                <Empty description="Chưa có kế hoạch điều trị nào." />
               ) : (
                 <Timeline mode="left" style={{ marginTop: "16px" }}>
-                  {medicalHistory.map((item, index) => (
+                  {console.log("Treatment data structure:", treatments)}
+                  {treatments.map((item, index) => (
                     <Timeline.Item
                       key={index}
                       dot={
@@ -511,13 +790,17 @@ const PatientProfile = () => {
                       label={
                         <div style={{ minWidth: "120px", textAlign: "right" }}>
                           <div style={{ fontWeight: "500", color: "#1890ff" }}>
-                            {item.recordDate
-                              ? moment(item.recordDate).format("DD/MM/YYYY")
+                            {item.startDate
+                              ? moment(item.startDate).format("DD/MM/YYYY")
+                              : item.createdAt
+                              ? moment(item.createdAt).format("DD/MM/YYYY")
                               : "---"}
                           </div>
                           <div style={{ fontSize: "12px", color: "#666" }}>
-                            {item.recordDate
-                              ? moment(item.recordDate).format("dddd")
+                            {item.startDate
+                              ? moment(item.startDate).format("dddd")
+                              : item.createdAt
+                              ? moment(item.createdAt).format("dddd")
                               : ""}
                           </div>
                         </div>
@@ -554,22 +837,10 @@ const PatientProfile = () => {
                             <ExclamationCircleOutlined
                               style={{ color: "#fa541c", marginTop: "4px" }}
                             />
-                            <Text strong>Chẩn đoán:</Text>
-                            <Text>{item.diagnosis || "---"}</Text>
+                            <Text strong>Dịch vụ:</Text>
+                            <Text>{item.serviceName || "---"}</Text>
                           </div>
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "flex-start",
-                              gap: "8px",
-                            }}
-                          >
-                            <MedicineBoxOutlined
-                              style={{ color: "#52c41a", marginTop: "4px" }}
-                            />
-                            <Text strong>Phương pháp điều trị:</Text>
-                            <Text>{item.treatment || "---"}</Text>
-                          </div>
+                          {/* Đã loại bỏ phần hiển thị loại điều trị và mô tả theo yêu cầu */}
                           <div
                             style={{
                               display: "flex",
@@ -578,9 +849,209 @@ const PatientProfile = () => {
                             }}
                           >
                             <CalendarOutlined style={{ color: "#722ed1" }} />
-                            <Text strong>Phương pháp điều trị:</Text>
-                            <Text>{item.appointmentType || "---"}</Text>
+                            <Text strong>Trạng thái:</Text>
+                            <Tag
+                              color={
+                                item.status === "Completed"
+                                  ? "success"
+                                  : item.status === "Pending"
+                                  ? "warning"
+                                  : item.status === "Active"
+                                  ? "processing"
+                                  : "default"
+                              }
+                            >
+                              {item.status === "Completed"
+                                ? "Đã hoàn thành"
+                                : item.status === "Pending"
+                                ? "Chờ xử lý"
+                                : item.status === "Active"
+                                ? "Đang tiến hành"
+                                : item.status}
+                            </Tag>
                           </div>
+                          {item.phaseDescription && (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "flex-start",
+                                gap: "8px",
+                              }}
+                            >
+                              <FileTextOutlined
+                                style={{ color: "#13c2c2", marginTop: "4px" }}
+                              />
+                              <Text strong>Giai đoạn hiện tại:</Text>
+                              <Text>
+                                {item.phaseDescription} (Giai đoạn{" "}
+                                {item.currentPhase})
+                              </Text>
+                            </div>
+                          )}
+
+                          {/* Hiển thị thông tin dòng điều trị nếu có */}
+                          {item.phases && item.phases.length > 0 && (
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "flex-start",
+                                gap: "8px",
+                                marginTop: "10px",
+                                border: "1px solid #e6f7ff",
+                                padding: "10px",
+                                borderRadius: "8px",
+                                backgroundColor: "#f0f9ff",
+                              }}
+                            >
+                              <div style={{ width: "100%" }}>
+                                <Text
+                                  strong
+                                  style={{ fontSize: "14px", color: "#1890ff" }}
+                                >
+                                  Tiến trình điều trị:
+                                </Text>
+                              </div>
+
+                              <Timeline
+                                style={{
+                                  width: "100%",
+                                  marginTop: "8px",
+                                  marginBottom: "0",
+                                }}
+                              >
+                                {item.phases.map((phase, phaseIndex) => (
+                                  <Timeline.Item
+                                    key={phaseIndex}
+                                    color={
+                                      phase.completed
+                                        ? "green"
+                                        : phase.active
+                                        ? "blue"
+                                        : "gray"
+                                    }
+                                    dot={
+                                      phase.completed ? (
+                                        <CheckCircleOutlined
+                                          style={{ fontSize: "16px" }}
+                                        />
+                                      ) : phase.active ? (
+                                        <ClockCircleOutlined
+                                          style={{ fontSize: "16px" }}
+                                        />
+                                      ) : undefined
+                                    }
+                                  >
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                      }}
+                                    >
+                                      <Text strong style={{ fontSize: "13px" }}>
+                                        Giai đoạn {phase.phaseNumber}:{" "}
+                                        {phase.description}
+                                      </Text>
+                                      <Text
+                                        type={
+                                          phase.completed || phase.active
+                                            ? "normal"
+                                            : "secondary"
+                                        }
+                                        style={{ fontSize: "12px" }}
+                                      >
+                                        {phase.completed ? (
+                                          <span>
+                                            Hoàn thành vào{" "}
+                                            {moment(
+                                              phase.completionDate
+                                            ).format("DD/MM/YYYY")}
+                                          </span>
+                                        ) : phase.active ? (
+                                          <span>
+                                            Đang thực hiện (từ{" "}
+                                            {moment(phase.startDate).format(
+                                              "DD/MM/YYYY"
+                                            )}
+                                            )
+                                          </span>
+                                        ) : (
+                                          <span>
+                                            Dự kiến:{" "}
+                                            {moment(phase.estimatedDate).format(
+                                              "DD/MM/YYYY"
+                                            )}
+                                          </span>
+                                        )}
+                                      </Text>
+                                    </div>
+                                  </Timeline.Item>
+                                ))}
+                              </Timeline>
+                            </div>
+                          )}
+                          {item.nextVisitDate && (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                              }}
+                            >
+                              <CalendarOutlined style={{ color: "#13c2c2" }} />
+                              <Text strong>Lịch tái khám:</Text>
+                              <Text>
+                                {moment(item.nextVisitDate).format(
+                                  "DD/MM/YYYY"
+                                )}
+                              </Text>
+                            </div>
+                          )}
+                          {item.totalCost && (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                              }}
+                            >
+                              <DollarOutlined style={{ color: "#52c41a" }} />
+                              <Text strong>Tổng chi phí:</Text>
+                              <Text>
+                                {typeof item.totalCost === "number"
+                                  ? item.totalCost.toLocaleString()
+                                  : item.totalCost}{" "}
+                                VNĐ
+                              </Text>
+                            </div>
+                          )}
+                          {item.paymentStatus && (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                              }}
+                            >
+                              <CreditCardOutlined
+                                style={{ color: "#722ed1" }}
+                              />
+                              <Text strong>Trạng thái thanh toán:</Text>
+                              <Tag
+                                color={
+                                  item.paymentStatus === "Completed"
+                                    ? "success"
+                                    : "warning"
+                                }
+                              >
+                                {item.paymentStatus === "Completed"
+                                  ? "Đã thanh toán"
+                                  : item.paymentStatus === "Pending"
+                                  ? "Chưa thanh toán"
+                                  : item.paymentStatus}
+                              </Tag>
+                            </div>
+                          )}
                         </div>
                       </Card>
                     </Timeline.Item>
