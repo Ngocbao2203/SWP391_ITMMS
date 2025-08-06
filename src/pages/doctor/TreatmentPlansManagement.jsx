@@ -199,13 +199,13 @@ const TreatmentPlansManagement = () => {
 
     const plan = planData.treatmentPlan || planData;
     const nextVisitDate = plan.nextVisitDate || plan.nextAppointmentDate;
-    const nextPhaseDate = plan.nextPhaseDate;
+    // Đã loại bỏ nextPhaseDate theo yêu cầu
 
     form.setFieldsValue({
       currentPhase: plan.currentPhase || plan.phase || 1,
       phaseDescription: plan.phaseDescription || plan.description || "",
       nextVisitDate: nextVisitDate ? dayjs(nextVisitDate) : null,
-      nextPhaseDate: nextPhaseDate ? dayjs(nextPhaseDate) : null,
+      // Đã loại bỏ trường nextPhaseDate theo yêu cầu
       progressNotes: plan.progressNotes || plan.notes || "",
       status: plan.status || "Active",
     });
@@ -235,7 +235,7 @@ const TreatmentPlansManagement = () => {
         currentPhase: values.currentPhase,
         phaseDescription: values.phaseDescription,
         nextVisitDate: formatDate(values.nextVisitDate),
-        nextPhaseDate: formatDate(values.nextPhaseDate),
+        // Đã loại bỏ trường nextPhaseDate theo yêu cầu
         progressNotes: values.progressNotes,
         status: values.status,
       };
@@ -873,9 +873,9 @@ const TreatmentPlansManagement = () => {
           </Form.Item>
 
           <Row gutter={16} className="update-form-date-inputs">
-            <Col span={12}>
+            <Col span={24}>
               <Form.Item
-                label="Ngày khám tiếp theo"
+                label="Ngày tái khám"
                 name="nextVisitDate"
                 rules={[
                   {
@@ -883,38 +883,17 @@ const TreatmentPlansManagement = () => {
                     message: "Vui lòng chọn ngày khám tiếp theo",
                   },
                 ]}
-                tooltip="Ngày bệnh nhân cần quay lại khám"
               >
                 <Input type="date" min={dayjs().format("YYYY-MM-DD")} />
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Ngày chuyển giai đoạn tiếp theo"
-                name="nextPhaseDate"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng chọn ngày chuyển giai đoạn",
-                  },
-                ]}
-                tooltip="Ngày dự kiến chuyển sang giai đoạn tiếp theo của quá trình điều trị"
-              >
-                <Input type="date" min={dayjs().format("YYYY-MM-DD")} />
-              </Form.Item>
-            </Col>
+            {/* Đã loại bỏ trường ngày chuyển giai đoạn tiếp theo theo yêu cầu */}
           </Row>
 
           <Text
             type="secondary"
             style={{ display: "block", marginBottom: "16px" }}
-          >
-            <i>
-              Lưu ý: Ngày khám tiếp theo là ngày bệnh nhân cần quay lại tái
-              khám. Ngày chuyển giai đoạn là dự kiến thời điểm bệnh nhân sẽ
-              chuyển sang giai đoạn điều trị kế tiếp.
-            </i>
-          </Text>
+          ></Text>
 
           <Form.Item label="Ghi chú tiến trình" name="progressNotes">
             <TextArea

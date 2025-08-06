@@ -525,6 +525,17 @@ const TreatmentPlanDetailPage = () => {
                     </h6>
                     <p>{selectedPlan.description || "Không có mô tả"}</p>
                   </div>
+
+                  <div className="mt-4">
+                    <h6>
+                      <i className="fas fa-layer-group me-1"></i> Mô tả giai
+                      đoạn:
+                    </h6>
+                    <p>
+                      {selectedPlan.phaseDescription ||
+                        "Không có mô tả giai đoạn"}
+                    </p>
+                  </div>
                 </Card.Body>
               </Card>
 

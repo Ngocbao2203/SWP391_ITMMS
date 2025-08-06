@@ -346,9 +346,11 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
                 notes: values.notes || "",
                 currentPhase: 1, // Default to phase 1
                 phaseDescription: values.phaseDescription || "",
-                nextPhaseDate: values.nextPhaseDate
-                  ? values.nextPhaseDate.format("YYYY-MM-DDTHH:mm:ss")
-                  : null,
+
+                NextVisitDate:
+                  values.followUpRequired && values.nextAppointmentDate
+                    ? values.nextAppointmentDate.format("YYYY-MM-DD")
+                    : null,
               };
 
               const treatmentResult =
@@ -603,13 +605,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
                       />
                     </Form.Item>
 
-                    <Form.Item
-                      label="Ngày giai đoạn tiếp theo"
-                      name="nextPhaseDate"
-                    >
-                      <DatePicker style={{ width: "100%" }} />
-                    </Form.Item>
-
                     <Form.Item label="Ghi chú tiến trình" name="progressNotes">
                       <TextArea
                         rows={2}
@@ -684,18 +679,6 @@ const ConsultationModal = ({ visible, onCancel, appointment, onSuccess }) => {
 
                     <Form.Item label="Ngày bắt đầu" name="startDate">
                       <DatePicker style={{ width: "100%" }} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Ngày giai đoạn tiếp theo"
-                      name="nextPhaseDate"
-                    >
-                      <DatePicker
-                        style={{ width: "100%" }}
-                        disabledDate={(current) =>
-                          current && current < dayjs().startOf("day")
-                        }
-                      />
                     </Form.Item>
                   </>
                 ) : (
